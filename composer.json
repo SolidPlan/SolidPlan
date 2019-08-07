@@ -12,6 +12,7 @@
         "symfony/yaml": "4.3.*"
     },
     "require-dev": {
+        "symfony/maker-bundle": "^1.12"
     },
     "config": {
         "preferred-install": {
