@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import TaskItem from '~/components/TaskItem.vue'
+import TaskItem from '~/components/tasks/TaskItem.vue'
 
 const filters = {
   all: tasks => [].concat(filters.open(tasks), filters.closed(tasks)),

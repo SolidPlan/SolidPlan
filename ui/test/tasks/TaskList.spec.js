@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import TaskList from '~/components/TaskList'
+import TaskList from '~/components/tasks/TaskList'
 
 describe('TaskList', () => {
   test('is a Vue instance', () => {

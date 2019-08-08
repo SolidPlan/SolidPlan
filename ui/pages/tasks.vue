@@ -13,8 +13,8 @@
 </template>
 
 <script>
-import TaskList from '~/components/TaskList'
-import CreateTask from '~/components/CreateTask'
+import TaskList from '~/components/tasks/TaskList'
+import CreateTask from '~/components/tasks/CreateTask'
 
 export default {
   components: {
