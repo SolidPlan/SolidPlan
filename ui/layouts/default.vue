@@ -17,16 +17,16 @@
           </v-list-item-content>
         </v-list-item>
       </v-list>
-        <template v-slot:append>
-            <div class="pa-2" :class="{'text-center': miniVariant, 'text-right': !miniVariant}">
-                <v-btn icon @click.stop="miniVariant = !miniVariant">
-                    <v-icon>{{ `mdi-chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon>
-                </v-btn>
-            </div>
-        </template>
+      <template v-slot:append>
+        <div class="pa-2" :class="{'text-center': miniVariant, 'text-right': !miniVariant}">
+          <v-btn icon @click.stop="miniVariant = !miniVariant">
+            <v-icon>{{ `mdi-chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon>
+          </v-btn>
+        </div>
+      </template>
     </v-navigation-drawer>
     <v-app-bar clipped-left fixed app>
-        <v-spacer />
+      <v-spacer />
       <v-toolbar-title v-text="title" />
       <v-spacer />
     </v-app-bar>
@@ -52,6 +52,11 @@ export default {
           icon: 'mdi-apps',
           title: 'Dashboard',
           to: '/'
+        },
+        {
+          icon: 'mdi-check',
+          title: 'Tasks',
+          to: '/tasks'
         }
       ],
       title: 'SolidTask'

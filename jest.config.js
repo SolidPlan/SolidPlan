@@ -13,5 +13,6 @@ module.exports = {
   'collectCoverageFrom': [
     '<rootDir>/ui/components/**/*.vue',
     '<rootDir>/ui/pages/**/*.vue'
-  ]
+  ],
+  setupFilesAfterEnv: ['<rootDir>/ui/test/bootstrap.js'],
 }
