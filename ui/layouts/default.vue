@@ -54,7 +54,7 @@ export default {
           to: '/'
         },
         {
-          icon: 'mdi-check',
+          icon: 'mdi-playlist-check',
           title: 'Tasks',
           to: '/tasks'
         }
