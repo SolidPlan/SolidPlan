@@ -2,8 +2,8 @@
   <v-list>
     <v-list-item>
       <v-text-field
-        v-model="task"
-        :label="'New task'"
+        v-model="project"
+        :label="'New project'"
         autofocus
         autocomplete="off"
         clearable
@@ -11,13 +11,13 @@
         flat
         hide-details
         maxlength="255"
-        placeholder="Enter new task"
+        placeholder="Enter new project"
         prepend-icon="mdi-file-document-box-check-outline"
         solo
-        @keydown.enter="addTask"
+        @keydown.enter="addProject"
       />
       <v-list-item-action>
-        <v-icon color="success" @click="addTask">
+        <v-icon color="success" @click="addProject">
           mdi-check
         </v-icon>
       </v-list-item-action>
@@ -27,22 +27,15 @@
 
 <script>
 export default {
-  props: {
-    project: {
-      type: String,
-      required: false,
-      default: null
-    }
-  },
   data () {
     return {
-      task: null
+      project: null
     }
   },
   methods: {
-    addTask () {
-      if (this.task) {
-        this.$axios.post('/api/tasks', { 'name': this.task, 'status': 'open', 'project': this.project }).then((res) => { this.$emit('add', res.data); this.task = null })
+    addProject () {
+      if (this.project) {
+        this.$axios.post('/api/projects', { 'name': this.project }).then((res) => { this.$emit('add', res.data); this.project = null })
       }
     }
   }

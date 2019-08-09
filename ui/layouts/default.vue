@@ -54,6 +54,11 @@ export default {
           to: '/'
         },
         {
+          icon: 'mdi-folder-multiple-outline',
+          title: 'Projects',
+          to: '/projects'
+        },
+        {
           icon: 'mdi-playlist-check',
           title: 'Tasks',
           to: '/tasks'
