@@ -12,6 +12,7 @@
         <span>Mark all as done</span>
       </v-tooltip>
       <v-spacer />
+      <v-icon>mdi-filter-variant</v-icon>
       <v-btn-toggle
         v-show="tasks.length"
         v-model="visibility"
@@ -32,7 +33,7 @@
         </v-btn>
       </v-btn-toggle>
     </v-card-actions>
-    <v-list class="pa-0" dense elevation="12">
+    <v-list class="pa-0" :dense="filteredTasks.length > 0" elevation="12">
       <template v-for="task in filteredTasks">
         <v-divider :key="`${task.id}-divider`" />
         <TaskItem
@@ -41,6 +42,15 @@
           @update="$emit('refresh')"
           @remove="$emit('refresh')"
         />
+      </template>
+      <template v-if="!filteredTasks.length">
+        <v-list-item class="task-item text-cs-center">
+          <v-list-item-content>
+            <span class="text-center success--text">
+              <v-icon>mdi-party-popper</v-icon> No Tasks
+            </span>
+          </v-list-item-content>
+        </v-list-item>
       </template>
     </v-list>
   </v-card>
@@ -76,11 +86,6 @@ export default {
     filteredTasks () {
       return filters[this.visibility](this.tasks)
     }
-  },
-  async asyncData ({ $axios }) {
-    const tasks = await $axios.get('/api/tasks')
-
-    return { tasks: tasks.data['hydra:member'] }
   },
   methods: {
     markAllDone () {
