@@ -1,6 +1,8 @@
 <template>
   <v-card class="mx-auto">
-    <v-card-title @click="$router.push({'name': 'projects-id', 'params' : {'id': project.id}})">{{ project.name }}</v-card-title>
+    <v-card-title @click="$router.push({'name': 'projects-id', 'params' : {'id': project.id}})">
+      {{ project.name }}
+    </v-card-title>
     <v-card-actions>
       <v-spacer />
       <v-tooltip bottom>
@@ -10,7 +12,7 @@
             text
             icon
             small
-            @click="removeProject(project)"
+            @click="remove(project)"
             v-on="on"
           >
             <v-icon>mdi-close</v-icon>
@@ -23,6 +25,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   props: {
     project: {
@@ -31,11 +35,9 @@ export default {
     }
   },
   methods: {
-    removeProject () {
-      this.$axios.delete(`/api/projects/${this.project.id}`).then(() => {
-        this.$emit('remove', this.project)
-      })
-    }
+    ...mapActions({
+      remove: 'projects/remove'
+    })
   }
 }
 </script>

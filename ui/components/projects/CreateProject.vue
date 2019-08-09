@@ -14,10 +14,10 @@
         placeholder="Enter new project"
         prepend-icon="mdi-file-document-box-check-outline"
         solo
-        @keydown.enter="addProject"
+        @keydown.enter="add"
       />
       <v-list-item-action>
-        <v-icon color="success" @click="addProject">
+        <v-icon color="success" @click="add">
           mdi-check
         </v-icon>
       </v-list-item-action>
@@ -26,6 +26,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   data () {
     return {
@@ -33,10 +35,12 @@ export default {
     }
   },
   methods: {
-    addProject () {
-      if (this.project) {
-        this.$axios.post('/api/projects', { 'name': this.project }).then((res) => { this.$emit('add', res.data); this.project = null })
-      }
+    ...mapActions({
+      addProject: 'projects/add'
+    }),
+    add () {
+      this.addProject(this.project)
+      this.project = null
     }
   }
 }

@@ -16,17 +16,18 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import ProjectItem from '~/components/projects/ProjectItem.vue'
 
 export default {
   components: {
     ProjectItem
   },
-  props: {
-    projects: {
-      type: Array,
-      required: true
-    }
+  computed: mapState({
+    projects: state => state.projects.list
+  }),
+  created () {
+    this.$store.dispatch('projects/load')
   }
 }
 </script>

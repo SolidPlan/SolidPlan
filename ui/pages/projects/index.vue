@@ -3,9 +3,9 @@
     <v-layout row wrap>
       <v-flex>
         <v-card>
-          <create-project @add="fetchProjects" />
+          <create-project />
         </v-card>
-        <project-list :projects="projects" class="mt-5" @refresh="fetchProjects" />
+        <project-list class="mt-5" />
       </v-flex>
     </v-layout>
   </v-container>
@@ -19,16 +19,6 @@ export default {
   components: {
     CreateProject,
     ProjectList
-  },
-  async asyncData ({ $axios }) {
-    const projects = await $axios.get('/api/projects')
-    return { projects: projects.data['hydra:member'] }
-  },
-  methods: {
-    async fetchProjects () {
-      const projects = await this.$axios.get('/api/projects')
-      this.projects = projects.data['hydra:member']
-    }
   }
 }
 </script>
