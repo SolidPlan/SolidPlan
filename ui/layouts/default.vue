@@ -60,7 +60,7 @@ export default {
         },
         {
           icon: 'mdi-playlist-check',
-          title: 'Tasks',
+          title: 'All Tasks',
           to: '/tasks'
         }
       ],
