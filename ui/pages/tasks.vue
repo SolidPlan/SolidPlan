@@ -6,7 +6,7 @@
           <create-task />
         </v-card>
 
-        <task-list />
+        <task-list show-project />
       </v-flex>
     </v-layout>
   </v-container>

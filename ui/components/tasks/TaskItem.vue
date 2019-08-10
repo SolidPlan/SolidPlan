@@ -20,6 +20,11 @@
         {{ task.name }}
       </v-list-item-content>
       <v-list-item-action>
+        <v-list-item-action-text v-if="showProject && task.project">
+          <v-chip pill small :color="projects[task.project].color" text-color="white" v-once>
+            {{ projects[task.project].name }}
+          </v-chip>
+        </v-list-item-action-text>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-btn
@@ -57,6 +62,8 @@
 </template>
 
 <script>
+import { keyBy } from 'lodash'
+
 export default {
   directives: {
     focus (el, { value }, { context }) {
@@ -71,6 +78,11 @@ export default {
     task: {
       type: Object,
       required: true
+    },
+    showProject: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
   data () {
@@ -82,6 +94,9 @@ export default {
   computed: {
     done () {
       return this.task.status === 'closed'
+    },
+    projects () {
+      return keyBy(this.$store.state.projects.list, '@id')
     }
   },
   methods: {

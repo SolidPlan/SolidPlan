@@ -39,6 +39,7 @@
         <TaskItem
           :key="task.id"
           :task="task"
+          :show-project="showProject"
           @update="$emit('refresh')"
           @remove="$emit('refresh')"
         />
@@ -74,6 +75,11 @@ export default {
       type: Object,
       required: false,
       default: null
+    },
+    showProject: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
   data () {
