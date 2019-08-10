@@ -7,7 +7,7 @@
         <v-btn icon color="white">
           <v-icon>mdi-pencil</v-icon>
         </v-btn>
-        <v-btn icon color="white">
+        <v-btn icon color="white" @click="remove(project)">
           <v-icon>mdi-delete-circle</v-icon>
         </v-btn>
       </template>
@@ -32,6 +32,13 @@ export default {
   computed: {
     project () {
       return this.$store.getters['projects/getProjectById'](Number(this.$route.params.id))
+    }
+  },
+  methods: {
+    async remove () {
+      await this.$store.dispatch('projects/remove', this.project)
+
+      this.$router.push({ 'name': 'projects' })
     }
   }
 }
