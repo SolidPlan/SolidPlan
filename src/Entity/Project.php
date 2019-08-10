@@ -37,6 +37,11 @@ class Project
      */
     private $tasks;
 
+    /**
+     * @ORM\Column(type="string", length=15, nullable=true)
+     */
+    private $color;
+
     public function __construct()
     {
         $this->tasks = new ArrayCollection();
@@ -98,6 +103,18 @@ class Project
                 $task->setProject(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getColor(): ?string
+    {
+        return $this->color;
+    }
+
+    public function setColor(?string $color): self
+    {
+        $this->color = $color;
 
         return $this;
     }

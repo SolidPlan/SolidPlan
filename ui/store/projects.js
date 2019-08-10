@@ -36,8 +36,8 @@ export const actions = {
     }
   },
 
-  async add ({ commit }, name) {
-    const data = await this.$axios.$post('/api/projects', { name })
+  async add ({ commit }, project) {
+    const data = await this.$axios.$post('/api/projects', project)
 
     commit('add', data)
 

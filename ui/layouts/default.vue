@@ -35,7 +35,7 @@
           >
             <v-list-item-title v-text="project.name" />
             <v-list-item-action>
-              <v-chip pill color="primary">
+              <v-chip pill :color="project.color" class="white--text">
                 {{ project.tasks.length }}
               </v-chip>
             </v-list-item-action>

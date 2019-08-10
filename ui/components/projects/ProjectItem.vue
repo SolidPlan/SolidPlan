@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mx-auto">
+  <v-card class="mx-auto white--text" :color="project.color">
     <v-card-title @click="$router.push({'name': 'projects-id', 'params' : {'id': project.id}})">
       {{ project.name }}
     </v-card-title>
@@ -8,7 +8,7 @@
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn
-            color="red lighten-3"
+            color="red"
             text
             icon
             small

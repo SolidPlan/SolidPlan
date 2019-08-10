@@ -1,6 +1,6 @@
 <template>
   <span>
-    <v-toolbar class="mb-3 white--text" color="primary">
+    <v-toolbar class="mb-3 white--text" :color="project.color">
       <v-toolbar-title>{{ project.name }}</v-toolbar-title>
       <v-spacer />
       <template v-if="$vuetify.breakpoint.smAndUp">
