@@ -29,7 +29,7 @@
 export default {
   props: {
     project: {
-      type: String,
+      type: Object,
       required: false,
       default: null
     }
@@ -40,9 +40,10 @@ export default {
     }
   },
   methods: {
-    addTask () {
+    async addTask () {
       if (this.task) {
-        this.$axios.post('/api/tasks', { 'name': this.task, 'status': 'open', 'project': this.project }).then((res) => { this.$emit('add', res.data); this.task = null })
+        await this.$store.dispatch('tasks/add', this)
+        this.task = null
       }
     }
   }

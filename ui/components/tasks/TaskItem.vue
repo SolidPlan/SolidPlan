@@ -14,7 +14,7 @@
     </v-list-item-action>
     <template v-if="!editing">
       <v-list-item-content
-        :class="{ 'primary--text': done, strikethrough }"
+        :class="{ 'primary--text': done, strikethrough: strikethrough || done }"
         @dblclick="editing = true"
       >
         {{ task.name }}
@@ -87,22 +87,16 @@ export default {
   methods: {
     editTask (value) {
       if (value !== this.task.name) {
-        this.$axios.put(`/api/tasks/${this.task.id}`, { name: value }).then(() => {
-          this.$emit('update')
-        })
+        this.$store.dispatch('tasks/edit', { task: this.task, data: { name: value } })
       }
     },
     removeTask () {
       this.strikethrough = true
-      this.$axios.delete(`/api/tasks/${this.task.id}`).then(() => {
-        this.$emit('remove', this.task)
-      })
+      this.$store.dispatch('tasks/remove', this.task)
     },
     toggleTask () {
       this.strikethrough = !this.done
-      this.$axios.put(`/api/tasks/${this.task.id}`, { status: this.done ? 'open' : 'closed' }).then(() => {
-        this.task.status = this.done ? 'open' : 'closed'
-      })
+      this.$store.dispatch('tasks/toggle', this.task)
     },
     doneEdit (e) {
       const value = e.target.value.trim()

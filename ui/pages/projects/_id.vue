@@ -14,9 +14,9 @@
     </v-toolbar>
     <h4>Tasks</h4>
     <v-card>
-      <create-task :project="project['@id']" @add="fetchTasks" />
+      <create-task :project="project" />
     </v-card>
-    <task-list :tasks="tasks" @refresh="fetchTasks" />
+    <task-list :project="project" />
   </span>
 </template>
 
@@ -30,17 +30,9 @@ export default {
     CreateTask
   },
   async asyncData ({ $axios, params }) {
-    const project = await $axios.get(`/api/projects/${params.id}`)
+    const project = await $axios.$get(`/api/projects/${params.id}`)
 
-    const tasks = await $axios.get(`/api/projects/${params.id}/tasks`)
-
-    return { project: project.data, tasks: tasks.data['hydra:member'] }
-  },
-  methods: {
-    async fetchTasks () {
-      const tasks = await this.$axios.get(`/api/projects/${this.project.id}/tasks`)
-      this.tasks = tasks.data['hydra:member']
-    }
+    return { project }
   }
 }
 </script>

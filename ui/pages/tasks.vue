@@ -3,10 +3,10 @@
     <v-layout justify-center align-center row wrap>
       <v-flex>
         <v-card>
-          <create-task @add="fetchTasks" />
+          <create-task />
         </v-card>
 
-        <task-list :tasks="tasks" @refresh="fetchTasks" />
+        <task-list />
       </v-flex>
     </v-layout>
   </v-container>
@@ -20,16 +20,6 @@ export default {
   components: {
     CreateTask,
     TaskList
-  },
-  async asyncData ({ $axios }) {
-    const tasks = await $axios.get('/api/tasks')
-    return { tasks: tasks.data['hydra:member'] }
-  },
-  methods: {
-    async fetchTasks () {
-      const tasks = await this.$axios.get('/api/tasks')
-      this.tasks = tasks.data['hydra:member']
-    }
   }
 }
 </script>

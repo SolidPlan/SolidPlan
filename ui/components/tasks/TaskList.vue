@@ -70,9 +70,10 @@ export default {
     TaskItem
   },
   props: {
-    tasks: {
-      type: Array,
-      required: true
+    project: {
+      type: Object,
+      required: false,
+      default: null
     }
   },
   data () {
@@ -83,6 +84,9 @@ export default {
     }
   },
   computed: {
+    tasks () {
+      return this.$store.getters['tasks/getTasksByProject'](this.project)
+    },
     filteredTasks () {
       return filters[this.visibility](this.tasks)
     }
@@ -90,9 +94,7 @@ export default {
   methods: {
     markAllDone () {
       this.tasks.forEach((task) => {
-        this.$axios.put(`/api/tasks/${task.id}`, { status: 'closed' }).then(() => {
-          task.status = 'closed'
-        })
+        this.$store.dispatch('tasks/markDone', task)
       })
     }
   }

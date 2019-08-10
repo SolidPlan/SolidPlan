@@ -25,9 +25,6 @@ export default {
   },
   computed: mapState({
     projects: state => state.projects.list
-  }),
-  created () {
-    this.$store.dispatch('projects/load')
-  }
+  })
 }
 </script>
