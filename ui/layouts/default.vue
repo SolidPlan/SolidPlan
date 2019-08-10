@@ -16,6 +16,31 @@
             <v-list-item-title v-text="item.title" />
           </v-list-item-content>
         </v-list-item>
+        <v-divider />
+        <v-list-group
+          v-if="projects.length > 0"
+          prepend-icon="mdi-account-circle"
+          value="true"
+          no-action
+        >
+          <template v-slot:activator>
+            <v-list-item-title>Project List</v-list-item-title>
+          </template>
+
+          <v-list-item
+            v-for="project in projects"
+            :key="project.id"
+            :to="{'name': 'projects-id', 'params': {'id': project.id}}"
+            link
+          >
+            <v-list-item-title v-text="project.name" />
+            <v-list-item-action>
+              <v-chip pill color="primary">
+                {{ project.tasks.length }}
+              </v-chip>
+            </v-list-item-action>
+          </v-list-item>
+        </v-list-group>
       </v-list>
       <template v-slot:append>
         <div class="pa-2" :class="{'text-center': miniVariant, 'text-right': !miniVariant}">
@@ -42,6 +67,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 export default {
   data () {
     return {
@@ -66,6 +93,10 @@ export default {
       ],
       title: 'SolidTask'
     }
-  }
+  },
+
+  computed: mapState({
+    projects: state => state.projects.list
+  })
 }
 </script>
