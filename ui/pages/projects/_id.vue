@@ -29,10 +29,10 @@ export default {
     TaskList,
     CreateTask
   },
-  async asyncData ({ $axios, params }) {
-    const project = await $axios.$get(`/api/projects/${params.id}`)
-
-    return { project }
+  computed: {
+    project () {
+      return this.$store.getters['projects/getProjectById'](Number(this.$route.params.id))
+    }
   }
 }
 </script>

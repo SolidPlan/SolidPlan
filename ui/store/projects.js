@@ -60,3 +60,9 @@ export const actions = {
     commit('removeTask', payload)
   }
 }
+
+export const getters = {
+  getProjectById: state => (id) => {
+    return find(state.list, { id })
+  }
+}

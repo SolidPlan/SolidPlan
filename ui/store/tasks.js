@@ -81,8 +81,5 @@ export const actions = {
 export const getters = {
   getTasksByProject: state => (project) => {
     return filter(state.list, project ? { 'project': project['@id'] } : null)
-  },
-  allTasks (state) {
-    return state.list
   }
 }
