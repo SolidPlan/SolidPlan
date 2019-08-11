@@ -63,6 +63,10 @@ export default {
   ** See https://axios.nuxtjs.org/options
   */
   axios: {
+    proxy: true
+  },
+  proxy: {
+    '/api/': process.env.API_PROXY_URL
   },
   /*
   ** vuetify module configuration
