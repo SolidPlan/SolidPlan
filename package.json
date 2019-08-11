@@ -1,9 +1,9 @@
 {
-  "name": "SolidDesk",
+  "name": "SolidPlan",
   "version": "1.0.0",
-  "description": "Simple Task management application",
+  "description": "Simple project management application",
   "author": "SolidWorx",
-  "private": true,
+  "license": "MI",
   "scripts": {
     "dev": "nuxt",
     "build": "nuxt build",

@@ -91,7 +91,7 @@ export default {
           to: '/tasks'
         }
       ],
-      title: 'SolidTask'
+      title: 'SolidPlan'
     }
   },
 
