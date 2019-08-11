@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Simple project management application",
   "author": "SolidWorx",
-  "license": "MI",
+  "license": "MIT",
   "scripts": {
     "dev": "nuxt",
     "build": "nuxt build",
