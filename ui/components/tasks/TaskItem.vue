@@ -4,7 +4,7 @@
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-hover v-slot:default="{ hover }">
-            <v-icon :color="done || hover ? 'success' : ''" @click="toggleTask(task)" v-on="on">
+            <v-icon :color="done || hover ? 'success' : ''" @click="toggleTask" v-on="on">
               mdi-checkbox-marked-circle-outline
             </v-icon>
           </v-hover>
@@ -19,27 +19,70 @@
       >
         {{ task.name }}
       </v-list-item-content>
-      <v-list-item-action>
-        <v-list-item-action-text v-if="showProject && task.project">
-          <v-chip pill small :color="projects[task.project].color" text-color="white" v-once>
-            {{ projects[task.project].name }}
-          </v-chip>
+      <v-list-item-action class="ma-0">
+        <v-list-item-action-text>
+          <v-menu v-if="showProject" offset-y>
+            <template v-slot:activator="{ on }">
+              <span v-on="on">
+                <v-chip
+                  v-if="task.project"
+                  pill
+                  small
+                  :color="projects[task.project].color"
+                  text-color="white"
+                >
+                  {{ projects[task.project].name }}
+                </v-chip>
+                <v-chip
+                  v-else
+                  pill
+                  x-small
+                  outlined
+                >
+                  + Add to project
+                </v-chip>
+              </span>
+            </template>
+            <v-list dense>
+              <v-list-item v-for="project in projects" :key="project.id" @click="assignTaskToProject(task, project)">
+                <v-list-item-title :key="project.id" >
+                  <v-chip
+                    x-small
+                    :color="project.color"
+                    class="project-info"
+                  />
+                  {{ project.name }}
+                </v-list-item-title>
+              </v-list-item>
+              <span v-if="task.project">
+                <v-divider  />
+                <v-list-item @click="assignTaskToProject(task, null)">
+                  <v-list-item-title>
+                    <v-icon x-small color="red">
+                      mdi-close
+                    </v-icon>
+                    Remove Project
+                  </v-list-item-title>
+                </v-list-item>
+              </span>
+            </v-list>
+          </v-menu>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                color="red lighten-3"
+                text
+                icon
+                x-small
+                @click="removeTask(task)"
+                v-on="on"
+              >
+                <v-icon>mdi-close</v-icon>
+              </v-btn>
+            </template>
+            <span>Remove Task</span>
+          </v-tooltip>
         </v-list-item-action-text>
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
-            <v-btn
-              color="red lighten-3"
-              text
-              icon
-              small
-              @click="removeTask(task)"
-              v-on="on"
-            >
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
-          </template>
-          <span>Remove Task</span>
-        </v-tooltip>
       </v-list-item-action>
     </template>
     <v-text-field
@@ -124,6 +167,9 @@ export default {
     },
     cancelEdit () {
       this.editing = false
+    },
+    assignTaskToProject (task, project) {
+      this.$store.dispatch('tasks/assignToProject', { task, project })
     }
   }
 }
@@ -148,5 +194,10 @@ export default {
     animation-timing-function: linear;
     animation-iteration-count: 1;
     animation-fill-mode: forwards;
+  }
+
+  .project-info.v-chip {
+    height: 8px !important;
+    padding: 0 4px !important;
   }
 </style>

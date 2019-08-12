@@ -5,8 +5,8 @@ export const state = () => ({
 })
 
 export const mutations = {
-  set (state, projects) {
-    state.list = projects
+  set (state, tasks) {
+    state.list = tasks
   },
 
   add (state, task) {
@@ -19,6 +19,15 @@ export const mutations = {
 
   toggle (state, task) {
     task.status = task.status === 'open' ? 'closed' : 'open'
+  },
+
+  assignToProject (state, { task, project }) {
+    if (project === null) {
+      task.project = null
+    } else {
+      task.project = project['@id']
+      project.tasks.push(task['@id'])
+    }
   },
 
   update (state, { task, data }) {
@@ -75,6 +84,18 @@ export const actions = {
     const taskData = await this.$axios.$put(`/api/tasks/${task.id}`, data)
 
     commit('update', { task, data: taskData })
+  },
+
+  async assignToProject ({ commit }, { task, project }) {
+    if (task.project !== (project ? project['@id'] : null)) {
+      await this.$axios.$put(`/api/tasks/${task.id}`, { project: project ? project['@id'] : null })
+
+      if (task.project) {
+        await commit('projects/removeTask', { project: task.project, task }, { root: true })
+      }
+
+      commit('assignToProject', { task, project })
+    }
   }
 }
 
