@@ -9,6 +9,10 @@ export const mutations = {
     state.list = projects
   },
 
+  reset (state) {
+    state.list = []
+  },
+
   add (state, project) {
     state.list.push(project)
   },
@@ -34,6 +38,10 @@ export const actions = {
       const data = await this.$axios.$get('/api/projects')
       commit('set', data['hydra:member'])
     }
+  },
+
+  reset ({ commit }) {
+    commit('reset')
   },
 
   async add ({ commit }, project) {

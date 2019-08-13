@@ -1,3 +1,5 @@
-export default async (ctx) => {
-  await ctx.store.dispatch('init', ctx)
+export default async (context) => {
+  if (context.$auth.$state.loggedIn) {
+    await context.store.dispatch('init', context)
+  }
 }

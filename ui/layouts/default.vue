@@ -10,10 +10,10 @@
           exact
         >
           <v-list-item-action>
-            <v-icon>{{ item.icon }}</v-icon>
+            <v-icon v-once v-text="item.icon" />
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title v-text="item.title" />
+            <v-list-item-title v-once v-text="item.title" />
           </v-list-item-content>
         </v-list-item>
         <v-divider />
@@ -41,6 +41,15 @@
             </v-list-item-action>
           </v-list-item>
         </v-list-group>
+        <v-divider />
+        <v-list-item @click="logout">
+          <v-list-item-action>
+            <v-icon>mdi-logout</v-icon>
+          </v-list-item-action>
+          <v-list-item-title>
+            Logout
+          </v-list-item-title>
+        </v-list-item>
       </v-list>
       <template v-slot:append>
         <div class="pa-2" :class="{'text-center': miniVariant, 'text-right': !miniVariant}">
@@ -51,9 +60,62 @@
       </template>
     </v-navigation-drawer>
     <v-app-bar clipped-left fixed app>
-      <v-spacer />
       <v-toolbar-title v-text="title" />
       <v-spacer />
+
+      <v-menu
+        :close-on-content-click="false"
+        :nudge-width="200"
+        offset-x
+      >
+        <template v-slot:activator="{ on }">
+          <v-btn
+            icon
+            text
+            v-on="on"
+          >
+            <v-icon>mdi-account</v-icon>
+          </v-btn>
+        </template>
+
+        <v-card>
+          <v-list>
+            <v-list-item>
+              <v-list-item-avatar>
+                <img :src="`https://www.gravatar.com/avatar/${emailHash}?d=mp`">
+              </v-list-item-avatar>
+
+              <v-list-item-content>
+                <v-list-item-title>{{ $auth.$state.user.email }}</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+          <v-divider />
+          <v-card-actions>
+            <v-btn
+              color="primary"
+              text
+              :to="{ name: 'profile' }"
+            >
+              <v-icon left>
+                mdi-account
+              </v-icon>
+              Profile
+            </v-btn>
+            <v-spacer />
+            <v-btn
+              color="primary"
+              text
+              @click="logout"
+            >
+              <v-icon left>
+                mdi-logout
+              </v-icon>
+              Logout
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-menu>
     </v-app-bar>
     <v-content>
       <v-container>
@@ -68,6 +130,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import md5 from 'md5'
 
 export default {
   data () {
@@ -95,8 +158,19 @@ export default {
     }
   },
 
-  computed: mapState({
-    projects: state => state.projects.list
-  })
+  computed: {
+    ...mapState({
+      projects: state => state.projects.list
+    }),
+    emailHash () {
+      return this.$auth.$state.isLoggedIn ? md5(this.$auth.$state.user.email) : ''
+    }
+  },
+
+  methods: {
+    logout () {
+      this.$auth.logout()
+    }
+  }
 }
 </script>

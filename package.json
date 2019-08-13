@@ -13,9 +13,11 @@
     "test": "jest"
   },
   "dependencies": {
+    "@nuxtjs/auth": "^4.8.1",
     "@nuxtjs/axios": "^5.3.6",
     "@nuxtjs/pwa": "^3.0.0-0",
     "lodash": "^4.17.15",
+    "md5": "^2.2.1",
     "nuxt": "^2.0.0",
     "vuex": "^3.1.1"
   },

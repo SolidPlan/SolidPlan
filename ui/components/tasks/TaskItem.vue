@@ -45,7 +45,7 @@
             </template>
             <v-list dense>
               <v-list-item v-for="project in projects" :key="project.id" @click="assignTaskToProject(task, project)">
-                <v-list-item-title :key="project.id" >
+                <v-list-item-title :key="project.id">
                   <v-chip
                     x-small
                     :color="project.color"
@@ -55,7 +55,7 @@
                 </v-list-item-title>
               </v-list-item>
               <span v-if="task.project">
-                <v-divider  />
+                <v-divider />
                 <v-list-item @click="assignTaskToProject(task, null)">
                   <v-list-item-title>
                     <v-icon x-small color="red">
