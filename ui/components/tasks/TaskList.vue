@@ -33,7 +33,7 @@
         </v-btn>
       </v-btn-toggle>
     </v-card-actions>
-    <v-list class="pa-0" :dense="filteredTasks.length > 0" elevation="12">
+    <v-list class="pa-0" :dense="filteredTasks.length > 0" elevation="12" two-line>
       <template v-for="task in filteredTasks">
         <v-divider :key="`${task.id}-divider`" />
         <TaskItem
@@ -85,8 +85,7 @@ export default {
   data () {
     return {
       filters: Object.freeze(filters),
-      visibility: 'open',
-      color: null
+      visibility: 'open'
     }
   },
   computed: {

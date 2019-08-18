@@ -18,30 +18,104 @@
         @dblclick="editing = true"
       >
         {{ task.name }}
+        <v-list-item-subtitle>
+          <v-chip
+            v-for="label in task.labels"
+            :key="label"
+            x-small
+            outlined
+            :color="labelList[label].color"
+            class="mr-1"
+          >
+            {{ labelList[label].name }}
+          </v-chip>
+
+          <v-menu :close-on-content-click="false">
+            <template v-slot:activator="{ on }">
+              <v-chip
+                pill
+                x-small
+                outlined
+                v-on="on"
+              >
+                <v-icon x-small>
+                  mdi-plus
+                </v-icon>
+                Add Label
+              </v-chip>
+            </template>
+            <v-list flat>
+              <v-list-item-group
+                v-model="selectedLabels"
+                multiple
+                dense
+              >
+                <v-container
+                  style="max-height: 400px"
+                  class="overflow-y-auto"
+                >
+                  <v-row>
+                    <v-flex xs12>
+                      <v-list-item v-for="label in labels" :key="label.id">
+                        <template v-slot:default="{ active, toggle }">
+                          <v-list-item-action>
+                            <v-checkbox
+                              v-model="active"
+                            />
+                          </v-list-item-action>
+
+                          <v-list-item-content>
+                            <v-list-item-title>
+                              <v-chip
+                                :color="label.color"
+                                small
+                                outlined
+                                v-text="label.name"
+                              />
+                            </v-list-item-title>
+                          </v-list-item-content>
+                        </template>
+                      </v-list-item>
+                    </v-flex>
+                  </v-row>
+                </v-container>
+                <v-divider />
+                <v-list-item>
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      <v-icon>mdi-plus</v-icon>
+                      Add Label
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
+          </v-menu>
+        </v-list-item-subtitle>
       </v-list-item-content>
       <v-list-item-action class="ma-0">
         <v-list-item-action-text>
           <v-menu v-if="showProject" offset-y>
             <template v-slot:activator="{ on }">
-              <span v-on="on">
-                <v-chip
-                  v-if="task.project"
-                  pill
-                  small
-                  :color="projects[task.project].color"
-                  text-color="white"
-                >
-                  {{ projects[task.project].name }}
-                </v-chip>
-                <v-chip
-                  v-else
-                  pill
-                  x-small
-                  outlined
-                >
-                  + Add to project
-                </v-chip>
-              </span>
+              <v-chip
+                v-if="task.project"
+                pill
+                small
+                :color="projects[task.project].color"
+                text-color="white"
+                v-on="on"
+              >
+                {{ projects[task.project].name }}
+              </v-chip>
+              <v-chip
+                v-else
+                pill
+                x-small
+                outlined
+                v-on="on"
+              >
+                + Add to project
+              </v-chip>
             </template>
             <v-list dense>
               <v-list-item v-for="project in projects" :key="project.id" @click="assignTaskToProject(task, project)">
@@ -105,7 +179,8 @@
 </template>
 
 <script>
-import { keyBy } from 'lodash'
+import { chunk, filter, keyBy, map, includes, keys, pickBy } from 'lodash'
+import colors from 'vuetify/es5/util/colors'
 
 export default {
   directives: {
@@ -131,7 +206,9 @@ export default {
   data () {
     return {
       editing: false,
-      strikethrough: this.task.status === 'closed'
+      strikethrough: this.task.status === 'closed',
+      selectedLabels: map(keys(pickBy(this.$store.state.labels.list, v => includes(this.task.labels, v['@id']))), Number),
+      color: colors.grey.base
     }
   },
   computed: {
@@ -140,6 +217,20 @@ export default {
     },
     projects () {
       return keyBy(this.$store.state.projects.list, '@id')
+    },
+    labels () {
+      return this.$store.state.labels.list
+    },
+    labelList () {
+      return keyBy(this.$store.state.labels.list, '@id')
+    },
+    swatches () {
+      return chunk(filter(map(colors, 'base').concat([colors.shades.black])), 4)
+    }
+  },
+  watch: {
+    selectedLabels (labels) {
+      this.$store.dispatch('tasks/setLabels', { task: this.task, labels: filter(this.labels, (_, k) => includes(labels, k)) })
     }
   },
   methods: {

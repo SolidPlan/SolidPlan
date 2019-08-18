@@ -20,7 +20,7 @@
         <v-list-group
           v-if="projects.length > 0"
           prepend-icon="mdi-account-circle"
-          value="true"
+          :value="true"
           no-action
         >
           <template v-slot:activator>
@@ -40,6 +40,41 @@
               </v-chip>
             </v-list-item-action>
           </v-list-item>
+        </v-list-group>
+        <v-divider />
+        <v-list-group
+          prepend-icon="mdi-label"
+          :value="true"
+          no-action
+        >
+          <template v-slot:activator>
+            <v-list-item-title>Labels</v-list-item-title>
+          </template>
+
+          <v-list-item
+            v-for="label in labels"
+            :key="label.id"
+          >
+            <v-list-item-title>
+              <v-icon :color="label.color">
+                mdi-label
+              </v-icon>
+              {{ label.name }}
+            </v-list-item-title>
+          </v-list-item>
+
+          <v-list-item
+            link
+            @click="labelsDialog = true"
+          >
+            <v-list-item-title>
+              <v-icon>
+                mdi-plus
+              </v-icon>
+              Edit Labels
+            </v-list-item-title>
+          </v-list-item>
+          <labels v-model="labelsDialog" />
         </v-list-group>
         <v-divider />
         <v-list-item @click="logout">
@@ -131,10 +166,15 @@
 <script>
 import { mapState } from 'vuex'
 import md5 from 'md5'
+import Labels from '~/components/labels/Labels.vue'
 
 export default {
+  components: {
+    Labels
+  },
   data () {
     return {
+      labelsDialog: false,
       year: (new Date()).getFullYear(),
       miniVariant: false,
       menuItems: [
@@ -160,7 +200,8 @@ export default {
 
   computed: {
     ...mapState({
-      projects: state => state.projects.list
+      projects: state => state.projects.list,
+      labels: state => state.labels.list
     }),
     emailHash () {
       return this.$auth.$state.isLoggedIn ? md5(this.$auth.$state.user.email) : ''

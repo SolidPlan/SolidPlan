@@ -1,4 +1,4 @@
-import { filter, findIndex, forEach } from 'lodash'
+import { filter, findIndex, forEach, map } from 'lodash'
 
 export const state = () => ({
   list: []
@@ -31,6 +31,14 @@ export const mutations = {
     } else {
       task.project = project['@id']
       project.tasks.push(task['@id'])
+    }
+  },
+
+  setLabels (state, { task, labels }) {
+    if (labels.length === 0) {
+      task.labels = []
+    } else {
+      task.labels = map(labels, '@id')
     }
   },
 
@@ -104,6 +112,12 @@ export const actions = {
 
       commit('assignToProject', { task, project })
     }
+  },
+
+  async setLabels ({ commit }, { task, labels }) {
+    await this.$axios.$put(`/api/tasks/${task.id}`, { labels: map(labels, '@id') })
+
+    commit('setLabels', { task, labels })
   }
 }
 
