@@ -32,6 +32,13 @@
           {{ key }}
         </v-btn>
       </v-btn-toggle>
+      <v-spacer />
+      <v-icon
+        :color="showLabels ? 'primary' : null"
+        @click="toggleLabels(!showLabels)"
+      >
+        mdi-label
+      </v-icon>
     </v-card-actions>
     <v-list class="pa-0" :dense="filteredTasks.length > 0" elevation="12" two-line>
       <template v-for="task in filteredTasks">
@@ -58,6 +65,7 @@
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex'
 import TaskItem from '~/components/tasks/TaskItem.vue'
 
 const filters = {
@@ -94,9 +102,13 @@ export default {
     },
     filteredTasks () {
       return filters[this.visibility](this.tasks)
-    }
+    },
+    ...mapState({
+      'showLabels': state => state.showLabels
+    })
   },
   methods: {
+    ...mapActions(['toggleLabels']),
     markAllDone () {
       this.tasks.forEach((task) => {
         this.$store.dispatch('tasks/markDone', task)

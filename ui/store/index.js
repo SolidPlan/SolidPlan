@@ -1,3 +1,13 @@
+export const state = () => ({
+  showLabels: JSON.parse(localStorage.getItem('showLabels') || true)
+})
+
+export const mutations = {
+  toggleLabels (state, value) {
+    state.showLabels = value
+  }
+}
+
 export const actions = {
   async init ({ dispatch }) {
     await Promise.all([
@@ -15,5 +25,10 @@ export const actions = {
       dispatch('labels/reset'),
       dispatch('users/reset')
     ])
+  },
+
+  toggleLabels ({ commit, state }) {
+    localStorage.setItem('showLabels', JSON.stringify(!state.showLabels))
+    commit('toggleLabels', !state.showLabels)
   }
 }

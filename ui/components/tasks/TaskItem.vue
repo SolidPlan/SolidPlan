@@ -66,7 +66,7 @@
             </div>
           </v-flex>
         </v-layout>
-        <v-list-item-subtitle>
+        <v-list-item-subtitle v-if="showLabels">
           <v-chip
             v-for="label in task.labels"
             :key="label"
@@ -227,6 +227,7 @@
 
 <script>
 import { chunk, filter, includes, keyBy, keys, map, pickBy } from 'lodash'
+import { mapState } from 'vuex'
 import colors from 'vuetify/es5/util/colors'
 
 export default {
@@ -259,6 +260,9 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      'showLabels': state => state.showLabels
+    }),
     done () {
       return this.task.status === 'closed'
     },
