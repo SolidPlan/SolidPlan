@@ -124,7 +124,7 @@ export default {
               password: this.password
             }
           }).then(() => {
-            this.$store.dispatch('init')
+            this.$store.dispatch('init', this.$nuxt)
           })
           .catch((e, c, v, f) => {
             this.error = e.response.data.message

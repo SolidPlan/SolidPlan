@@ -87,10 +87,17 @@
         </v-list-item>
       </v-list>
       <template v-slot:append>
-        <div class="pa-2" :class="{'text-center': miniVariant, 'text-right': !miniVariant}">
-          <v-btn icon @click.stop="miniVariant = !miniVariant">
-            <v-icon>{{ `mdi-chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon>
-          </v-btn>
+        <div :class="{'d-flex justify-space-between': !miniVariant}">
+          <span class="pa-2">
+            <v-btn icon @click.stop="switchTheme">
+              <v-icon>{{ `mdi-theme-light-dark` }}</v-icon>
+            </v-btn>
+          </span>
+          <span class="pa-2">
+            <v-btn icon @click.stop="miniVariant = !miniVariant">
+              <v-icon>{{ `mdi-chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon>
+            </v-btn>
+          </span>
         </div>
       </template>
     </v-navigation-drawer>
@@ -211,6 +218,9 @@ export default {
   methods: {
     logout () {
       this.$auth.logout()
+    },
+    switchTheme () {
+      this.$store.dispatch('toggleTheme', this.$nuxt)
     }
   }
 }
