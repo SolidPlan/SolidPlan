@@ -17,7 +17,55 @@
         :class="{ 'primary--text': done, strikethrough: strikethrough || done }"
         @dblclick="editing = true"
       >
-        {{ task.name }}
+        <v-layout>
+          <v-flex xs10 d-flex>
+            {{ task.name }}
+          </v-flex>
+          <v-flex xs2 class="text-right">
+            <div v-if="task.assigned">
+              {{ `${usersList[task.assigned].firstName} ${usersList[task.assigned].lastName}` }}
+
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-icon
+                    color="error"
+                    x-small
+                    @click="removeAssignedUser"
+                    v-on="on"
+                  >
+                    mdi-close
+                  </v-icon>
+                </template>
+                <span>Remove Assigned User</span>
+              </v-tooltip>
+            </div>
+            <div v-else>
+              <v-menu :close-on-content-click="false">
+                <template v-slot:activator="{ on }">
+                  <v-chip
+                    pill
+                    x-small
+                    outlined
+                    v-on="on"
+                  >
+                    <v-icon x-small>
+                      mdi-plus
+                    </v-icon>
+                    Assign to User
+                  </v-chip>
+                </template>
+
+                <v-list dense>
+                  <v-list-item v-for="user in usersList" :key="user.id" @click="assignTaskToUser(task, user)">
+                    <v-list-item-title :key="user.id">
+                      {{ user.firstName }} {{ user.lastName }}
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </div>
+          </v-flex>
+        </v-layout>
         <v-list-item-subtitle>
           <v-chip
             v-for="label in task.labels"
@@ -29,7 +77,6 @@
           >
             {{ labelList[label].name }}
           </v-chip>
-
           <v-menu :close-on-content-click="false">
             <template v-slot:activator="{ on }">
               <v-chip
@@ -93,7 +140,7 @@
           </v-menu>
         </v-list-item-subtitle>
       </v-list-item-content>
-      <v-list-item-action class="ma-0">
+      <v-list-item-action class="task-actions">
         <v-list-item-action-text>
           <v-menu v-if="showProject" offset-y>
             <template v-slot:activator="{ on }">
@@ -179,7 +226,7 @@
 </template>
 
 <script>
-import { chunk, filter, keyBy, map, includes, keys, pickBy } from 'lodash'
+import { chunk, filter, includes, keyBy, keys, map, pickBy } from 'lodash'
 import colors from 'vuetify/es5/util/colors'
 
 export default {
@@ -224,6 +271,9 @@ export default {
     labelList () {
       return keyBy(this.$store.state.labels.list, '@id')
     },
+    usersList () {
+      return keyBy(this.$store.state.users.list, '@id')
+    },
     swatches () {
       return chunk(filter(map(colors, 'base').concat([colors.shades.black])), 4)
     }
@@ -261,12 +311,24 @@ export default {
     },
     assignTaskToProject (task, project) {
       this.$store.dispatch('tasks/assignToProject', { task, project })
+    },
+    assignTaskToUser (task, user) {
+      this.$store.dispatch('tasks/assignToUser', { task, user })
+    },
+    removeAssignedUser () {
+      this.$store.dispatch('tasks/removeAssignedUser', this.task)
     }
   }
 }
 </script>
 
-<style>
+<style scoped>
+  .task-actions {
+    min-width: 150px;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
   .strikethrough {
     position: relative;
     color: #999999;

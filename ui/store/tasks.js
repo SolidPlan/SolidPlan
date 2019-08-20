@@ -34,6 +34,14 @@ export const mutations = {
     }
   },
 
+  removeAssignedUser (state, task) {
+    task.assigned = null
+  },
+
+  assignToUser (state, { task, user }) {
+    task.assigned = user
+  },
+
   setLabels (state, { task, labels }) {
     if (labels.length === 0) {
       task.labels = []
@@ -112,6 +120,17 @@ export const actions = {
 
       commit('assignToProject', { task, project })
     }
+  },
+
+  async assignToUser ({ commit }, { task, user }) {
+    await this.$axios.$put(`/api/tasks/${task.id}`, { assigned: user['@id'] })
+    commit('assignToUser', { task, user: user['@id'] })
+  },
+
+  async removeAssignedUser ({ commit }, task) {
+    await this.$axios.$put(`/api/tasks/${task.id}`, { assigned: null })
+
+    commit('removeAssignedUser', task)
   },
 
   async setLabels ({ commit }, { task, labels }) {

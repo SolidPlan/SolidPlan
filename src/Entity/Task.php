@@ -45,6 +45,11 @@ class Task
      */
     private $labels;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="tasks")
+     */
+    private $assigned;
+
     public function __construct()
     {
         $this->labels = new ArrayCollection();
@@ -127,6 +132,18 @@ class Task
             $this->labels->removeElement($label);
             $label->removeTask($this);
         }
+
+        return $this;
+    }
+
+    public function getAssigned(): ?User
+    {
+        return $this->assigned;
+    }
+
+    public function setAssigned(?User $assigned): self
+    {
+        $this->assigned = $assigned;
 
         return $this;
     }

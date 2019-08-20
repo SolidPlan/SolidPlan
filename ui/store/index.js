@@ -3,7 +3,8 @@ export const actions = {
     await Promise.all([
       dispatch('projects/init'),
       dispatch('tasks/init'),
-      dispatch('labels/init')
+      dispatch('labels/init'),
+      dispatch('users/init')
     ])
   },
 
@@ -11,7 +12,8 @@ export const actions = {
     await Promise.all([
       dispatch('projects/reset'),
       dispatch('tasks/reset'),
-      dispatch('labels/reset')
+      dispatch('labels/reset'),
+      dispatch('users/reset')
     ])
   }
 }
