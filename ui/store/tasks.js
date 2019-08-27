@@ -1,4 +1,4 @@
-import { filter, findIndex, forEach, map } from 'lodash'
+import { filter, findIndex, forEach, map, orderBy } from 'lodash'
 
 export const state = () => ({
   list: []
@@ -56,12 +56,16 @@ export const mutations = {
         task[key] = value
       }
     })
+  },
+
+  updateOrder (state, { task, order }) {
+    task.order = order
   }
 }
 
 export const actions = {
-  async init ({ state, commit }) {
-    if (state.list.length === 0) {
+  async init ({ state, commit }, { force }) {
+    if (state.list.length === 0 || force === true) {
       const data = await this.$axios.$get('/api/tasks')
       commit('set', data['hydra:member'])
     }
@@ -137,11 +141,18 @@ export const actions = {
     await this.$axios.$put(`/api/tasks/${task.id}`, { labels: map(labels, '@id') })
 
     commit('setLabels', { task, labels })
+  },
+
+  async sort ({ commit, dispatch }, { task, order }) {
+    await this.$axios.$put(`/api/tasks/${task.id}/sort`, { order })
+
+    await commit('updateOrder', { task, order })
+    await dispatch('init', { force: true })
   }
 }
 
 export const getters = {
   getTasksByProject: state => (project) => {
-    return filter(state.list, project ? { 'project': project['@id'] } : null)
+    return orderBy(filter(state.list, project ? { 'project': project['@id'] } : null), 'order')
   }
 }

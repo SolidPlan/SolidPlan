@@ -14,7 +14,6 @@ export const mutations = {
 
 export const actions = {
   async init ({ commit, dispatch, state }, context) {
-    localStorage.setItem('showLabels', JSON.stringify(!state.showLabels))
     context.$vuetify.theme.dark = state.theme
     commit('toggleTheme', state.theme)
 

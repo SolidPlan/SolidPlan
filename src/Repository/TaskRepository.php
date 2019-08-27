@@ -14,37 +14,52 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
  */
 class TaskRepository extends ServiceEntityRepository
 {
-    public function __construct(RegistryInterface $registry)
-    {
-        parent::__construct($registry, Task::class);
+  public function __construct(RegistryInterface $registry)
+  {
+    parent::__construct($registry, Task::class);
+  }
+
+  public function sortTask(Task $task, int $newOrder): Task
+  {
+    $initialOrder = $task->getOrder();
+
+    $qb = $this->createQueryBuilder('t');
+
+    if ($initialOrder > $newOrder) {
+      // Task moved up in list (higher priority)
+      $qb->update()
+        ->set('t.order', 't.order + 1')
+        ->where('t.order >= :order')
+        ->andWhere('t.order < :initialOrder')
+        ->setParameter('order', $newOrder)
+        ->setParameter('initialOrder', $initialOrder)
+        ->getQuery()
+        ->execute();
+    } else {
+      // Task moved down in list (lower priority)
+      $qb->update()
+        ->set('t.order', 't.order - 1')
+        ->where('t.order <= :order')
+        ->andWhere('t.order > :initialOrder')
+        ->setParameter('order', $newOrder)
+        ->setParameter('initialOrder', $initialOrder)
+        ->getQuery()
+        ->execute();
     }
 
-    // /**
-    //  * @return Task[] Returns an array of Task objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('t.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+    $task->setOrder($newOrder);
 
-    /*
-    public function findOneBySomeField($value): ?Task
-    {
-        return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
+    $this->getEntityManager()
+      ->persist($task);
+
+    return $task;
+  }
+
+  public function getMaxOrder(): int
+  {
+    return (int) $this->createQueryBuilder('t')
+      ->select('MAX(t.order)')
+      ->getQuery()
+      ->getSingleScalarResult();
+  }
 }

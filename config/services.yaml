@@ -26,3 +26,6 @@ services:
     App\Serializer\UserPasswordNormalizer:
         decorates: 'api_platform.jsonld.normalizer.item'
         arguments: [ '@App\Serializer\UserPasswordNormalizer.inner' ]
+
+    App\Event\Listener\TaskListener:
+      tags: ['doctrine.event_subscriber']

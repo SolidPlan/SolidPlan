@@ -1,6 +1,9 @@
 <template>
   <v-list-item class="task-item" :class="{ 'editing': editing }">
-    <v-list-item-action>
+    <v-list-item-action style="flex-direction: unset">
+      <v-icon v-show="!disableDrag" class="sort-handle">
+        mdi-drag
+      </v-icon>
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-hover v-slot:default="{ hover }">
@@ -18,9 +21,7 @@
         @dblclick="editing = true"
       >
         <v-layout>
-          <v-flex xs10 d-flex>
-            {{ task.name }}
-          </v-flex>
+          <v-flex xs10 d-flex v-text="task.name" />
           <v-flex xs2 class="text-right">
             <div v-if="task.assigned">
               {{ `${usersList[task.assigned].firstName} ${usersList[task.assigned].lastName}` }}
@@ -249,6 +250,11 @@ export default {
       type: Boolean,
       required: false,
       default: false
+    },
+    disableDrag: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
   data () {
@@ -356,5 +362,9 @@ export default {
   .project-info.v-chip {
     height: 8px !important;
     padding: 0 4px !important;
+  }
+
+  .sort-handle {
+    cursor: move;
   }
 </style>

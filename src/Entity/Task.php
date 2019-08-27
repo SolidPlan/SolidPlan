@@ -8,7 +8,18 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *   itemOperations={
+ *     "get", "put", "delete",
+ *     "sort"={
+ *        "method"="PUT",
+ *        "path"="/tasks/{id}/sort.{_format}",
+ *        "controller"="App\Action\Api\Tasks\Sort",
+ *        "swagger_context"={"summary"="Sorts a task"},
+ *        "access_control"="is_granted('IS_AUTHENTICATED_FULLY')",
+ *       }
+ *     },
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\TaskRepository")
  */
 class Task
@@ -49,6 +60,11 @@ class Task
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="tasks")
      */
     private $assigned;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true, name="`order`")
+     */
+    private $order;
 
     public function __construct()
     {
@@ -144,6 +160,18 @@ class Task
     public function setAssigned(?User $assigned): self
     {
         $this->assigned = $assigned;
+
+        return $this;
+    }
+
+    public function getOrder(): ?int
+    {
+        return $this->order;
+    }
+
+    public function setOrder(?int $order): self
+    {
+        $this->order = $order;
 
         return $this;
     }
