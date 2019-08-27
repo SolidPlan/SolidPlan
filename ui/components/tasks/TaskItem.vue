@@ -17,10 +17,10 @@
     </v-list-item-action>
     <template v-if="!editing">
       <v-list-item-content
-        :class="{ 'primary--text': done, strikethrough: strikethrough || done }"
+        :class="{ 'primary--text': done }"
         @dblclick="editing = true"
       >
-        <v-layout>
+        <v-layout :class="{ strikethrough: strikethrough || done }">
           <v-flex xs10 d-flex v-text="task.name" />
           <v-flex xs2 class="text-right">
             <div v-if="task.assigned">
