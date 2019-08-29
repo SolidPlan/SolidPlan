@@ -1,5 +1,5 @@
 <template>
-  <v-list-item class="task-item" :class="{ 'editing': editing }">
+  <v-list-item class="task-item" :class="{ 'editing': editing }" @click="detailView({component: components.TaskDetail, props: { task }})">
     <v-list-item-action style="flex-direction: unset">
       <v-icon v-show="!disableDrag" class="sort-handle">
         mdi-drag
@@ -67,78 +67,9 @@
             </div>
           </v-flex>
         </v-layout>
+        <v-list-item-subtitle v-if="task.description" v-text="task.description" />
         <v-list-item-subtitle v-if="showLabels">
-          <v-chip
-            v-for="label in task.labels"
-            :key="label"
-            x-small
-            outlined
-            :color="labelList[label].color"
-            class="mr-1"
-          >
-            {{ labelList[label].name }}
-          </v-chip>
-          <v-menu :close-on-content-click="false">
-            <template v-slot:activator="{ on }">
-              <v-chip
-                pill
-                x-small
-                outlined
-                v-on="on"
-              >
-                <v-icon x-small>
-                  mdi-plus
-                </v-icon>
-                Add Label
-              </v-chip>
-            </template>
-            <v-list flat>
-              <v-list-item-group
-                v-model="selectedLabels"
-                multiple
-                dense
-              >
-                <v-container
-                  style="max-height: 400px"
-                  class="overflow-y-auto"
-                >
-                  <v-row>
-                    <v-flex xs12>
-                      <v-list-item v-for="label in labels" :key="label.id">
-                        <template v-slot:default="{ active, toggle }">
-                          <v-list-item-action>
-                            <v-checkbox
-                              v-model="active"
-                            />
-                          </v-list-item-action>
-
-                          <v-list-item-content>
-                            <v-list-item-title>
-                              <v-chip
-                                :color="label.color"
-                                small
-                                outlined
-                                v-text="label.name"
-                              />
-                            </v-list-item-title>
-                          </v-list-item-content>
-                        </template>
-                      </v-list-item>
-                    </v-flex>
-                  </v-row>
-                </v-container>
-                <v-divider />
-                <v-list-item>
-                  <v-list-item-content>
-                    <v-list-item-title>
-                      <v-icon>mdi-plus</v-icon>
-                      Add Label
-                    </v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list-item-group>
-            </v-list>
-          </v-menu>
+          <TaskLabels :task="task" />
         </v-list-item-subtitle>
       </v-list-item-content>
       <v-list-item-action class="task-actions">
@@ -227,11 +158,16 @@
 </template>
 
 <script>
-import { chunk, filter, includes, keyBy, keys, map, pickBy } from 'lodash'
-import { mapState } from 'vuex'
+import { chunk, filter, keyBy, map } from 'lodash'
+import { mapState, mapActions } from 'vuex'
 import colors from 'vuetify/es5/util/colors'
+import TaskDetail from '~/components/tasks/TaskDetail.vue'
+import TaskLabels from '~/components/labels/TaskLabels.vue'
 
 export default {
+  components: {
+    TaskLabels
+  },
   directives: {
     focus (el, { value }, { context }) {
       if (value) {
@@ -261,8 +197,8 @@ export default {
     return {
       editing: false,
       strikethrough: this.task.status === 'closed',
-      selectedLabels: map(keys(pickBy(this.$store.state.labels.list, v => includes(this.task.labels, v['@id']))), Number),
-      color: colors.grey.base
+      color: colors.grey.base,
+      components: { TaskDetail }
     }
   },
   computed: {
@@ -275,22 +211,11 @@ export default {
     projects () {
       return keyBy(this.$store.state.projects.list, '@id')
     },
-    labels () {
-      return this.$store.state.labels.list
-    },
-    labelList () {
-      return keyBy(this.$store.state.labels.list, '@id')
-    },
     usersList () {
       return keyBy(this.$store.state.users.list, '@id')
     },
     swatches () {
       return chunk(filter(map(colors, 'base').concat([colors.shades.black])), 4)
-    }
-  },
-  watch: {
-    selectedLabels (labels) {
-      this.$store.dispatch('tasks/setLabels', { task: this.task, labels: filter(this.labels, (_, k) => includes(labels, k)) })
     }
   },
   methods: {
@@ -327,7 +252,8 @@ export default {
     },
     removeAssignedUser () {
       this.$store.dispatch('tasks/removeAssignedUser', this.task)
-    }
+    },
+    ...mapActions(['detailView'])
   }
 }
 </script>

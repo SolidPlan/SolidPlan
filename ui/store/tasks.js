@@ -1,4 +1,5 @@
 import { filter, findIndex, forEach, map, orderBy } from 'lodash'
+import Vue from 'vue'
 
 export const state = () => ({
   list: []
@@ -44,9 +45,9 @@ export const mutations = {
 
   setLabels (state, { task, labels }) {
     if (labels.length === 0) {
-      task.labels = []
+      Vue.set(task, 'labels', [])
     } else {
-      task.labels = map(labels, '@id')
+      Vue.set(task, 'labels', map(labels, '@id'))
     }
   },
 

@@ -127,9 +127,7 @@ export default {
         return value
       }
     },
-    ...mapState({
-      'showLabels': state => state.showLabels
-    })
+    ...mapState(['showLabels'])
   },
   methods: {
     ...mapActions(['toggleLabels']),

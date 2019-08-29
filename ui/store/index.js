@@ -1,6 +1,8 @@
 export const state = () => ({
   showLabels: JSON.parse(localStorage.getItem('showLabels') || true),
-  theme: JSON.parse(localStorage.getItem('theme') || false)
+  theme: JSON.parse(localStorage.getItem('theme') || false),
+  detailViewActive: false,
+  detailViewComponent: {}
 })
 
 export const mutations = {
@@ -9,6 +11,14 @@ export const mutations = {
   },
   toggleTheme (state, value) {
     state.theme = value
+  },
+  showDetailView (state, { component, props }) {
+    state.detailViewActive = true
+    state.detailViewComponent = Object.freeze({ component, props })
+  },
+  hideDetailView (state) {
+    state.detailViewActive = false
+    state.detailViewComponent = {}
   }
 }
 
@@ -43,5 +53,13 @@ export const actions = {
     context.$vuetify.theme.dark = !state.theme
     await localStorage.setItem('theme', JSON.stringify(!state.theme))
     commit('toggleTheme', !state.theme)
+  },
+
+  detailView ({ commit }, context) {
+    commit('showDetailView', context)
+  },
+
+  hideDetailView ({ commit }) {
+    commit('hideDetailView')
   }
 }

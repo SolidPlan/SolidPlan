@@ -1,5 +1,73 @@
 <template>
   <v-app>
+    <v-navigation-drawer
+      v-model="detailViewActive"
+      clipped
+      right
+      app
+      temporary
+      width="50%"
+    >
+      <component :is="detailViewComponent.component" v-if="detailViewActive" v-bind="detailViewComponent.props" />
+    </v-navigation-drawer>
+    <v-app-bar clipped-left clipped-right fixed app>
+      <v-toolbar-title v-text="title" />
+      <v-spacer />
+
+      <v-menu
+        :close-on-content-click="false"
+        :nudge-width="200"
+        offset-x
+      >
+        <template v-slot:activator="{ on }">
+          <v-btn
+            icon
+            text
+            v-on="on"
+          >
+            <v-icon>mdi-account</v-icon>
+          </v-btn>
+        </template>
+
+        <v-card>
+          <v-list>
+            <v-list-item>
+              <v-list-item-avatar>
+                <img :src="`https://www.gravatar.com/avatar/${emailHash}?d=mp`">
+              </v-list-item-avatar>
+
+              <v-list-item-content>
+                <v-list-item-title>{{ $auth.$state.user.email }}</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+          <v-divider />
+          <v-card-actions>
+            <v-btn
+              color="primary"
+              text
+              :to="{ name: 'profile' }"
+            >
+              <v-icon left>
+                mdi-account
+              </v-icon>
+              Profile
+            </v-btn>
+            <v-spacer />
+            <v-btn
+              color="primary"
+              text
+              @click="logout"
+            >
+              <v-icon left>
+                mdi-logout
+              </v-icon>
+              Logout
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-menu>
+    </v-app-bar>
     <v-navigation-drawer :mini-variant="miniVariant" clipped fixed app>
       <v-list>
         <v-list-item
@@ -101,64 +169,6 @@
         </div>
       </template>
     </v-navigation-drawer>
-    <v-app-bar clipped-left fixed app>
-      <v-toolbar-title v-text="title" />
-      <v-spacer />
-
-      <v-menu
-        :close-on-content-click="false"
-        :nudge-width="200"
-        offset-x
-      >
-        <template v-slot:activator="{ on }">
-          <v-btn
-            icon
-            text
-            v-on="on"
-          >
-            <v-icon>mdi-account</v-icon>
-          </v-btn>
-        </template>
-
-        <v-card>
-          <v-list>
-            <v-list-item>
-              <v-list-item-avatar>
-                <img :src="`https://www.gravatar.com/avatar/${emailHash}?d=mp`">
-              </v-list-item-avatar>
-
-              <v-list-item-content>
-                <v-list-item-title>{{ $auth.$state.user.email }}</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
-          <v-divider />
-          <v-card-actions>
-            <v-btn
-              color="primary"
-              text
-              :to="{ name: 'profile' }"
-            >
-              <v-icon left>
-                mdi-account
-              </v-icon>
-              Profile
-            </v-btn>
-            <v-spacer />
-            <v-btn
-              color="primary"
-              text
-              @click="logout"
-            >
-              <v-icon left>
-                mdi-logout
-              </v-icon>
-              Logout
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-menu>
-    </v-app-bar>
     <v-content>
       <v-container>
         <nuxt />
@@ -171,7 +181,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 import md5 from 'md5'
 import Labels from '~/components/labels/Labels.vue'
 
@@ -210,6 +220,17 @@ export default {
       projects: state => state.projects.list,
       labels: state => state.labels.list
     }),
+    detailViewActive: {
+      get () {
+        return this.$store.state.detailViewActive
+      },
+      set (value) {
+        if (value === false) {
+          this.hideDetailView()
+        }
+      }
+    },
+    ...mapState(['detailViewComponent']),
     emailHash () {
       return this.$auth.$state.isLoggedIn ? md5(this.$auth.$state.user.email) : ''
     }
@@ -221,7 +242,8 @@ export default {
     },
     switchTheme () {
       this.$store.dispatch('toggleTheme', this.$nuxt)
-    }
+    },
+    ...mapActions(['hideDetailView'])
   }
 }
 </script>
