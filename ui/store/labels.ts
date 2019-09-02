@@ -1,67 +1,74 @@
-import { findIndex } from 'lodash'
-import { CrudAction, Initializeable, LabelState, StateContext } from "../types/state";
-import { Label } from "~/ui/types";
-import { ActionContext, MutationTree } from "vuex";
-import Vue from "vue";
+/*
+ * This file is part of the SolidPlan project.
+ *
+ * @author     pierre
+ * @copyright  Copyright (c) 2019
+ */
 
-export const state = (): LabelState => ({
-  labels: []
+import { findIndex } from 'lodash';
+import Vue from 'vue';
+import { ActionContext, MutationTree } from 'vuex';
+import { Collection, Label } from '~/ui/types';
+import { CrudAction, Initializeable, LabelState, StateContext } from '../types/state';
+
+export const state: () => LabelState = (): LabelState => ({
+  labels: [],
 });
 
 export const mutations: MutationTree<LabelState> = {
-  set(state: LabelState, labels: Label[]): void {
-    state.labels = labels
+  set (labelState: LabelState, labels: Label[]): void {
+    labelState.labels = labels;
   },
 
-  reset(state: LabelState): void {
-    state.labels = []
+  reset (labelState: LabelState): void {
+    labelState.labels = [];
   },
 
-  add(state: LabelState, label: Label): void {
-    state.labels.push(label)
+  add (labelState: LabelState, label: Label): void {
+    labelState.labels.push(label);
   },
 
-  remove(state: LabelState, label: Label): void {
-    state.labels.splice(findIndex(state.labels, {'@id': label['@id']}), 1)
+  remove (labelState: LabelState, label: Label): void {
+    labelState.labels.splice(findIndex(labelState.labels, {'@id': label['@id']}), 1);
   },
 
-  update(state: LabelState, label: Label): void {
-    const index = findIndex(state.labels, { id: label.id })
-    Vue.set(state.labels, index, label)
-  }
+  update (labelState: LabelState, label: Label): void {
+    const index: number = findIndex(labelState.labels, {id: label.id});
+    Vue.set(labelState.labels, index, label);
+  },
 };
 
 export const actions: CrudAction<LabelState, Label> & Initializeable<LabelState, Label> = {
-  async init({state, commit}: ActionContext<LabelState, Label>, context: StateContext): Promise<void> {
-    if (state.labels.length === 0) {
-      const data = await context.$axios.$get('/api/labels');
-      commit('set', data['hydra:member'])
+  async init ({state: labelState, commit}: ActionContext<LabelState, Label>, context: StateContext): Promise<void> {
+    if (labelState.labels.length === 0) {
+      const data: Collection<Label> = await context.$axios.$get<Collection<Label>>('/api/labels');
+      commit('set', data['hydra:member']);
     }
   },
 
-  reset({commit}: ActionContext<LabelState, Label>) {
-    commit('reset')
+  reset ({commit}: ActionContext<LabelState, Label>): void {
+    commit('reset');
   },
 
-  async add({commit, dispatch}: ActionContext<LabelState, Label>, label: Label): Promise<Label> {
+  async add ({commit, dispatch}: ActionContext<LabelState, Label>, label: Label): Promise<Label> {
     const data: Label = await this.$axios.$post<Label>('/api/labels', label);
 
     commit('add', data);
 
-    return data
+    return data;
   },
 
-  async edit({commit, dispatch}: ActionContext<LabelState, Label>, {id, name, color}: Label): Promise<Label> {
+  async edit ({commit, dispatch}: ActionContext<LabelState, Label>, {id, name, color}: Label): Promise<Label> {
     const data: Label = await this.$axios.$put<Label>(`/api/labels/${id}`, {name, color});
 
     commit('update', data);
 
-    return data
+    return data;
   },
 
-  async remove({commit, dispatch}: ActionContext<LabelState, Label>, label): Promise<void> {
+  async remove ({commit, dispatch}: ActionContext<LabelState, Label>, label: Label): Promise<void> {
     await this.$axios.$delete(`/api/labels/${label.id}`);
 
-    commit('remove', label)
-  }
+    commit('remove', label);
+  },
 };

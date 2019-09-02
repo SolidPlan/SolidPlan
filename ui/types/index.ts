@@ -1,6 +1,13 @@
+/*
+ * This file is part of the SolidPlan project.
+ *
+ * @author     pierre
+ * @copyright  Copyright (c) 2019
+ */
+
 interface Entity {
   '@id': string;
-  id: number
+  id: number;
 }
 
 export interface Task extends Entity {
@@ -14,20 +21,24 @@ export interface Task extends Entity {
 }
 
 export interface Label extends Entity {
-  name: string,
-  color: string
-  tasks: string[],
+  name: string;
+  color: string;
+  tasks: string[];
 }
 
 export interface Project extends Entity {
-  name: string,
-  description: string,
-  color: string
-  tasks: string[],
+  name: string;
+  description: string;
+  color: string;
+  tasks: string[];
 }
 
 export interface User extends Entity {
-  firstName: string,
-  lastName: string,
-  tasks: string[],
+  firstName: string;
+  lastName: string;
+  tasks: string[];
+}
+
+export interface Collection<T> {
+  'hydra:member': T[];
 }

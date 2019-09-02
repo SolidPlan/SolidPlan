@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "esnext",
-    "module": "esnext",
+    "target": "es5",
+    "module": "es2015",
     "moduleResolution": "node",
     "lib": [
       "esnext",
@@ -28,7 +28,13 @@
       "ui/types"
     ]
   },
+  "include": [
+    "ui/**/*.ts",
+    "ui/**/*.vue"
+  ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "ui/**/*.spec.ts",
+    "ui/test/**/*.ts"
   ]
 }

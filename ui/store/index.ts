@@ -1,68 +1,75 @@
-import { DetailComponent, RootState, StateContext } from "../types/state";
-import { ActionContext, ActionTree, MutationTree } from "vuex";
+/*
+ * This file is part of the SolidPlan project.
+ *
+ * @author     pierre
+ * @copyright  Copyright (c) 2019
+ */
 
-export const state = (): RootState => ({
+import { ActionContext, ActionTree, MutationTree } from 'vuex';
+import { DetailComponent, RootState, StateContext } from '../types/state';
+
+export const state: () => RootState = (): RootState => ({
+  detailViewActive: false,
+  detailViewComponent: {} as DetailComponent,
   showLabels: Boolean(JSON.parse(localStorage.getItem('showLabels') || 'true')),
   theme: Boolean(JSON.parse(localStorage.getItem('theme') || 'false')),
-  detailViewActive: false,
-  detailViewComponent: {} as DetailComponent
 });
 
 export const mutations: MutationTree<RootState> = {
-  toggleLabels(state: RootState, value: boolean) {
-    state.showLabels = value
+  toggleLabels (rootState: RootState, value: boolean): void {
+    rootState.showLabels = value;
   },
-  toggleTheme(state: RootState, value: boolean) {
-    state.theme = value
+  toggleTheme (rootState: RootState, value: boolean): void {
+    rootState.theme = value;
   },
-  showDetailView(state: RootState, component: DetailComponent) {
-    state.detailViewActive = true;
-    state.detailViewComponent = Object.freeze(component)
+  showDetailView (rootState: RootState, component: DetailComponent): void {
+    rootState.detailViewActive = true;
+    rootState.detailViewComponent = Object.freeze(component);
   },
-  hideDetailView(state: RootState) {
-    state.detailViewActive = false;
-    state.detailViewComponent = {} as DetailComponent
-  }
+  hideDetailView (rootState: RootState): void {
+    rootState.detailViewActive = false;
+    rootState.detailViewComponent = {} as DetailComponent;
+  },
 };
 
 export const actions: ActionTree<RootState, {}> = {
-  async init({commit, dispatch, state}: ActionContext<RootState, {}>, context: StateContext): Promise<void> {
-    context.$vuetify.theme.dark = state.theme;
-    commit('toggleTheme', state.theme);
+  async init ({commit, dispatch, state: rootState}: ActionContext<RootState, {}>, context: StateContext): Promise<void> {
+    context.$vuetify.theme.dark = rootState.theme;
+    commit('toggleTheme', rootState.theme);
 
     await Promise.all([
       dispatch('projects/init', context),
       dispatch('tasks/init', context),
       dispatch('labels/init', context),
-      dispatch('users/init', context)
-    ])
+      dispatch('users/init', context),
+    ]);
   },
 
-  async reset({dispatch}: ActionContext<RootState, {}>, context: StateContext): Promise<void> {
+  async reset ({dispatch}: ActionContext<RootState, {}>, context: StateContext): Promise<void> {
     await Promise.all([
       dispatch('projects/reset', context),
       dispatch('tasks/reset', context),
       dispatch('labels/reset', context),
-      dispatch('users/reset', context)
-    ])
+      dispatch('users/reset', context),
+    ]);
   },
 
-  async toggleLabels({commit, state}: ActionContext<RootState, {}>): Promise<void> {
-    await localStorage.setItem('showLabels', JSON.stringify(!state.showLabels));
-    commit('toggleLabels', !state.showLabels)
+  async toggleLabels ({commit, state: rootState}: ActionContext<RootState, {}>): Promise<void> {
+    await localStorage.setItem('showLabels', JSON.stringify(!rootState.showLabels));
+    commit('toggleLabels', !rootState.showLabels);
   },
 
-  async toggleTheme({commit, state}: ActionContext<RootState, {}>, context: StateContext): Promise<void> {
-    context.$vuetify.theme.dark = !state.theme;
-    await localStorage.setItem('theme', JSON.stringify(!state.theme));
-    commit('toggleTheme', !state.theme)
+  async toggleTheme ({commit, state: rootState}: ActionContext<RootState, {}>, context: StateContext): Promise<void> {
+    context.$vuetify.theme.dark = !rootState.theme;
+    await localStorage.setItem('theme', JSON.stringify(!rootState.theme));
+    commit('toggleTheme', !rootState.theme);
   },
 
-  detailView({commit}: ActionContext<RootState, {}>, context: DetailComponent): void {
-    commit('showDetailView', context)
+  detailView ({commit}: ActionContext<RootState, {}>, context: DetailComponent): void {
+    commit('showDetailView', context);
   },
 
-  hideDetailView({commit}: ActionContext<RootState, {}>): void {
-    commit('hideDetailView')
-  }
+  hideDetailView ({commit}: ActionContext<RootState, {}>): void {
+    commit('hideDetailView');
+  },
 };
