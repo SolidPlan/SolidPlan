@@ -130,7 +130,7 @@ export default {
   },
   computed: {
     ...mapState({
-      labels: state => state.labels.list
+      labels: state => state.labels.labels
     }),
     swatches () {
       return chunk(filter(map(colors, 'base').concat([colors.shades.black])), 4)
@@ -146,7 +146,7 @@ export default {
       if (this.editing === null) {
         this.addLabel({ name: this.name, color: this.color })
       } else {
-        this.editLabel({ label: this.editing, name: this.name, color: this.color })
+        this.editLabel({ id: this.editing.id, name: this.name, color: this.color })
       }
       this.reset()
     },

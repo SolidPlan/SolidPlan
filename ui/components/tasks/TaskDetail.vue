@@ -223,10 +223,10 @@ export default {
       }
     },
     projects () {
-      return keyBy(this.$store.state.projects.list, '@id')
+      return keyBy(this.$store.state.projects.projects, '@id')
     },
     usersList () {
-      return keyBy(this.$store.state.users.list, '@id')
+      return keyBy(this.$store.state.users.users, '@id')
     }
   },
   methods: {

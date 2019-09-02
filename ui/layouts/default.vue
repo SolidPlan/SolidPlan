@@ -217,8 +217,8 @@ export default {
 
   computed: {
     ...mapState({
-      projects: state => state.projects.list,
-      labels: state => state.labels.list
+      projects: state => state.projects.projects,
+      labels: state => state.labels.labels
     }),
     detailViewActive: {
       get () {

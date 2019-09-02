@@ -96,14 +96,14 @@ export default {
   },
   computed: {
     ...mapState({
-      labels: state => state.labels.list
+      labels: state => state.labels.labels
     }),
     labelList () {
-      return keyBy(this.$store.state.labels.list, '@id')
+      return keyBy(this.$store.state.labels.labels, '@id')
     },
     selectedLabels: {
       get () {
-        return map(keys(pickBy(this.$store.state.labels.list, v => includes(this.task.labels, v['@id']))), Number)
+        return map(keys(pickBy(this.$store.state.labels.labels, v => includes(this.task.labels, v['@id']))), Number)
       },
       set (value) {
         return this.$store.dispatch('tasks/setLabels', { task: this.task, labels: filter(this.labels, (_, k) => includes(value, k)) })

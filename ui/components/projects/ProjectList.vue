@@ -24,7 +24,7 @@ export default {
     ProjectItem
   },
   computed: mapState({
-    projects: state => state.projects.list
+    projects: state => state.projects.projects
   })
 }
 </script>

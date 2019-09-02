@@ -114,6 +114,7 @@ export default {
   /*
   ** Build configuration
   */
+  buildModules: ['@nuxt/typescript-build'],
   build: {
     /*
     ** You can extend webpack config here
