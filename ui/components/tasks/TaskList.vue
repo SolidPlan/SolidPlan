@@ -69,77 +69,85 @@
   </v-card>
 </template>
 
-<script>
-import { mapState, mapActions } from 'vuex'
-import draggable from 'vuedraggable'
-import TaskItem from '~/components/tasks/TaskItem.vue'
+<script lang="ts">
+import Vue, { PropType } from 'vue';
+import { Component, Prop } from 'vue-property-decorator';
+import Draggable, { DragOptions, MoveEvent } from 'vuedraggable';
+import { Action, namespace, State } from 'vuex-class';
+import { BindingHelpers } from 'vuex-class/lib/bindings';
+import TaskItem from '~/components/tasks/TaskItem.vue';
+import { Project, Task } from '~/types';
 
-const filters = {
-  all: tasks => filters.open(tasks).concat(filters.closed(tasks)),
-  open: tasks => tasks.filter(task => task.status === 'open'),
-  closed: tasks => tasks.filter(task => task.status === 'closed')
+const store: BindingHelpers = namespace('tasks');
+
+interface FilterList {
+  [key: string]: (tasks: Task[]) => Task[];
 }
 
-export default {
+const filters: FilterList = {
+  all: (tasks: Task[]): Task[] => filters.open(tasks)
+      .concat(filters.closed(tasks)),
+  open: (tasks: Task[]): Task[] => tasks.filter((task: Task) => task.status === 'open'),
+  closed: (tasks: Task[]): Task[] => tasks.filter((task: Task) => task.status === 'closed'),
+};
+
+@Component({
   components: {
+    Draggable,
     TaskItem,
-    draggable
   },
-  props: {
-    project: {
-      type: Object,
-      required: false,
-      default: null
-    },
-    showProject: {
-      type: Boolean,
-      required: false,
-      default: false
-    }
-  },
-  data () {
+})
+export default class TaskList extends Vue {
+  @Prop({type: Object as PropType<Project>, required: false, default: null}) public readonly project!: Project;
+  @Prop({type: Boolean, required: false, default: false}) public readonly showProject!: boolean;
+
+  @State('showLabels') public readonly showLabels!: boolean;
+
+  @store.Getter('getTasksByProject') public getTasksByProject!: (project?: Project) => Task[];
+  @store.Action('sort') public sort!: ({task, order}: {task: Task; order: number}) => void;
+  @store.Action('markDone') public markDone!: (task: Task) => void;
+
+  @Action('toggleLabels') public toggleLabels!: () => void;
+
+  public visibility: string = 'open';
+
+  public drag: boolean = false;
+
+  public get disableDrag (): boolean {
+    return this.visibility === 'all';
+  }
+
+  public get filters(): FilterList {
+    return Object.freeze(filters);
+  }
+
+  public get dragOptions (): DragOptions {
     return {
-      filters: Object.freeze(filters),
-      visibility: 'open',
-      drag: false
-    }
-  },
-  computed: {
-    disableDrag () {
-      return this.visibility === 'all'
-    },
-    dragOptions () {
-      return {
-        animation: 200,
-        disabled: this.disableDrag,
-        group: 'description',
-        ghostClass: 'ghost'
-      }
-    },
-    tasks () {
-      return this.$store.getters['tasks/getTasksByProject'](this.project)
-    },
-    filteredTasks: {
-      get () {
-        return filters[this.visibility](this.tasks)
-      },
-      set (value) {
-        return value
-      }
-    },
-    ...mapState(['showLabels'])
-  },
-  methods: {
-    ...mapActions(['toggleLabels']),
-    markAllDone () {
-      this.tasks.forEach((task) => {
-        this.$store.dispatch('tasks/markDone', task)
-      })
-    },
-    trackChanges ({ oldIndex, newIndex }) {
-      const order = this.filteredTasks[newIndex].order
-      this.$store.dispatch('tasks/sort', { task: this.filteredTasks[oldIndex], order })
-    }
+      animation: 200,
+      disabled: this.disableDrag,
+      ghostClass: 'ghost',
+      group: 'description',
+    };
+  }
+
+  public get tasks (): Task[] {
+    return this.getTasksByProject(this.project);
+  }
+
+  public get filteredTasks (): Task[] {
+    return filters[this.visibility](this.tasks);
+  }
+
+  public set filteredTasks (value: Task[]) {
+  }
+
+  public markAllDone (): void {
+    this.tasks.forEach(this.markDone);
+  }
+
+  public trackChanges ({ oldIndex, newIndex }: MoveEvent<Task>): void {
+    const order: number = this.filteredTasks[newIndex].order;
+    this.sort({ task: this.filteredTasks[oldIndex], order });
   }
 }
 </script>

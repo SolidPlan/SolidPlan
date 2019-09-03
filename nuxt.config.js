@@ -1,7 +1,10 @@
 import colors from 'vuetify/es5/util/colors'
 
+const isDev = process.env.NODE_ENV !== "production"
+
 export default {
   mode: 'spa',
+  modern: !isDev,
   srcDir: 'ui/',
   /*
   ** Headers of the page
@@ -42,8 +45,6 @@ export default {
   ** Nuxt.js dev-modules
   */
   devModules: [
-    // Doc: https://github.com/nuxt-community/eslint-module
-    '@nuxtjs/eslint-module',
     '@nuxtjs/vuetify',
   ],
   /*
@@ -60,6 +61,7 @@ export default {
   ** See https://axios.nuxtjs.org/options
   */
   axios: {
+    debug: isDev,
     proxy: true
   },
   proxy: {

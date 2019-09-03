@@ -7,9 +7,9 @@
 
 import { find, findIndex, forEach } from 'lodash';
 import Vue from 'vue';
-import { ActionContext, ActionTree, GetterTree, MutationTree } from '~/node_modules/vuex';
-import { Collection, Project, Task } from '~/ui/types';
-import { CrudAction, Initializeable, ProjectState } from '../types/state';
+import { ActionContext, ActionTree, GetterTree, MutationTree } from 'vuex';
+import { Collection, Project, Task } from '~/types';
+import { CrudAction, Initializeable, ProjectState } from '~/types/state';
 
 export const state: () => ProjectState = (): ProjectState => ({
   projects: [],
@@ -49,7 +49,7 @@ export const mutations: MutationTree<ProjectState> = {
 export const actions: (CrudAction<ProjectState, Project> & Initializeable<ProjectState, Project>) | ActionTree<ProjectState, Project> = {
   async init ({state: projectState, commit}: ActionContext<ProjectState, Project>): Promise<void> {
     if (projectState.projects.length === 0) {
-      const data: Collection<Project> = await this.$axios.$get<Collection<Project>>('/api/projects');
+      const data: Collection<Project> = await this.$axios.$get('/api/projects');
       commit('set', data['hydra:member']);
     }
   },
@@ -59,7 +59,7 @@ export const actions: (CrudAction<ProjectState, Project> & Initializeable<Projec
   },
 
   async add ({commit}: ActionContext<ProjectState, Project>, project: Project): Promise<Project> {
-    const data: Project = await this.$axios.$post<Project>('/api/projects', project);
+    const data: Project = await this.$axios.$post('/api/projects', project);
 
     commit('add', data);
 

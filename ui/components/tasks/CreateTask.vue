@@ -2,7 +2,7 @@
   <v-list>
     <v-list-item>
       <v-text-field
-        v-model="task"
+        v-model="name"
         :label="'New task'"
         autofocus
         autocomplete="off"
@@ -14,10 +14,10 @@
         placeholder="Enter new task"
         prepend-icon="mdi-file-document-box-check-outline"
         solo
-        @keydown.enter="addTask"
+        @keydown.enter="add"
       />
       <v-list-item-action>
-        <v-icon color="success" @click="addTask">
+        <v-icon color="success" @click="add">
           mdi-check
         </v-icon>
       </v-list-item-action>
@@ -25,26 +25,27 @@
   </v-list>
 </template>
 
-<script>
-export default {
-  props: {
-    project: {
-      type: Object,
-      required: false,
-      default: null
-    }
-  },
-  data () {
-    return {
-      task: null
-    }
-  },
-  methods: {
-    async addTask () {
-      if (this.task) {
-        await this.$store.dispatch('tasks/add', this)
-        this.task = null
-      }
+<script lang="ts">
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import { PropType } from 'vue/types/options';
+import { namespace } from 'vuex-class';
+import { BindingHelpers } from 'vuex-class/lib/bindings';
+import { Project, Task } from '~/types';
+
+const store: BindingHelpers = namespace('tasks');
+
+@Component({})
+export default class CreateTask extends Vue {
+  @Prop({type: Object as PropType<Project>}) public readonly project!: Project;
+
+  public name: string | null = null;
+
+  @store.Action('add') public addTask!: (task: Task) => void;
+
+  public async add (): Promise<void> {
+    if (this.name) {
+      await this.addTask({name: this.name} as Task);
+      this.name = null;
     }
   }
 }

@@ -36,6 +36,8 @@ export interface Project extends Entity {
 export interface User extends Entity {
   firstName: string;
   lastName: string;
+  email: string;
+  password: string | null;
   tasks: string[];
 }
 

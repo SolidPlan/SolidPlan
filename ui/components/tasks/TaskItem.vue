@@ -1,5 +1,5 @@
 <template>
-  <v-list-item class="task-item" :class="{ 'editing': editing }" @click="detailView({component: components.TaskDetail, props: { task }})">
+  <v-list-item class="task-item" :class="{ 'editing': editTitle }" @click="detailView({component: components.TaskDetail, props: { task }})" :ripple="false">
     <v-list-item-action style="flex-direction: unset">
       <v-icon v-show="!disableDrag" class="sort-handle">
         mdi-drag
@@ -7,7 +7,7 @@
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-hover v-slot:default="{ hover }">
-            <v-icon :color="done || hover ? 'success' : ''" @click="toggleTask" v-on="on">
+            <v-icon :color="done || hover ? 'success' : ''" @click.stop="toggle(task)" v-on="on">
               mdi-checkbox-marked-circle-outline
             </v-icon>
           </v-hover>
@@ -15,10 +15,10 @@
         <span>{{ done ? 'Re-open Task' : 'Complete Task' }}</span>
       </v-tooltip>
     </v-list-item-action>
-    <template v-if="!editing">
+    <template v-if="!editTitle">
       <v-list-item-content
         :class="{ 'primary--text': done }"
-        @dblclick="editing = true"
+        @dblclick.stop="editTitle = true"
       >
         <v-layout :class="{ strikethrough: strikethrough || done }">
           <v-flex xs10 d-flex v-text="task.name" />
@@ -31,7 +31,7 @@
                   <v-icon
                     color="error"
                     x-small
-                    @click="removeAssignedUser"
+                    @click.stop="removeAssignedUser(task)"
                     v-on="on"
                   >
                     mdi-close
@@ -47,7 +47,7 @@
                     pill
                     x-small
                     outlined
-                    v-on="on"
+                    v-on:click.stop="on.click"
                   >
                     <v-icon x-small>
                       mdi-plus
@@ -57,7 +57,7 @@
                 </template>
 
                 <v-list dense>
-                  <v-list-item v-for="user in usersList" :key="user.id" @click="assignTaskToUser(task, user)">
+                  <v-list-item v-for="user in usersList" :key="user.id" @click.stop="assignToUser({task, user})">
                     <v-list-item-title :key="user.id">
                       {{ user.firstName }} {{ user.lastName }}
                     </v-list-item-title>
@@ -82,7 +82,7 @@
                 small
                 :color="projects[task.project].color"
                 text-color="white"
-                v-on="on"
+                v-on:click.stop="on.click"
               >
                 {{ projects[task.project].name }}
               </v-chip>
@@ -91,13 +91,13 @@
                 pill
                 x-small
                 outlined
-                v-on="on"
+                v-on:click.stop="on.click"
               >
                 + Add to project
               </v-chip>
             </template>
             <v-list dense>
-              <v-list-item v-for="project in projects" :key="project.id" @click="assignTaskToProject(task, project)">
+              <v-list-item v-for="project in projects" :key="project.id" @click="assignToProject({task, project})">
                 <v-list-item-title :key="project.id">
                   <v-chip
                     x-small
@@ -109,7 +109,7 @@
               </v-list-item>
               <span v-if="task.project">
                 <v-divider />
-                <v-list-item @click="assignTaskToProject(task, null)">
+                <v-list-item @click="assignToProject({task, project: null})">
                   <v-list-item-title>
                     <v-icon x-small color="red">
                       mdi-close
@@ -127,7 +127,7 @@
                 text
                 icon
                 x-small
-                @click="removeTask(task)"
+                @click.stop="remove(task)"
                 v-on="on"
               >
                 <v-icon>mdi-close</v-icon>
@@ -141,7 +141,7 @@
     <v-text-field
       v-else
       ref="input"
-      v-focus="editing"
+      v-focus="editTitle"
       clearable
       color="primary"
       text
@@ -157,103 +157,49 @@
   </v-list-item>
 </template>
 
-<script>
-import { chunk, filter, keyBy, map } from 'lodash'
-import { mapState, mapActions } from 'vuex'
-import colors from 'vuetify/es5/util/colors'
-import TaskDetail from '~/components/tasks/TaskDetail.vue'
-import TaskLabels from '~/components/labels/TaskLabels.vue'
+<script lang="ts">
+import { Dictionary, keyBy } from 'lodash';
+import { mixins } from 'vue-class-component';
+import { Component, Prop } from 'vue-property-decorator';
+import colors from 'vuetify/src/util/colors';
+import { Action, State } from 'vuex-class';
+import focus from '~/assets/directives/focus';
+import TaskActions from '~/assets/mixins/taskActions';
+import TaskLabels from '~/components/labels/TaskLabels.vue';
+import TaskDetail from '~/components/tasks/TaskDetail.vue';
+import { Project, User } from '~/types';
+import { DetailComponent } from '~/types/state';
 
-export default {
+@Component({
   components: {
-    TaskLabels
+    TaskLabels,
   },
   directives: {
-    focus (el, { value }, { context }) {
-      if (value) {
-        context.$nextTick(() => {
-          context.$refs.input.focus()
-        })
-      }
-    }
+    focus,
   },
-  props: {
-    task: {
-      type: Object,
-      required: true
-    },
-    showProject: {
-      type: Boolean,
-      required: false,
-      default: false
-    },
-    disableDrag: {
-      type: Boolean,
-      required: false,
-      default: false
-    }
-  },
-  data () {
-    return {
-      editing: false,
-      strikethrough: this.task.status === 'closed',
-      color: colors.grey.base,
-      components: { TaskDetail }
-    }
-  },
-  computed: {
-    ...mapState({
-      'showLabels': state => state.showLabels
-    }),
-    done () {
-      return this.task.status === 'closed'
-    },
-    projects () {
-      return keyBy(this.$store.state.projects.projects, '@id')
-    },
-    usersList () {
-      return keyBy(this.$store.state.users.users, '@id')
-    },
-    swatches () {
-      return chunk(filter(map(colors, 'base').concat([colors.shades.black])), 4)
-    }
-  },
-  methods: {
-    editTask (value) {
-      if (value !== this.task.name) {
-        this.$store.dispatch('tasks/edit', { task: this.task, data: { name: value } })
-      }
-    },
-    removeTask () {
-      this.strikethrough = true
-      this.$store.dispatch('tasks/remove', this.task)
-    },
-    toggleTask () {
-      this.strikethrough = !this.done
-      this.$store.dispatch('tasks/toggle', this.task)
-    },
-    doneEdit (e) {
-      const value = e.target.value.trim()
-      if (!value) {
-        this.removeTask()
-      } else if (this.editing) {
-        this.editTask(value)
-        this.editing = false
-      }
-    },
-    cancelEdit () {
-      this.editing = false
-    },
-    assignTaskToProject (task, project) {
-      this.$store.dispatch('tasks/assignToProject', { task, project })
-    },
-    assignTaskToUser (task, user) {
-      this.$store.dispatch('tasks/assignToUser', { task, user })
-    },
-    removeAssignedUser () {
-      this.$store.dispatch('tasks/removeAssignedUser', this.task)
-    },
-    ...mapActions(['detailView'])
+})
+export default class TaskItem extends mixins(TaskActions) {
+  @Prop({type: Boolean, required: false, default: false}) public showProject!: boolean;
+  @Prop({type: Boolean, required: false, default: false}) public disableDrag!: boolean;
+
+  @State('showLabels') public showLabels!: boolean;
+
+  @Action('detailView') public detailView!: (details: DetailComponent) => void;
+
+  public strikethrough: boolean = this.task.status === 'closed';
+  public color: string = colors.grey.base;
+  public components: {} = { TaskDetail };
+
+  public get done (): boolean {
+    return this.task.status === 'closed';
+  }
+
+  public get projects (): Dictionary<Project> {
+    return keyBy(this.$store.state.projects.projects, '@id');
+  }
+
+  public get usersList (): Dictionary<User> {
+    return keyBy(this.$store.state.users.users, '@id');
   }
 }
 </script>

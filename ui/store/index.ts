@@ -5,8 +5,9 @@
  * @copyright  Copyright (c) 2019
  */
 
+import { NuxtApp } from '@nuxt/types/app';
 import { ActionContext, ActionTree, MutationTree } from 'vuex';
-import { DetailComponent, RootState, StateContext } from '../types/state';
+import { DetailComponent, RootState } from '~/types/state';
 
 export const state: () => RootState = (): RootState => ({
   detailViewActive: false,
@@ -33,7 +34,7 @@ export const mutations: MutationTree<RootState> = {
 };
 
 export const actions: ActionTree<RootState, {}> = {
-  async init ({commit, dispatch, state: rootState}: ActionContext<RootState, {}>, context: StateContext): Promise<void> {
+  async init ({commit, dispatch, state: rootState}: ActionContext<RootState, {}>, context: NuxtApp): Promise<void> {
     context.$vuetify.theme.dark = rootState.theme;
     commit('toggleTheme', rootState.theme);
 
@@ -45,7 +46,7 @@ export const actions: ActionTree<RootState, {}> = {
     ]);
   },
 
-  async reset ({dispatch}: ActionContext<RootState, {}>, context: StateContext): Promise<void> {
+  async reset ({dispatch}: ActionContext<RootState, {}>, context: NuxtApp): Promise<void> {
     await Promise.all([
       dispatch('projects/reset', context),
       dispatch('tasks/reset', context),
@@ -59,7 +60,7 @@ export const actions: ActionTree<RootState, {}> = {
     commit('toggleLabels', !rootState.showLabels);
   },
 
-  async toggleTheme ({commit, state: rootState}: ActionContext<RootState, {}>, context: StateContext): Promise<void> {
+  async toggleTheme ({commit, state: rootState}: ActionContext<RootState, {}>, context: NuxtApp): Promise<void> {
     context.$vuetify.theme.dark = !rootState.theme;
     await localStorage.setItem('theme', JSON.stringify(!rootState.theme));
     commit('toggleTheme', !rootState.theme);

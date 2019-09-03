@@ -6,8 +6,8 @@
  */
 
 import { ActionContext, ActionTree, MutationTree } from 'vuex';
+import { Initializeable, UserState } from '~/types/state';
 import { Collection, User } from '../types';
-import { Initializeable, UserState } from '../types/state';
 
 export const state: () => UserState = (): UserState => ({
   users: [],

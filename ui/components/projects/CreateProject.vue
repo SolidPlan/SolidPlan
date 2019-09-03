@@ -51,31 +51,27 @@
   </v-list>
 </template>
 
-<script>
-import { mapActions } from 'vuex'
-import colors from 'vuetify/es5/util/colors'
-import { chunk, filter, map } from 'lodash'
+<script lang="ts">
+import { mixins } from 'vue-class-component';
+import { Component } from 'vue-property-decorator';
+import colors from 'vuetify/src/util/colors';
+import { namespace } from 'vuex-class';
+import { BindingHelpers } from 'vuex-class/lib/bindings';
+import ColorSwatches from '~/assets/mixins/colorSwatches';
+import { Project } from '~/types';
 
-export default {
-  data () {
-    return {
-      name: null,
-      color: colors.grey.base
-    }
-  },
-  computed: {
-    swatches () {
-      return chunk(filter(map(colors, 'base').concat([colors.shades.black])), 4)
-    }
-  },
-  methods: {
-    ...mapActions({
-      addProject: 'projects/add'
-    }),
-    add () {
-      this.addProject({ name: this.name, color: this.color })
-      this.name = null
-    }
+const store: BindingHelpers = namespace('projects');
+
+@Component({})
+export default class CreateProject extends mixins(ColorSwatches) {
+  public name: string | null = null;
+  public color: string = colors.grey.base;
+
+  @store.Action('add') public addProject!: (project: Project) => void;
+
+  public async add (): Promise<void> {
+    await this.addProject({ name: this.name, color: this.color } as Project);
+    this.name = null;
   }
 }
 </script>

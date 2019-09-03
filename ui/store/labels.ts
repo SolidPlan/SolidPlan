@@ -5,11 +5,12 @@
  * @copyright  Copyright (c) 2019
  */
 
+import { NuxtApp } from '@nuxt/types/app';
 import { findIndex } from 'lodash';
 import Vue from 'vue';
 import { ActionContext, MutationTree } from 'vuex';
-import { Collection, Label } from '~/ui/types';
-import { CrudAction, Initializeable, LabelState, StateContext } from '../types/state';
+import { Collection, Label } from '~/types';
+import { CrudAction, Initializeable, LabelState } from '~/types/state';
 
 export const state: () => LabelState = (): LabelState => ({
   labels: [],
@@ -39,7 +40,7 @@ export const mutations: MutationTree<LabelState> = {
 };
 
 export const actions: CrudAction<LabelState, Label> & Initializeable<LabelState, Label> = {
-  async init ({state: labelState, commit}: ActionContext<LabelState, Label>, context: StateContext): Promise<void> {
+  async init ({state: labelState, commit}: ActionContext<LabelState, Label>, context: NuxtApp): Promise<void> {
     if (labelState.labels.length === 0) {
       const data: Collection<Label> = await context.$axios.$get<Collection<Label>>('/api/labels');
       commit('set', data['hydra:member']);

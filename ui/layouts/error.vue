@@ -12,27 +12,27 @@
   </v-app>
 </template>
 
-<script>
-export default {
-  layout: 'empty',
-  props: {
-    error: {
-      type: Object,
-      default: null
-    }
-  },
-  head () {
-    const title =
-      this.error.statusCode === 404 ? this.pageNotFound : this.otherError
+<script lang="ts">
+import { NuxtError } from '@nuxt/types/app';
+import Vue, { PropType } from 'vue';
+import Component from 'vue-class-component';
+import { Prop } from 'vue-property-decorator';
+
+@Component({})
+export default class ErrorLayout extends Vue {
+  @Prop({type: Object as PropType<NuxtError>, default: null}) public error!: NuxtError;
+
+  public layout: string = 'empty';
+  public pageNotFound: string = '404 Not Found';
+  public otherError: string = 'An error occurred';
+
+  public head (): {title: string} {
+    const pageNotFoundErrorCode: number = 404;
+    const title: string = this.error.statusCode === pageNotFoundErrorCode ? this.pageNotFound : this.otherError;
+
     return {
-      title
-    }
-  },
-  data () {
-    return {
-      pageNotFound: '404 Not Found',
-      otherError: 'An error occurred'
-    }
+      title,
+    };
   }
 }
 </script>

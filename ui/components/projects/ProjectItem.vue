@@ -24,21 +24,20 @@
   </v-card>
 </template>
 
-<script>
-import { mapActions } from 'vuex'
+<script lang="ts">
+import { PropType } from 'vue';
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import { namespace } from 'vuex-class';
+import { BindingHelpers } from 'vuex-class/lib/bindings';
+import { Project } from '~/types';
 
-export default {
-  props: {
-    project: {
-      type: Object,
-      required: true
-    }
-  },
-  methods: {
-    ...mapActions({
-      remove: 'projects/remove'
-    })
-  }
+const store: BindingHelpers = namespace('projects');
+
+@Component({})
+export default class ProjectItem extends Vue {
+  @Prop({type: Object as PropType<Project>, required: true}) public project!: Project;
+
+  @store.Action('remove') public remove!: (project: Project) => void;
 }
 </script>
 

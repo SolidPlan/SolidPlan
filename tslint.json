@@ -181,5 +181,16 @@
     },
     "rulesDirectory": [
         "node_modules/tslint-eslint-rules/dist/rules"
+    ],
+  "linterOptions": {
+    "include": [
+      "./ui/**/*.ts",
+      "./ui/**/*.vue"
+    ],
+    "exclude": [
+      "node_modules",
+      "./ui/**/*.spec.ts",
+      "./ui/test/**/*.ts"
     ]
+  }
 }

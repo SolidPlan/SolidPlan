@@ -11,14 +11,17 @@
   </v-container>
 </template>
 
-<script>
-import ProjectList from '~/components/projects/ProjectList'
-import CreateProject from '~/components/projects/CreateProject'
+<script lang="ts">
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import CreateProject from '~/components/projects/CreateProject.vue';
+import ProjectList from '~/components/projects/ProjectList.vue';
 
-export default {
+@Component({
   components: {
     CreateProject,
-    ProjectList
-  }
-}
+    ProjectList,
+  },
+})
+export default class ProjectIndex extends Vue {}
 </script>

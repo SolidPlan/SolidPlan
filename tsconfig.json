@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "es2015",
+    "experimentalDecorators": true,
+    "target": "esnext",
+    "module": "esnext",
     "moduleResolution": "node",
     "lib": [
       "esnext",
@@ -16,25 +17,30 @@
     "baseUrl": ".",
     "paths": {
       "~/*": [
-        "./*"
+        "./ui/*"
       ],
       "@/*": [
-        "./*"
+        "./ui/*"
       ]
     },
     "types": [
       "@types/node",
       "@nuxt/types",
-      "ui/types"
+      "./ui/types/types.d.ts"
+    ],
+    "plugins": [
+      {
+        "name": "typescript-tslint-plugin"
+      }
     ]
   },
   "include": [
-    "ui/**/*.ts",
-    "ui/**/*.vue"
+    "./ui/**/*.ts",
+    "./ui/**/*.vue"
   ],
   "exclude": [
     "node_modules",
-    "ui/**/*.spec.ts",
-    "ui/test/**/*.ts"
+    "./ui/**/*.spec.ts",
+    "./ui/test/**/*.ts"
   ]
 }

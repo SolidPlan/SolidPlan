@@ -19,7 +19,7 @@
             pill
             x-small
             outlined
-            v-on="on"
+            v-on:click.stop="on.click"
           >
             <v-icon x-small>
               mdi-plus
@@ -78,37 +78,33 @@
   </span>
 </template>
 
-<script>
-import { filter, includes, keys, keyBy, map, pickBy } from 'lodash'
-import { mapState } from 'vuex'
+<script lang="ts">
+import { Dictionary, filter, includes, keyBy, keys, map, pickBy } from 'lodash';
+import Vue, { PropType } from 'vue';
+import { Component, Prop } from 'vue-property-decorator';
+import { namespace } from 'vuex-class';
+import { BindingHelpers } from 'vuex-class/lib/bindings';
+import { Label, Task } from '~/types';
 
-export default {
-  props: {
-    task: {
-      type: Object,
-      required: true
-    },
-    showLabels: {
-      type: Boolean,
-      required: false,
-      default: true
-    }
-  },
-  computed: {
-    ...mapState({
-      labels: state => state.labels.labels
-    }),
-    labelList () {
-      return keyBy(this.$store.state.labels.labels, '@id')
-    },
-    selectedLabels: {
-      get () {
-        return map(keys(pickBy(this.$store.state.labels.labels, v => includes(this.task.labels, v['@id']))), Number)
-      },
-      set (value) {
-        return this.$store.dispatch('tasks/setLabels', { task: this.task, labels: filter(this.labels, (_, k) => includes(value, k)) })
-      }
-    }
+const store: BindingHelpers = namespace('labels');
+
+@Component({})
+export default class TaskLabels extends Vue {
+  @Prop({type: Object as PropType<Task>, required: true}) public readonly task!: Task;
+  @Prop({type: Boolean, required: false, default: true}) public readonly showLabels!: boolean;
+
+  @store.State('labels') public readonly labels!: Label[];
+
+  public get  labelList (): Dictionary<string> {
+    return keyBy<string>(this.$store.state.labels.labels, '@id');
+  }
+
+  public get selectedLabels (): number[] {
+    return map(keys(pickBy(this.$store.state.labels.labels, (v: Label) => includes(this.task.labels, v['@id']))), Number);
+  }
+
+  public set selectedLabels (value: number[]) {
+    this.$store.dispatch('tasks/setLabels', { task: this.task, labels: filter(this.labels, (_: Label, k: number) => includes(value, k)) });
   }
 }
 </script>

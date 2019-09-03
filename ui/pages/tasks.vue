@@ -12,14 +12,17 @@
   </v-container>
 </template>
 
-<script>
-import TaskList from '~/components/tasks/TaskList'
-import CreateTask from '~/components/tasks/CreateTask'
+<script lang="ts">
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import CreateTask from '~/components/tasks/CreateTask.vue';
+import TaskList from '~/components/tasks/TaskList.vue';
 
-export default {
+@Component({
   components: {
     CreateTask,
-    TaskList
-  }
-}
+    TaskList,
+  },
+})
+export default class TaskIndex extends Vue {}
 </script>

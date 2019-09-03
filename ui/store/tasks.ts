@@ -8,8 +8,8 @@
 import { filter, findIndex, map, orderBy } from 'lodash';
 import Vue from 'vue';
 import { ActionContext, ActionTree, GetterTree, MutationTree } from 'vuex';
-import { Collection, Label, Project, Task, User } from '~/ui/types';
-import { CrudAction, Initializeable, TaskState } from '~/ui/types/state';
+import { Collection, Label, Project, Task, User } from '~/types';
+import { CrudAction, Initializeable, TaskState } from '~/types/state';
 
 export const state: () => TaskState = (): TaskState => ({
   tasks: [],
@@ -79,13 +79,13 @@ export const actions: (CrudAction<TaskState, Task> & Initializeable<TaskState, T
     commit('reset');
   },
 
-  async add ({commit, dispatch}: ActionContext<TaskState, Task>, {project, task}: { project: Project; task: string }): Promise<Task> {
-    const data: Task = await this.$axios.$post<Task>(`/api/tasks`, {name: task, status: 'open', project: project ? project['@id'] : null});
+  async add ({commit, dispatch}: ActionContext<TaskState, Task>, {project, name}: { project: Project; name: string }): Promise<Task> {
+    const data: Task = await this.$axios.$post<Task>(`/api/tasks`, {name, status: 'open', project: project ? project['@id'] : null});
 
     commit('add', data);
 
     if (project) {
-      await dispatch('projects/addTask', {project, task}, {root: true});
+      await dispatch('projects/addTask', {project, task: data}, {root: true});
     }
 
     return data;
@@ -112,8 +112,8 @@ export const actions: (CrudAction<TaskState, Task> & Initializeable<TaskState, T
     }
   },
 
-  async edit ({commit}: ActionContext<TaskState, Task>, {id, name}: Task): Promise<void> {
-    const taskData: Task = await this.$axios.$put<Task>(`/api/tasks/${id}`, {name});
+  async edit ({commit}: ActionContext<TaskState, Task>, {id, name, description}: Task): Promise<void> {
+    const taskData: Task = await this.$axios.$put<Task>(`/api/tasks/${id}`, {name, description});
 
     commit('update', taskData);
   },

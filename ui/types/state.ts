@@ -43,11 +43,6 @@ export interface TaskState {
   tasks: Task[];
 }
 
-export interface StateContext {
-  $vuetify: VuetifyObject;
-  $axios: NuxtAxiosInstance;
-}
-
 export interface CrudAction<T, S> {
   reset: Action<T, S>;
   add: Action<T, S>;

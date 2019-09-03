@@ -5,19 +5,21 @@
         <nuxt />
       </v-container>
     </v-content>
-    <v-footer fixed app>
-      <span v-once>&copy; {{ year }}</span>
-    </v-footer>
+    <Footer />
   </v-app>
 </template>
 
-<script>
-export default {
-  data () {
-    return {
-      year: (new Date()).getFullYear()
-    }
-  }
+<script lang="ts">
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import Footer from '~/components/Footer.vue';
+
+@Component({
+  components: {
+    Footer,
+  },
+})
+export default class LoginLayout extends Vue {
 }
 </script>
 

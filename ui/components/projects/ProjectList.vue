@@ -6,8 +6,6 @@
           <ProjectItem
             :key="project.id"
             :project="project"
-            @update="$emit('refresh')"
-            @remove="$emit('refresh')"
           />
         </v-flex>
       </template>
@@ -15,16 +13,22 @@
   </div>
 </template>
 
-<script>
-import { mapState } from 'vuex'
-import ProjectItem from '~/components/projects/ProjectItem.vue'
+<script lang="ts">
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import { namespace } from 'vuex-class';
+import { BindingHelpers } from 'vuex-class/lib/bindings';
+import ProjectItem from '~/components/projects/ProjectItem.vue';
+import { Project } from '~/types';
 
-export default {
+const store: BindingHelpers = namespace('projects');
+
+@Component({
   components: {
-    ProjectItem
+    ProjectItem,
   },
-  computed: mapState({
-    projects: state => state.projects.projects
-  })
+})
+export default class ProjectList extends Vue {
+  @store.State('projects') public readonly projects!: Project[];
 }
 </script>

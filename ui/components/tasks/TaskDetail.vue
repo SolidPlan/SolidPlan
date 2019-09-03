@@ -46,7 +46,7 @@
           <v-textarea outlined auto-grow :value="description" label="Description" @change="description = $event" />
           <v-subheader>Labels</v-subheader>
           <TaskLabels :task="task" />
-          <div class="mt-5">
+          <div class="mt-5" v-if="task.assigned || task.project">
             <v-subheader>Info</v-subheader>
             <v-card>
               <v-list dense>
@@ -86,7 +86,7 @@
                 Delete Task
               </v-list-item-title>
             </v-list-item>
-            <v-list-item @click="toggleTask">
+            <v-list-item @click="toggle(task)">
               <v-list-item-icon class="mr-3">
                 <v-icon color="green">mdi-checkbox-marked-circle-outline</v-icon>
               </v-list-item-icon>
@@ -102,7 +102,7 @@
                 </v-list-item>
               </template>
               <v-list dense>
-                <v-list-item v-for="user in usersList" :key="user.id" @click="assignTaskToUser(task, user)">
+                <v-list-item v-for="user in usersList" :key="user.id" @click="assignToUser({task, user})">
                   <v-list-item-title :key="user.id">
                     {{ user.firstName }} {{ user.lastName }}
                   </v-list-item-title>
@@ -130,7 +130,7 @@
                 </v-list-item>
               </template>
               <v-list dense>
-                <v-list-item v-for="project in projects" :key="project.id" @click="assignTaskToProject(task, project)">
+                <v-list-item v-for="project in projects" :key="project.id" @click="assignToProject({task, project})">
                   <v-list-item-title :key="project.id">
                     <v-chip
                       x-small
@@ -142,7 +142,7 @@
                 </v-list-item>
                 <span v-if="task.project">
                   <v-divider />
-                  <v-list-item @click="assignTaskToProject(task, null)">
+                  <v-list-item @click="assignToProject({task, project: null})">
                     <v-list-item-title>
                       <v-icon x-small color="red">
                         mdi-close
@@ -172,97 +172,52 @@
   </span>
 </template>
 
-<script>
-import { keyBy } from 'lodash'
-import { mapActions } from 'vuex'
-import TaskLabels from '~/components/labels/TaskLabels.vue'
+<script lang="ts">
+import { Dictionary, keyBy } from 'lodash';
+import { PropType } from 'vue';
+import Component, { mixins } from 'vue-class-component';
+import { Prop } from 'vue-property-decorator';
+import { Action, namespace } from 'vuex-class';
+import { BindingHelpers } from 'vuex-class/lib/bindings';
+import focus from '~/assets/directives/focus';
+import TaskActions from '~/assets/mixins/taskActions';
+import TaskLabels from '~/components/labels/TaskLabels.vue';
+import { Project, Task, User } from '~/types';
 
-export default {
-  directives: {
-    focus (el, { value }, { context }) {
-      if (value) {
-        context.$nextTick(() => {
-          context.$refs.input.focus()
-        })
-      }
-    }
-  },
+const projectStore: BindingHelpers = namespace('projects');
+
+@Component({
   components: {
-    TaskLabels
+    TaskLabels,
   },
-  props: {
-    task: {
-      type: Object,
-      required: true
-    }
+  directives: {
+    focus,
   },
-  data () {
-    return {
-      editTitle: false,
-      itemsPerPageOptions: [4, 8, 12],
-      itemsPerPage: 4,
-      item: {
-        name: 'Frozen Yogurt',
-        calories: 159,
-        fat: 6.0,
-        carbs: 24,
-        protein: 4.0,
-        sodium: 87,
-        calcium: '14%',
-        iron: '1%'
-      }
-    }
-  },
-  computed: {
-    description: {
-      get () {
-        return this.task.description
-      },
-      set (value) {
-        return this.$store.dispatch('tasks/edit', { task: this.task, data: { description: value } })
-      }
-    },
-    projects () {
-      return keyBy(this.$store.state.projects.projects, '@id')
-    },
-    usersList () {
-      return keyBy(this.$store.state.users.users, '@id')
-    }
-  },
-  methods: {
-    ...mapActions(['hideDetailView']),
-    editTask (value) {
-      if (value !== this.task.name) {
-        this.$store.dispatch('tasks/edit', { task: this.task, data: { name: value } })
-      }
-    },
-    doneEdit (e) {
-      const value = e.target.value.trim()
-      if (!value) {
-        // @TODO: Show error message
-      } else if (this.editTitle) {
-        this.editTask(value)
-        this.editTitle = false
-      }
-    },
-    cancelEdit () {
-      this.editTitle = false
-    },
-    removeTask () {
-      this.$store.dispatch('tasks/remove', this.task).then(this.hideDetailView)
-    },
-    toggleTask () {
-      this.$store.dispatch('tasks/toggle', this.task)
-    },
-    removeAssignedUser () {
-      this.$store.dispatch('tasks/removeAssignedUser', this.task)
-    },
-    assignTaskToUser (task, user) {
-      this.$store.dispatch('tasks/assignToUser', { task, user })
-    },
-    assignTaskToProject (task, project) {
-      this.$store.dispatch('tasks/assignToProject', { task, project })
-    }
+})
+export default class TaskDetail extends mixins(TaskActions) {
+  @Prop({type: Object as PropType<Task>, required: true}) public task!: Task;
+
+  @Action('hideDetailView') public hideDetailView!: () => void;
+
+  public get description (): string {
+    return this.task.description;
+  }
+
+  public set description (value: string) {
+      this.edit({id: this.task.id, description: value} as Task);
+  }
+
+  public get projects (): Dictionary<Project> {
+    return keyBy(this.$store.state.projects.projects, '@id');
+  }
+
+  public get usersList (): Dictionary<User> {
+    return keyBy(this.$store.state.users.users, '@id');
+  }
+
+  public async removeTask (): Promise<void> {
+    await this.remove(this.task);
+    this.hideDetailView();
   }
 }
 </script>

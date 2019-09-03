@@ -99,68 +99,53 @@
   </span>
 </template>
 
-<script>
-import colors from 'vuetify/es5/util/colors'
-import { mapState, mapActions } from 'vuex'
-import { chunk, filter, map } from 'lodash'
+<script lang="ts">
+import { mixins } from 'vue-class-component';
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import colors from 'vuetify/src/util/colors';
+import { namespace } from 'vuex-class';
+import { BindingHelpers } from 'vuex-class/lib/bindings';
+import focus from '~/assets/directives/focus';
+import ColorSwatches from '~/assets/mixins/colorSwatches';
+import { Label } from '~/types';
 
-export default {
-  directives: {
-    focus (el, { value }, { context }) {
-      if (value) {
-        context.$nextTick(() => {
-          context.$refs.input.focus()
-        })
-      }
+const store: BindingHelpers = namespace('labels');
+
+@Component({
+  directives: { focus },
+})
+export default class Labels extends mixins(ColorSwatches) {
+  @Prop({ type: Boolean, required: false, default: false }) public readonly value!: boolean;
+
+  public editing: Label | null = null;
+  public name: string | null = null;
+  public color: string = colors.grey.base;
+
+  @store.State('labels') public readonly labels!: Label[];
+
+  @store.Action('add') public addLabel!: (label: Label) => void;
+  @store.Action('edit') public editLabel!: (label: Label) => void;
+  @store.Action('remove') public remove!: (label: Label) => void;
+
+  public save (): void {
+    if (this.editing === null) {
+        this.addLabel({ name: this.name, color: this.color } as Label);
+    } else {
+        this.editLabel({ id: this.editing.id, name: this.name, color: this.color } as Label);
     }
-  },
-  props: {
-    value: {
-      type: Boolean,
-      default: false,
-      required: false
-    }
-  },
-  data () {
-    return {
-      editing: null,
-      name: null,
-      color: colors.grey.base
-    }
-  },
-  computed: {
-    ...mapState({
-      labels: state => state.labels.labels
-    }),
-    swatches () {
-      return chunk(filter(map(colors, 'base').concat([colors.shades.black])), 4)
-    }
-  },
-  methods: {
-    ...mapActions({
-      addLabel: 'labels/add',
-      editLabel: 'labels/edit',
-      remove: 'labels/remove'
-    }),
-    save () {
-      if (this.editing === null) {
-        this.addLabel({ name: this.name, color: this.color })
-      } else {
-        this.editLabel({ id: this.editing.id, name: this.name, color: this.color })
-      }
-      this.reset()
-    },
-    edit (label) {
-      this.name = String(label.name)
-      this.color = String(label.color)
-      this.editing = label
-      this.$vuetify.goTo(0, { container: '#LabelCard' })
-    },
-    reset () {
-      this.name = null
-      this.color = colors.grey.base
-      this.editing = null
-    }
+    this.reset();
+  }
+
+  public edit (label: Label): void {
+    this.name = String(label.name);
+    this.color = String(label.color);
+    this.editing = label;
+    this.$vuetify.goTo(0, { container: '#LabelCard' });
+  }
+  public reset (): void {
+    this.name = null;
+    this.color = colors.grey.base;
+    this.editing = null;
   }
 }
 </script>

@@ -174,76 +174,89 @@
         <nuxt />
       </v-container>
     </v-content>
-    <v-footer fixed app>
-      <span v-once>&copy; {{ title }} {{ year }}</span>
-    </v-footer>
+    <Footer />
   </v-app>
 </template>
 
-<script>
-import { mapActions, mapState } from 'vuex'
-import md5 from 'md5'
-import Labels from '~/components/labels/Labels.vue'
+<script lang="ts">
+import { NuxtApp } from '@nuxt/types/app';
+import md5 from 'md5';
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import { Action, namespace, State } from 'vuex-class';
+import { BindingHelpers } from 'vuex-class/lib/bindings';
+import Footer from '~/components/Footer.vue';
+import Labels from '~/components/labels/Labels.vue';
+import { Label, Project } from '~/types';
+import { DetailComponent } from '~/types/state';
 
-export default {
+const projectsStore: BindingHelpers = namespace('projects');
+const labelsStore: BindingHelpers = namespace('labels');
+
+interface MenuItem {
+  icon: string;
+  title: string;
+  to: string;
+}
+
+@Component({
   components: {
-    Labels
+    Footer,
+    Labels,
   },
-  data () {
-    return {
-      labelsDialog: false,
-      year: (new Date()).getFullYear(),
-      miniVariant: false,
-      menuItems: [
+})
+export default class DefaultLayout extends Vue {
+    @projectsStore.State('projects') public readonly projects!: Project[];
+    @labelsStore.State('labels') public readonly labels!: Label[];
+    @State('detailViewActive') public readonly isDetailViewActive!: boolean;
+    @State('detailViewComponent') public readonly detailViewComponent!: DetailComponent;
+
+    @Action('hideDetailView') public readonly hideDetailView!: () => void;
+    @Action('toggleTheme') public readonly toggleTheme!: (context: NuxtApp) => void;
+
+    public labelsDialog: boolean = false;
+    public miniVariant: boolean = false;
+
+    public get menuItems (): MenuItem[] {
+      return [
         {
           icon: 'mdi-apps',
           title: 'Dashboard',
-          to: '/'
+          to: '/',
         },
         {
           icon: 'mdi-folder-multiple-outline',
           title: 'Projects',
-          to: '/projects'
+          to: '/projects',
         },
         {
           icon: 'mdi-playlist-check',
           title: 'All Tasks',
-          to: '/tasks'
-        }
-      ],
-      title: 'SolidPlan'
+          to: '/tasks',
+        },
+      ];
     }
-  },
 
-  computed: {
-    ...mapState({
-      projects: state => state.projects.projects,
-      labels: state => state.labels.labels
-    }),
-    detailViewActive: {
-      get () {
-        return this.$store.state.detailViewActive
-      },
-      set (value) {
-        if (value === false) {
-          this.hideDetailView()
-        }
+    public get detailViewActive (): boolean {
+      return this.isDetailViewActive;
+    }
+
+    public set detailViewActive (value: boolean) {
+      if (!value) {
+          this.hideDetailView();
       }
-    },
-    ...mapState(['detailViewComponent']),
-    emailHash () {
-      return this.$auth.$state.isLoggedIn ? md5(this.$auth.$state.user.email) : ''
     }
-  },
 
-  methods: {
-    logout () {
-      this.$auth.logout()
-    },
-    switchTheme () {
-      this.$store.dispatch('toggleTheme', this.$nuxt)
-    },
-    ...mapActions(['hideDetailView'])
-  }
+    public get emailHash (): string {
+      return this.$auth.$state.isLoggedIn ? md5(this.$auth.$state.user.email) : '';
+    }
+
+    public logout (): void {
+      this.$auth.logout();
+    }
+
+    public switchTheme (): void {
+      this.toggleTheme(this.$nuxt);
+    }
 }
 </script>

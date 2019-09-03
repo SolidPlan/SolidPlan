@@ -20,26 +20,34 @@
   </span>
 </template>
 
-<script>
-import TaskList from '~/components/tasks/TaskList'
-import CreateTask from '~/components/tasks/CreateTask'
+<script lang="ts">
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import { namespace } from 'vuex-class';
+import { BindingHelpers } from 'vuex-class/lib/bindings';
+import CreateTask from '~/components/tasks/CreateTask.vue';
+import TaskList from '~/components/tasks/TaskList.vue';
+import { Project } from '~/types';
 
-export default {
+const projectStore: BindingHelpers = namespace('projects');
+@Component({
   components: {
+    CreateTask,
     TaskList,
-    CreateTask
   },
-  computed: {
-    project () {
-      return this.$store.getters['projects/getProjectById'](Number(this.$route.params.id))
-    }
-  },
-  methods: {
-    async remove () {
-      await this.$store.dispatch('projects/remove', this.project)
+})
+export default class ProjectId extends Vue {
+    @projectStore.Getter('getProjectById') private readonly getProjectById!: (projectId: number) => Project;
+    @projectStore.Action('remove') private readonly removeProject!: (project: Project) => Promise<void>;
 
-      this.$router.push({ 'name': 'projects' })
+    public get project (): Project {
+      return this.getProjectById(Number(this.$route.params.id));
     }
-  }
+
+    public async remove (): Promise<void> {
+      await this.removeProject(this.project);
+
+      this.$router.push({ 'name': 'projects' });
+    }
 }
 </script>

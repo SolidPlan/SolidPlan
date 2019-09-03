@@ -123,8 +123,8 @@ export default {
               email: this.email,
               password: this.password
             }
-          }).then(() => {
-            this.$store.dispatch('init', this.$nuxt)
+          }).then(async () => {
+            await this.$store.dispatch('init', this.$nuxt)
           })
           .catch((e, c, v, f) => {
             this.error = e.response.data.message
