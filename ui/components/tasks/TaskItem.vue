@@ -56,13 +56,7 @@
                   </v-chip>
                 </template>
 
-                <v-list dense>
-                  <v-list-item v-for="user in usersList" :key="user.id" @click.stop="assignToUser({task, user})">
-                    <v-list-item-title :key="user.id">
-                      {{ user.firstName }} {{ user.lastName }}
-                    </v-list-item-title>
-                  </v-list-item>
-                </v-list>
+                <TaskUser :task="task" />
               </v-menu>
             </div>
           </v-flex>
@@ -96,29 +90,7 @@
                 + Add to project
               </v-chip>
             </template>
-            <v-list dense>
-              <v-list-item v-for="project in projects" :key="project.id" @click="assignToProject({task, project})">
-                <v-list-item-title :key="project.id">
-                  <v-chip
-                    x-small
-                    :color="project.color"
-                    class="project-info"
-                  />
-                  {{ project.name }}
-                </v-list-item-title>
-              </v-list-item>
-              <span v-if="task.project">
-                <v-divider />
-                <v-list-item @click="assignToProject({task, project: null})">
-                  <v-list-item-title>
-                    <v-icon x-small color="red">
-                      mdi-close
-                    </v-icon>
-                    Remove Project
-                  </v-list-item-title>
-                </v-list-item>
-              </span>
-            </v-list>
+            <TaskProject :task="task" />
           </v-menu>
           <v-tooltip bottom>
             <template v-slot:activator="{ on }">
@@ -166,13 +138,17 @@ import { Action, State } from 'vuex-class';
 import focus from '~/assets/directives/focus';
 import TaskActions from '~/assets/mixins/taskActions';
 import TaskLabels from '~/components/labels/TaskLabels.vue';
+import TaskProject from '~/components/projects/TaskProject.vue';
 import TaskDetail from '~/components/tasks/TaskDetail.vue';
+import TaskUser from '~/components/users/TaskUser.vue';
 import { Project, User } from '~/types';
 import { DetailComponent } from '~/types/state';
 
 @Component({
   components: {
     TaskLabels,
+    TaskProject,
+    TaskUser,
   },
   directives: {
     focus,
@@ -229,11 +205,6 @@ export default class TaskItem extends mixins(TaskActions) {
     animation-timing-function: linear;
     animation-iteration-count: 1;
     animation-fill-mode: forwards;
-  }
-
-  .project-info.v-chip {
-    height: 8px !important;
-    padding: 0 4px !important;
   }
 
   .sort-handle {

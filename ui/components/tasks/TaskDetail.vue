@@ -101,24 +101,7 @@
                   <v-list-item-title v-text="task.assigned ? 'Re-Assign Task' : 'Assign Task'" />
                 </v-list-item>
               </template>
-              <v-list dense>
-                <v-list-item v-for="user in usersList" :key="user.id" @click="assignToUser({task, user})">
-                  <v-list-item-title :key="user.id">
-                    {{ user.firstName }} {{ user.lastName }}
-                  </v-list-item-title>
-                </v-list-item>
-                <span v-if="task.assigned">
-                  <v-divider />
-                  <v-list-item @click="removeAssignedUser(task)">
-                    <v-list-item-title>
-                      <v-icon x-small color="red">
-                        mdi-close
-                      </v-icon>
-                      Remove Assigned User
-                    </v-list-item-title>
-                  </v-list-item>
-                </span>
-              </v-list>
+              <TaskUser :task="task" />
             </v-menu>
             <v-menu offset-y full-width>
               <template v-slot:activator="{ on }">
@@ -129,29 +112,7 @@
                   <v-list-item-title v-text="task.project ? 'Move to project' : 'Assign to project'" />
                 </v-list-item>
               </template>
-              <v-list dense>
-                <v-list-item v-for="project in projects" :key="project.id" @click="assignToProject({task, project})">
-                  <v-list-item-title :key="project.id">
-                    <v-chip
-                      x-small
-                      :color="project.color"
-                      class="project-info"
-                    />
-                    {{ project.name }}
-                  </v-list-item-title>
-                </v-list-item>
-                <span v-if="task.project">
-                  <v-divider />
-                  <v-list-item @click="assignToProject({task, project: null})">
-                    <v-list-item-title>
-                      <v-icon x-small color="red">
-                        mdi-close
-                      </v-icon>
-                      Remove from Project
-                    </v-list-item-title>
-                  </v-list-item>
-                </span>
-              </v-list>
+              <TaskProject :task="task" />
             </v-menu>
             <TaskLabels :task="task" :show-labels="false">
               <template v-slot:defaultButton="{ on }">
@@ -182,6 +143,8 @@ import { BindingHelpers } from 'vuex-class/lib/bindings';
 import focus from '~/assets/directives/focus';
 import TaskActions from '~/assets/mixins/taskActions';
 import TaskLabels from '~/components/labels/TaskLabels.vue';
+import TaskProject from '~/components/projects/TaskProject.vue';
+import TaskUser from '~/components/users/TaskUser.vue';
 import { Project, Task, User } from '~/types';
 
 const projectStore: BindingHelpers = namespace('projects');
@@ -189,6 +152,8 @@ const projectStore: BindingHelpers = namespace('projects');
 @Component({
   components: {
     TaskLabels,
+    TaskProject,
+    TaskUser,
   },
   directives: {
     focus,

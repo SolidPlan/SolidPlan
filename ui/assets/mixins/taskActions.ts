@@ -10,7 +10,7 @@ import Component from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
 import { namespace } from 'vuex-class';
 import { BindingHelpers } from 'vuex-class/lib/bindings';
-import { Project, Task, User } from '~/types';
+import { Task, User } from '~/types';
 
 const store: BindingHelpers = namespace('tasks');
 
@@ -22,8 +22,6 @@ export default class TaskActions extends Vue {
   @store.Action('remove') public remove!: (task: Task) => void;
   @store.Action('toggle') public toggle!: (task: Task) => void;
   @store.Action('removeAssignedUser') public removeAssignedUser!: (task: Task) => void;
-  @store.Action('assignToUser') public assignToUser!: ({task, user}: { task: Task; user: User }) => void;
-  @store.Action('assignToProject') public assignToProject!: ({task, project}: { task: Task; project?: Project }) => void;
 
   public editTitle: boolean = false;
 

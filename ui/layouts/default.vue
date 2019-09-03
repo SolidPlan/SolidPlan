@@ -217,6 +217,10 @@ export default class DefaultLayout extends Vue {
     public labelsDialog: boolean = false;
     public miniVariant: boolean = false;
 
+    public get title (): string {
+      return 'SolidPlan';
+    }
+
     public get menuItems (): MenuItem[] {
       return [
         {
