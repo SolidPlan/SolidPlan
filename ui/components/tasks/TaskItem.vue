@@ -1,5 +1,5 @@
 <template>
-  <v-list-item class="task-item" :class="{ 'editing': editTitle }" @click="detailView({component: components.TaskDetail, props: { task }})" :ripple="false">
+  <v-list-item class="task-item" :class="{ 'editing': editTitle }" @click="detailView({component: components.taskDetail, props: { task }})" :ripple="false">
     <v-list-item-action style="flex-direction: unset">
       <v-icon v-show="!disableDrag" class="sort-handle">
         mdi-drag
@@ -139,10 +139,10 @@ import focus from '~/assets/directives/focus';
 import TaskActions from '~/assets/mixins/taskActions';
 import TaskLabels from '~/components/labels/TaskLabels.vue';
 import TaskProject from '~/components/projects/TaskProject.vue';
-import TaskDetail from '~/components/tasks/TaskDetail.vue';
 import TaskUser from '~/components/users/TaskUser.vue';
 import { Project, User } from '~/types';
 import { DetailComponent } from '~/types/state';
+const taskDetail: () => Promise<any> = (): Promise<any> => import('~/components/tasks/TaskDetail.vue');
 
 @Component({
   components: {
@@ -164,7 +164,7 @@ export default class TaskItem extends mixins(TaskActions) {
 
   public strikethrough: boolean = this.task.status === 'closed';
   public color: string = colors.grey.base;
-  public components: {} = { TaskDetail };
+  public components: {} = { taskDetail };
 
   public get done (): boolean {
     return this.task.status === 'closed';
