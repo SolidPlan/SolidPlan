@@ -44,15 +44,15 @@
       <v-list class="pa-0" :dense="filteredTasks.length > 0" elevation="12" two-line>
         <draggable v-model="filteredTasks" v-bind="dragOptions" handle=".sort-handle" v-on="{ sort: trackChanges }">
           <template v-for="task in filteredTasks">
-            <!--<v-divider :key="`${task.id}-divider`" />-->
-            <TaskItem
-              :key="task.id"
-              :task="task"
-              :show-project="showProject"
-              :disable-drag="disableDrag"
-              @update="$emit('refresh')"
-              @remove="$emit('refresh')"
-            />
+            <div>
+              <v-divider />
+              <TaskItem
+                :key="task.id"
+                :task="task"
+                :show-project="showProject"
+                :disable-drag="disableDrag"
+              />
+            </div>
           </template>
         </draggable>
         <template v-if="!filteredTasks.length">
