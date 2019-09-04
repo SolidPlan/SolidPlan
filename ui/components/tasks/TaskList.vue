@@ -33,15 +33,22 @@
         </v-btn>
       </v-btn-toggle>
       <v-spacer />
-      <v-icon
-        :color="showLabels ? 'primary' : null"
-        @click="toggleLabels(!showLabels)"
-      >
-        mdi-label
-      </v-icon>
+
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-icon
+            :color="showLabels ? 'primary' : null"
+            @click="toggleLabels(!showLabels)"
+            v-on="on"
+          >
+            mdi-label
+          </v-icon>
+        </template>
+        <span>Show/Hide labels</span>
+      </v-tooltip>
     </v-card-actions>
-    <v-card-text>
-      <v-list class="pa-0" :dense="filteredTasks.length > 0" elevation="12" two-line>
+    <v-card-text class="pa-0">
+      <v-list class="py-0" :dense="filteredTasks.length > 0" elevation="12" :three-line="showLabels">
         <draggable v-model="filteredTasks" v-bind="dragOptions" handle=".sort-handle" v-on="{ sort: trackChanges }">
           <template v-for="task in filteredTasks">
             <div>

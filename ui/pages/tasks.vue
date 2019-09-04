@@ -1,15 +1,14 @@
 <template>
-  <v-container grid-list-xl>
-    <v-layout justify-center align-center row wrap>
-      <v-flex>
-        <v-card>
+  <v-layout justify-center align-center row wrap class="ma-12">
+    <v-flex>
+      <v-card>
+        <keep-alive>
           <create-task />
-        </v-card>
-
-        <task-list show-project />
-      </v-flex>
-    </v-layout>
-  </v-container>
+        </keep-alive>
+      </v-card>
+      <task-list class="mt-5" show-project />
+    </v-flex>
+  </v-layout>
 </template>
 
 <script lang="ts">

@@ -10,7 +10,7 @@
     >
       <component :is="detailViewComponent.component" v-if="detailViewActive" v-bind="detailViewComponent.props" />
     </v-navigation-drawer>
-    <v-app-bar clipped-left clipped-right fixed app>
+    <v-app-bar clipped-left clipped-right fixed app dark color="grey darken-3">
       <v-toolbar-title v-text="title" />
       <v-spacer />
 
@@ -68,14 +68,30 @@
         </v-card>
       </v-menu>
     </v-app-bar>
-    <v-navigation-drawer :mini-variant="miniVariant" clipped fixed app>
-      <v-list>
+    <v-navigation-drawer
+      :mini-variant="miniVariant"
+      src="/login.jpg"
+      color="grey darken-2"
+      clipped
+      app
+      dark
+      floating
+      persistent
+    >
+      <template v-slot:img="attrs">
+        <v-img
+          v-bind="attrs"
+          gradient="to top, rgba(0, 0, 0, .7), rgba(0, 0, 0, .7)"
+        />
+      </template>
+      <v-list nav>
         <v-list-item
           v-for="(item, i) in menuItems"
           :key="i"
           :to="item.to"
           router
           exact
+          active-class="primary white--text"
         >
           <v-list-item-action>
             <v-icon v-once v-text="item.icon" />
@@ -112,7 +128,6 @@
         <v-divider />
         <v-list-group
           prepend-icon="mdi-label"
-          :value="true"
           no-action
         >
           <template v-slot:activator>
@@ -169,10 +184,10 @@
         </div>
       </template>
     </v-navigation-drawer>
-    <v-content>
-      <v-container>
+    <v-content class="grey lighten-3">
+      <v-fade-transition mode="out-in">
         <nuxt />
-      </v-container>
+      </v-fade-transition>
     </v-content>
     <Footer />
   </v-app>

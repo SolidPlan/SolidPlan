@@ -1,14 +1,14 @@
 <template>
-  <v-container>
-    <v-layout row wrap>
-      <v-flex>
-        <v-card>
+  <v-layout justify-center align-center row wrap class="ma-12">
+    <v-flex>
+      <v-card>
+        <keep-alive>
           <create-project />
-        </v-card>
-        <project-list class="mt-5" />
-      </v-flex>
-    </v-layout>
-  </v-container>
+        </keep-alive>
+      </v-card>
+      <project-list class="mt-5" />
+    </v-flex>
+  </v-layout>
 </template>
 
 <script lang="ts">

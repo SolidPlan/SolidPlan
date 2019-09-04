@@ -1,6 +1,6 @@
 <template>
-  <v-list-item class="task-item" :class="{ 'editing': editTitle }" @click="detailView({component: components.taskDetail, props: { task }})" :ripple="false">
-    <v-list-item-action style="flex-direction: unset">
+  <v-list-item class="task-item" :class="{ 'editing': editTitle }" @click="!editTitle ? detailView({component: components.taskDetail, props: { task }}): ''" :ripple="false">
+    <v-list-item-action style="flex-direction: unset" class="align-self-center">
       <v-icon v-show="!disableDrag" class="sort-handle">
         mdi-drag
       </v-icon>
@@ -15,117 +15,124 @@
         <span>{{ done ? 'Re-open Task' : 'Complete Task' }}</span>
       </v-tooltip>
     </v-list-item-action>
-    <template v-if="!editTitle">
-      <v-list-item-content
-        :class="{ 'primary--text': done }"
-        @dblclick.stop="editTitle = true"
-      >
-        <v-layout :class="{ strikethrough: strikethrough || done }">
-          <v-flex xs10 d-flex v-text="task.name" />
-          <v-flex xs2 class="text-right">
-            <div v-if="task.assigned">
-              {{ `${usersList[task.assigned].firstName} ${usersList[task.assigned].lastName}` }}
+    <v-hover v-slot:default="{ hover }">
+      <template v-if="!editTitle">
+        <v-list-item-content>
+          <v-list-item-title :class="{ 'primary--text': done, 'strikethrough': strikethrough || done }">
 
+            <span class="mr-3">{{ task.name }}</span>
+            <template v-if="hover">
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
-                  <v-icon
-                    color="error"
-                    x-small
-                    @click.stop="removeAssignedUser(task)"
-                    v-on="on"
-                  >
-                    mdi-close
+                  <v-icon v-on="on" @click.stop="editTitle = true">
+                    mdi-pencil
                   </v-icon>
                 </template>
-                <span>Remove Assigned User</span>
+                <span>Edit Task</span>
               </v-tooltip>
-            </div>
-            <div v-else>
-              <v-menu :close-on-content-click="false">
+              <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
-                  <v-chip
-                    pill
-                    x-small
-                    outlined
-                    v-on:click.stop="on.click"
-                  >
-                    <v-icon x-small>
-                      mdi-plus
-                    </v-icon>
-                    Assign to User
-                  </v-chip>
+                  <v-icon color="red lighten-3" @click.stop="remove(task)" v-on="on">mdi-close</v-icon>
                 </template>
+                <span>Remove Task</span>
+              </v-tooltip>
+            </template>
+          </v-list-item-title>
+          <v-list-item-subtitle v-if="showLabels">
+            <TaskLabels :task="task" />
+          </v-list-item-subtitle>
+        </v-list-item-content>
+      </template>
+      <v-text-field
+        v-else
+        ref="input"
+        v-focus="editTitle"
+        clearable
+        color="primary"
+        text
+        hide-details
+        maxlength="1023"
+        solo
+        :value="task.name"
+        @blur.stop="doneEdit"
+        @keyup.enter.stop="doneEdit"
+        @keyup.esc.stop="cancelEdit"
+      >
+        <template v-slot:append>
+          <v-icon color="success" @click="$refs.input.blur()">
+            mdi-check
+          </v-icon>
+        </template>
+      </v-text-field>
+    </v-hover>
 
-                <TaskUser :task="task" />
-              </v-menu>
-            </div>
-          </v-flex>
-        </v-layout>
-        <v-list-item-subtitle v-if="task.description" v-text="task.description" />
-        <v-list-item-subtitle v-if="showLabels">
-          <TaskLabels :task="task" />
-        </v-list-item-subtitle>
-      </v-list-item-content>
-      <v-list-item-action class="task-actions">
-        <v-list-item-action-text>
-          <v-menu v-if="showProject" offset-y>
+    <v-list-item-action class="align-self-center">
+      <div :class="{'pb-2': showProject}">
+        <div v-if="task.assigned">
+          {{ `${usersList[task.assigned].firstName} ${usersList[task.assigned].lastName}` }}
+
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on }">
+              <v-icon
+                color="error"
+                x-small
+                @click.stop="removeAssignedUser(task)"
+                v-on="on"
+              >
+                mdi-close
+              </v-icon>
+            </template>
+            <span>Remove Assigned User</span>
+          </v-tooltip>
+        </div>
+        <div v-else>
+          <v-menu :close-on-content-click="false">
             <template v-slot:activator="{ on }">
               <v-chip
-                v-if="task.project"
-                pill
-                small
-                :color="projects[task.project].color"
-                text-color="white"
-                v-on:click.stop="on.click"
-              >
-                {{ projects[task.project].name }}
-              </v-chip>
-              <v-chip
-                v-else
                 pill
                 x-small
                 outlined
                 v-on:click.stop="on.click"
               >
-                + Add to project
+                <v-icon x-small>
+                  mdi-plus
+                </v-icon>
+                Assign to User
               </v-chip>
             </template>
-            <TaskProject :task="task" />
+
+            <TaskUser :task="task" />
           </v-menu>
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
-              <v-btn
-                color="red lighten-3"
-                text
-                icon
-                x-small
-                @click.stop="remove(task)"
-                v-on="on"
-              >
-                <v-icon>mdi-close</v-icon>
-              </v-btn>
-            </template>
-            <span>Remove Task</span>
-          </v-tooltip>
-        </v-list-item-action-text>
-      </v-list-item-action>
-    </template>
-    <v-text-field
-      v-else
-      ref="input"
-      v-focus="editTitle"
-      clearable
-      color="primary"
-      text
-      flat
-      hide-details
-      maxlength="1023"
-      solo
-      :value="task.name"
-      @blur="doneEdit"
-      @keyup.enter="doneEdit"
-      @keyup.esc="cancelEdit"
-    />
+        </div>
+      </div>
+
+      <div class="pt-2" v-if="showProject">
+        <v-menu offset-y>
+          <template v-slot:activator="{ on }">
+            <v-chip
+              v-if="task.project"
+              pill
+              small
+              :color="projects[task.project].color"
+              text-color="white"
+              v-on:click.stop="on.click"
+            >
+              {{ projects[task.project].name }}
+            </v-chip>
+            <v-chip
+              v-else
+              pill
+              x-small
+              outlined
+              v-on:click.stop="on.click"
+            >
+              + Add to project
+            </v-chip>
+          </template>
+          <TaskProject :task="task" />
+        </v-menu>
+      </div>
+    </v-list-item-action>
   </v-list-item>
 </template>
 
