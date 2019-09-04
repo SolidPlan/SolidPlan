@@ -10,17 +10,9 @@
           </v-toolbar-title>
         </v-toolbar>
         <v-card>
-          <v-form
-            ref="form"
-            v-model="valid"
-            lazy-validation
-          >
-            <v-card-text class="grey lighten-4 pt-4">
-              <v-alert
-                v-if="$auth.$state.redirect"
-                :value="true"
-                type="warning"
-              >
+          <v-form ref="form" v-model="valid" lazy-validation>
+            <v-card-text class="pt-4">
+              <v-alert v-if="$auth.$state.redirect" :value="true" type="warning">
                 You have to login before accessing to <strong>{{ $auth.$state.redirect }}</strong>
               </v-alert>
               <v-alert
@@ -31,57 +23,48 @@
               </v-alert>
               <v-flex>
                 <v-container style="position: relative;top: 13%;" class="text-xs-center">
-                  <v-card>
-                    <v-card-text>
-                      <v-text-field
-                        v-model="email"
-                        type="email"
-                        prepend-icon="mdi-account"
-                        name="email"
-                        label=""
-                        placeholder="Email"
-                        required
-                        value=""
-                        :rules="usernameRules"
-                        @keydown.enter="login"
-                      />
-                      <v-text-field
-                        v-model="password"
-                        prepend-icon="mdi-shield-lock"
-                        name="_password"
-                        label=""
-                        type="password"
-                        placeholder="Password"
-                        required
-                        min="5"
-                        append-icon="mdi-eye"
-                        counter
-                        :rules="passwordRules"
-                        @keydown.enter="login"
-                      />
-                      <v-card-actions>
-                        <v-btn
-                          primary
-                          large
-                          block
-                          :class=" { 'primary' : valid, 'disabled': !valid }"
-                          :disbled="!valid"
-                          @click="login"
-                        >
-                          <v-icon>mdi-shield-lock</v-icon>&nbsp;Login
-                        </v-btn>
-                      </v-card-actions>
-                      <!--<v-card-actions>
-                        <v-icon>mdi-lock-question</v-icon>
-                        <a nuxt="/dashboard">
-                          Forgot Password
-                        </a>
-                      </v-card-actions>-->
-                    </v-card-text>
-                  </v-card>
+
+                  <v-text-field
+                    v-model="email"
+                    type="email"
+                    prepend-icon="mdi-account"
+                    name="email"
+                    label=""
+                    placeholder="Email"
+                    required
+                    value=""
+                    :rules="usernameRules"
+                    @keydown.enter="login"
+                  />
+                  <v-text-field
+                    v-model="password"
+                    prepend-icon="mdi-shield-lock"
+                    name="_password"
+                    label=""
+                    type="password"
+                    placeholder="Password"
+                    required
+                    min="5"
+                    append-icon="mdi-eye"
+                    counter
+                    :rules="passwordRules"
+                    @keydown.enter="login"
+                  />
                 </v-container>
               </v-flex>
             </v-card-text>
+            <v-card-actions>
+              <v-btn
+                primary
+                large
+                block
+                :class=" { 'primary' : valid, 'disabled': !valid }"
+                :disbled="!valid"
+                @click="login"
+              >
+                <v-icon>mdi-shield-lock</v-icon>&nbsp;Login
+              </v-btn>
+            </v-card-actions>
           </v-form>
         </v-card>
       </v-flex>
@@ -90,46 +73,56 @@
   </v-container>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { NuxtApp } from '@nuxt/types/app';
+import { AxiosError } from 'axios';
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import { VuetifyRuleValidations } from 'vuetify/src/mixins/validatable/index';
+import { Action } from 'vuex-class';
+import { User } from '~/types';
+
+@Component({
   layout: 'login',
-  data: () => {
-    return {
-      checkbox: true,
-      valid: false,
-      error: null,
-      email: null,
-      password: null,
-      usernameRules: [
-        value => !!value || 'E-mail is Required.',
-        (value) => {
-          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-          return pattern.test(value) || 'Invalid E-mail.'
-        }
-      ],
-      passwordRules: [
-        value => !!value || 'Password is Required.',
-        value => (value || '').length >= 5 || 'Password is too short.'
-      ]
-    }
-  },
-  methods: {
-    login () {
-      this.error = null
-      if (this.$refs.form.validate()) {
-        return this.$auth
-          .loginWith('local', {
-            data: {
-              email: this.email,
-              password: this.password
-            }
-          }).then(async () => {
-            await this.$store.dispatch('init', this.$nuxt)
-          })
-          .catch((e, c, v, f) => {
-            this.error = e.response.data.message
-          })
-      }
+})
+export default class Login extends Vue {
+  public valid: boolean = false;
+  public error: string | null = null;
+  public email: string | null = null;
+  public password: string | null = null;
+  public usernameRules: VuetifyRuleValidations = [
+    (value: string | null): boolean | string => !!value || 'E-mail is Required.',
+    (value: string | null): boolean | string => {
+      const pattern: RegExp = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+      return pattern.test(value || '') || 'Invalid E-mail.';
+    },
+  ];
+
+  public passwordRules: VuetifyRuleValidations = [
+    (value: string | null): boolean | string => !!value || 'Password is Required.',
+    (value: string | null): boolean | string => (value || '').length >= 5 || 'Password is too short.',
+  ];
+
+  @Action('init') public init!: (context: NuxtApp) => Promise<void>;
+
+  public login (): Promise<void> | void {
+    this.error = null;
+
+    if ((this.$refs.form as HTMLFormElement).validate()) {
+      return this.$auth
+        .loginWith('local', {
+          data: {
+            email: this.email,
+            password: this.password,
+          } as User,
+        })
+        .then(async () => {
+          await this.init(this.$nuxt);
+        })
+        .catch((e: AxiosError) => {
+          this.error = e.response ? e.response.data.message : 'An error occurred';
+        });
     }
   }
 }

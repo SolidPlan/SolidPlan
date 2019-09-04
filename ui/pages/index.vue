@@ -60,7 +60,7 @@
       </v-row>
       <v-row>
         <v-col cols="12">
-          <TaskList :assigned="$auth.user" limit="5" show-project />
+          <TaskList :assigned="$auth.user" :limit="5" show-project />
         </v-col>
       </v-row>
     </v-container>
@@ -100,7 +100,7 @@ export default class Dashboard extends Vue {
   public get assignedTasksCount (): number {
     const user: Partial<User> = this.$auth.user;
 
-    return this.tasks.filter((value: Task): boolean => value.assigned === user['@id']).length;
+    return this.tasks.filter((value: Task): boolean => value.assigned === user['@id'] && value.status === 'open').length;
   }
 }
 </script>

@@ -67,11 +67,13 @@ export default class Profile extends Vue {
 
   public async update (): Promise<void> {
     if ((this.$refs.form as HTMLFormElement).validate()) {
+      const data: {email: string; firstName: string; lastName: string; password?: string} = {email: this.user.email, firstName: this.user.firstName, lastName: this.user.lastName };
+
       if (this.password !== '') {
-        this.user.password = this.password;
+        data.password = this.password;
       }
 
-      await this.$axios.$put(`/api/users/${this.user.id}`, this.user);
+      await this.$axios.$put(`/api/users/${this.user.id}`, data);
       if (this.$auth.$state.user.email !== this.user.email) {
         await this.$auth.logout();
       } else {
