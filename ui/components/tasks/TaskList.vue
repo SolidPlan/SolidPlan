@@ -1,5 +1,5 @@
 <template>
-  <v-card v-show="tasks.length" class="mt-3">
+  <v-card class="mt-3">
     <v-card-actions v-show="tasks.length" class="px-3">
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
@@ -83,7 +83,7 @@ import Draggable, { DragOptions, MoveEvent } from 'vuedraggable';
 import { Action, namespace, State } from 'vuex-class';
 import { BindingHelpers } from 'vuex-class/lib/bindings';
 import TaskItem from '~/components/tasks/TaskItem.vue';
-import { Project, Task } from '~/types';
+import { Filter, Project, Task, User } from '~/types';
 
 const store: BindingHelpers = namespace('tasks');
 
@@ -106,11 +106,13 @@ const filters: FilterList = {
 })
 export default class TaskList extends Vue {
   @Prop({type: Object as PropType<Project>, required: false, default: null}) public readonly project!: Project;
+  @Prop({type: Object as PropType<User>, required: false, default: null}) public readonly assigned!: User;
   @Prop({type: Boolean, required: false, default: false}) public readonly showProject!: boolean;
+  @Prop({type: Number, required: false, default: null}) public readonly limit!: number;
 
   @State('showLabels') public readonly showLabels!: boolean;
 
-  @store.Getter('getTasksByProject') public getTasksByProject!: (project?: Project) => Task[];
+  @store.Getter('getFilteredTasks') public getFilteredTasks!: (filter?: Filter) => Task[];
   @store.Action('sort') public sort!: ({task, order}: {task: Task; order: number}) => void;
   @store.Action('markDone') public markDone!: (task: Task) => void;
 
@@ -124,7 +126,7 @@ export default class TaskList extends Vue {
     return this.visibility === 'all';
   }
 
-  public get filters(): FilterList {
+  public get filters (): FilterList {
     return Object.freeze(filters);
   }
 
@@ -138,7 +140,7 @@ export default class TaskList extends Vue {
   }
 
   public get tasks (): Task[] {
-    return this.getTasksByProject(this.project);
+    return this.getFilteredTasks({project: this.project, assigned: this.assigned, limit: this.limit});
   }
 
   public get filteredTasks (): Task[] {

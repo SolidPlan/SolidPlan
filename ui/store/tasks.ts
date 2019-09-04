@@ -5,10 +5,10 @@
  * @copyright  Copyright (c) 2019
  */
 
-import { filter, findIndex, map, orderBy } from 'lodash';
+import { filter, findIndex, isEmpty, map, orderBy, slice } from 'lodash';
 import Vue from 'vue';
 import { ActionContext, ActionTree, GetterTree, MutationTree } from 'vuex';
-import { Collection, Label, Project, Task, User } from '~/types';
+import { Collection, Filter, Label, Project, Task, User } from '~/types';
 import { CrudAction, Initializeable, TaskState } from '~/types/state';
 
 export const state: () => TaskState = (): TaskState => ({
@@ -79,8 +79,8 @@ export const actions: (CrudAction<TaskState, Task> & Initializeable<TaskState, T
     commit('reset');
   },
 
-  async add ({commit, dispatch}: ActionContext<TaskState, Task>, {project, name}: { project: Project; name: string }): Promise<Task> {
-    const data: Task = await this.$axios.$post<Task>(`/api/tasks`, {name, status: 'open', project: project ? project['@id'] : null});
+  async add ({commit, dispatch}: ActionContext<TaskState, Task>, {project, task}: { project: Project; task: Task }): Promise<Task> {
+    const data: Task = await this.$axios.$post<Task>(`/api/tasks`, {name: task.name, status: 'open', project: project ? project['@id'] : null});
 
     commit('add', data);
 
@@ -160,6 +160,29 @@ export const getters: GetterTree<TaskState, Task> = {
     let tasks: Task[] = taskState.tasks;
     if (project) {
       tasks = filter<Task>(taskState.tasks, {'project': project['@id']});
+    }
+
+    return orderBy<Task>(tasks, 'order');
+  },
+
+  getFilteredTasks: (taskState: TaskState): (filters: Filter) => Task[] => (filters: Filter): Task[] => {
+    let tasks: Task[] = taskState.tasks;
+    const predicate: {project?: string; assigned?: string} = {};
+
+    if (filters.project) {
+      predicate.project = filters.project['@id'];
+    }
+
+    if (filters.assigned) {
+      predicate.assigned = filters.assigned['@id'];
+    }
+
+    if (!isEmpty(predicate)) {
+      tasks = filter<Task>(taskState.tasks, predicate);
+    }
+
+    if (filters.limit) {
+      tasks = slice<Task>(tasks, 0, filters.limit);
     }
 
     return orderBy<Task>(tasks, 'order');

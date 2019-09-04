@@ -40,11 +40,11 @@ export default class CreateTask extends Vue {
 
   public name: string | null = null;
 
-  @store.Action('add') public addTask!: (task: Task) => void;
+  @store.Action('add') public addTask!: ({task, project}: {task: Task; project?: Project | null}) => void;
 
   public async add (): Promise<void> {
     if (this.name) {
-      await this.addTask({name: this.name} as Task);
+      await this.addTask({task: {name: this.name} as Task, project: this.project});
       this.name = null;
     }
   }

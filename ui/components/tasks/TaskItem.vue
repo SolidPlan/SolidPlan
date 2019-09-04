@@ -66,8 +66,8 @@
       </v-text-field>
     </v-hover>
 
-    <v-list-item-action class="align-self-center">
-      <div :class="{'pb-2': showProject}">
+    <v-list-item-action class="align-self-center flex-row">
+      <div :class="{'mr-2': showProject}">
         <div v-if="task.assigned">
           {{ `${usersList[task.assigned].firstName} ${usersList[task.assigned].lastName}` }}
 
@@ -106,7 +106,7 @@
         </div>
       </div>
 
-      <div class="pt-2" v-if="showProject">
+      <div v-if="showProject">
         <v-menu offset-y>
           <template v-slot:activator="{ on }">
             <v-chip

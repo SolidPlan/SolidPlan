@@ -184,7 +184,7 @@
         </div>
       </template>
     </v-navigation-drawer>
-    <v-content class="grey lighten-3">
+    <v-content :class="{'grey lighten-3': !theme}">
       <v-fade-transition mode="out-in">
         <nuxt />
       </v-fade-transition>
@@ -225,6 +225,7 @@ export default class DefaultLayout extends Vue {
     @labelsStore.State('labels') public readonly labels!: Label[];
     @State('detailViewActive') public readonly isDetailViewActive!: boolean;
     @State('detailViewComponent') public readonly detailViewComponent!: DetailComponent;
+    @State('theme') public readonly theme!: boolean;
 
     @Action('hideDetailView') public readonly hideDetailView!: () => void;
     @Action('toggleTheme') public readonly toggleTheme!: (context: NuxtApp) => void;
