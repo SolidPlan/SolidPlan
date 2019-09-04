@@ -45,10 +45,14 @@ class UserPasswordNormalizer implements NormalizerInterface, DenormalizerInterfa
    */
   public function denormalize($data, $class, $format = null, array $context = [])
   {
+    $hashPassword = false;
+    if (\is_array($data) && isset($data['password'])) {
+      $hashPassword = true;
+    }
     $data = $this->normalizer->denormalize($data, $class, $format, $context);
 
-    if ($data instanceof User) {
-      $data->setPassword($this->passwordEncoder->encodePassword($data, $data->getPassword()));
+    if ($data instanceof User && $hashPassword) {
+        $data->setPassword($this->passwordEncoder->encodePassword($data, $data->getPassword()));
     }
 
     return $data;
