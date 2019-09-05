@@ -19,6 +19,7 @@ use Doctrine\ORM\Mapping as ORM;
  *        "access_control"="is_granted('IS_AUTHENTICATED_FULLY')",
  *       }
  *     },
+ *   attributes={"order"={"order": "ASC"}}
  * )
  * @ORM\Entity(repositoryClass="App\Repository\TaskRepository")
  */

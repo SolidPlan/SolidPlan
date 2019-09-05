@@ -5,7 +5,7 @@
  * @copyright  Copyright (c) 2019
  */
 
-import { filter, findIndex, isEmpty, map, orderBy, slice } from 'lodash';
+import { filter, findIndex, isEmpty, map, slice } from 'lodash';
 import Vue from 'vue';
 import { ActionContext, ActionTree, GetterTree, MutationTree } from 'vuex';
 import { Collection, Filter, Label, Project, Task, User } from '~/types';
@@ -162,12 +162,12 @@ export const getters: GetterTree<TaskState, Task> = {
       tasks = filter<Task>(taskState.tasks, {'project': project['@id']});
     }
 
-    return orderBy<Task>(tasks, 'order');
+    return tasks;
   },
 
   getFilteredTasks: (taskState: TaskState): (filters: Filter) => Task[] => (filters: Filter): Task[] => {
     let tasks: Task[] = taskState.tasks;
-    const predicate: {project?: string; assigned?: string} = {};
+    const predicate: {project?: string; assigned?: string; limit?: number} = {};
 
     if (filters.project) {
       predicate.project = filters.project['@id'];
@@ -185,6 +185,6 @@ export const getters: GetterTree<TaskState, Task> = {
       tasks = slice<Task>(tasks, 0, filters.limit);
     }
 
-    return orderBy<Task>(tasks, 'order');
+    return tasks;
   },
 };
