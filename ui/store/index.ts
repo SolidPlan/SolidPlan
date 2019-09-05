@@ -12,6 +12,7 @@ import { DetailComponent, RootState } from '~/types/state';
 export const state: () => RootState = (): RootState => ({
   detailViewActive: false,
   detailViewComponent: {} as DetailComponent,
+  labelsDialog: false,
   showLabels: Boolean(JSON.parse(localStorage.getItem('showLabels') || 'true')),
   theme: Boolean(JSON.parse(localStorage.getItem('theme') || 'false')),
 });
@@ -22,6 +23,9 @@ export const mutations: MutationTree<RootState> = {
   },
   toggleTheme (rootState: RootState, value: boolean): void {
     rootState.theme = value;
+  },
+  toggleLabelsDialog (rootState: RootState, value: boolean): void {
+    rootState.labelsDialog = value;
   },
   showDetailView (rootState: RootState, component: DetailComponent): void {
     rootState.detailViewActive = true;
@@ -58,6 +62,10 @@ export const actions: ActionTree<RootState, {}> = {
   async toggleLabels ({commit, state: rootState}: ActionContext<RootState, {}>): Promise<void> {
     await localStorage.setItem('showLabels', JSON.stringify(!rootState.showLabels));
     commit('toggleLabels', !rootState.showLabels);
+  },
+
+  toggleLabelsDialog ({commit, state: rootState}: ActionContext<RootState, {}>): void {
+    commit('toggleLabelsDialog', !rootState.labelsDialog);
   },
 
   async toggleTheme ({commit, state: rootState}: ActionContext<RootState, {}>, context: NuxtApp): Promise<void> {

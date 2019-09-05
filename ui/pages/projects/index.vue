@@ -3,10 +3,10 @@
     <v-flex>
       <v-card>
         <keep-alive>
-          <create-project />
+          <CreateProject />
         </keep-alive>
       </v-card>
-      <project-list class="mt-5" />
+      <ProjectList class="mt-5" />
     </v-flex>
   </v-layout>
 </template>

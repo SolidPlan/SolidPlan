@@ -1,11 +1,10 @@
 <template>
   <span>
     <v-dialog
-      v-model="value"
+      :value="labelsDialog"
       max-width="600px"
       persistent
       scrollable
-      @input="$emit('input', $event.target.value)"
     >
       <v-card>
         <v-card-title>Edit Labels</v-card-title>
@@ -92,7 +91,7 @@
         <v-divider />
         <v-card-actions>
           <v-spacer />
-          <v-btn color="blue darken-1" text @click="$emit('input', false)">Close</v-btn>
+          <v-btn color="blue darken-1" text @click="toggleLabelsDialog">Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -100,10 +99,9 @@
 </template>
 
 <script lang="ts">
-import { mixins } from 'vue-class-component';
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import Component, { mixins } from 'vue-class-component';
 import colors from 'vuetify/src/util/colors';
-import { namespace } from 'vuex-class';
+import { Action, namespace, State } from 'vuex-class';
 import { BindingHelpers } from 'vuex-class/lib/bindings';
 import focus from '~/assets/directives/focus';
 import ColorSwatches from '~/assets/mixins/colorSwatches';
@@ -115,7 +113,7 @@ const store: BindingHelpers = namespace('labels');
   directives: { focus },
 })
 export default class Labels extends mixins(ColorSwatches) {
-  @Prop({ type: Boolean, required: false, default: false }) public readonly value!: boolean;
+  @State('labelsDialog') public readonly labelsDialog!: boolean;
 
   public editing: Label | null = null;
   public name: string | null = null;
@@ -123,6 +121,7 @@ export default class Labels extends mixins(ColorSwatches) {
 
   @store.State('labels') public readonly labels!: Label[];
 
+  @Action('toggleLabelsDialog') public readonly toggleLabelsDialog!: () => void;
   @store.Action('add') public addLabel!: (label: Label) => void;
   @store.Action('edit') public editLabel!: (label: Label) => void;
   @store.Action('remove') public remove!: (label: Label) => void;

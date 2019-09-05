@@ -5,9 +5,7 @@
  * @copyright  Copyright (c) 2019
  */
 
-import { NuxtAxiosInstance } from '@nuxtjs/axios';
 import { Component, DefaultProps } from 'vue/types/options';
-import { VuetifyObject } from 'vuetify/types';
 import { Action } from 'vuex';
 import { Label, Project, Task, User } from './index';
 
@@ -21,6 +19,7 @@ export interface RootState {
   theme: boolean;
   detailViewActive: boolean;
   detailViewComponent: DetailComponent;
+  labelsDialog: boolean;
   labels?: LabelState;
   projects?: ProjectState;
   tasks?: TaskState;

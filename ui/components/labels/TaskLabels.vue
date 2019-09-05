@@ -63,16 +63,16 @@
               </v-flex>
             </v-row>
           </v-container>
-          <v-divider />
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-title>
-                <v-icon>mdi-plus</v-icon>
-                Add Label
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
         </v-list-item-group>
+        <v-divider />
+        <v-list-item @click="toggleLabelsDialog">
+          <v-list-item-content>
+            <v-list-item-title>
+              <v-icon>mdi-plus</v-icon>
+              Add Label
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
     </v-menu>
   </span>
@@ -82,29 +82,33 @@
 import { Dictionary, filter, includes, keyBy, keys, map, pickBy } from 'lodash';
 import Vue, { PropType } from 'vue';
 import { Component, Prop } from 'vue-property-decorator';
-import { namespace } from 'vuex-class';
+import { Action, namespace } from 'vuex-class';
 import { BindingHelpers } from 'vuex-class/lib/bindings';
 import { Label, Task } from '~/types';
 
 const store: BindingHelpers = namespace('labels');
+const taskStore: BindingHelpers = namespace('tasks');
 
 @Component({})
 export default class TaskLabels extends Vue {
   @Prop({type: Object as PropType<Task>, required: true}) public readonly task!: Task;
   @Prop({type: Boolean, required: false, default: true}) public readonly showLabels!: boolean;
 
-  @store.State('labels') public readonly labels!: Label[];
+  @Action('toggleLabelsDialog') public readonly toggleLabelsDialog!: () => void;
 
-  public get  labelList (): Dictionary<string> {
-    return keyBy<string>(this.$store.state.labels.labels, '@id');
+  @store.State('labels') public readonly labels!: Label[];
+  @taskStore.Action('setLabels') public readonly setLabels!: ({task, labels}: {task: Task; labels: Label[]}) => Promise<void>;
+
+  public get  labelList (): Dictionary<Label> {
+    return keyBy<Label>(this.labels, '@id');
   }
 
   public get selectedLabels (): number[] {
-    return map(keys(pickBy(this.$store.state.labels.labels, (v: Label) => includes(this.task.labels, v['@id']))), Number);
+    return map(keys(pickBy(this.labels, (v: Label) => includes(this.task.labels, v['@id']))), Number);
   }
 
   public set selectedLabels (value: number[]) {
-    this.$store.dispatch('tasks/setLabels', { task: this.task, labels: filter(this.labels, (_: Label, k: number) => includes(value, k)) });
+    this.setLabels({ task: this.task, labels: filter(this.labels, (_: Label, k: number) => includes(value, k)) });
   }
 }
 </script>

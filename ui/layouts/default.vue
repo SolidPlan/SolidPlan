@@ -146,10 +146,7 @@
             </v-list-item-title>
           </v-list-item>
 
-          <v-list-item
-            link
-            @click="labelsDialog = true"
-          >
+          <v-list-item link @click="toggleLabelsDialog">
             <v-list-item-title>
               <v-icon>
                 mdi-plus
@@ -157,7 +154,7 @@
               Edit Labels
             </v-list-item-title>
           </v-list-item>
-          <labels v-model="labelsDialog" />
+          <Labels />
         </v-list-group>
         <v-divider />
         <v-list-item @click="logout">
@@ -229,8 +226,8 @@ export default class DefaultLayout extends Vue {
 
     @Action('hideDetailView') public readonly hideDetailView!: () => void;
     @Action('toggleTheme') public readonly toggleTheme!: (context: NuxtApp) => void;
+    @Action('toggleLabelsDialog') public readonly toggleLabelsDialog!: () => void;
 
-    public labelsDialog: boolean = false;
     public miniVariant: boolean = false;
 
     public get title (): string {
