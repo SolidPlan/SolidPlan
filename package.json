@@ -26,6 +26,7 @@
     "vue-property-decorator": "^8.2.2",
     "vuedraggable": "^2.23.0",
     "vuetify": "^2.0.11",
+    "vuetify-dialog": "^1.0.0-alpha.4",
     "vuex": "^3.1.1",
     "vuex-class": "^0.3.2"
   },

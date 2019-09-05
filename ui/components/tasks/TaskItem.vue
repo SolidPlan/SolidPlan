@@ -19,7 +19,6 @@
       <template v-if="!editTitle">
         <v-list-item-content>
           <v-list-item-title :class="{ 'primary--text': done, 'strikethrough': strikethrough || done }">
-
             <span class="mr-3">{{ task.name }}</span>
             <template v-if="hover">
               <v-tooltip bottom>
@@ -32,7 +31,7 @@
               </v-tooltip>
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
-                  <v-icon color="red lighten-3" @click.stop="remove(task)" v-on="on">mdi-close</v-icon>
+                  <v-icon color="red lighten-3" @click.stop="removeTask" v-on="on">mdi-close</v-icon>
                 </template>
                 <span>Remove Task</span>
               </v-tooltip>

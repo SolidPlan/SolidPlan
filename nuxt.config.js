@@ -1,6 +1,6 @@
 import colors from 'vuetify/es5/util/colors'
 
-const isDev = process.env.NODE_ENV !== "production"
+const isDev = process.env.NODE_ENV !== "production";
 
 export default {
   mode: 'spa',
@@ -55,6 +55,7 @@ export default {
     '@nuxtjs/auth',
     '@nuxtjs/axios',
     '@nuxtjs/pwa',
+    'vuetify-dialog/nuxt',
   ],
   /*
   ** Axios module configuration

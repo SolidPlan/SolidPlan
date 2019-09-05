@@ -176,11 +176,6 @@ export default class TaskDetail extends mixins(TaskActions) {
   public get usersList (): Dictionary<User> {
     return keyBy(this.$store.state.users.users, '@id');
   }
-
-  public async removeTask (): Promise<void> {
-    await this.remove(this.task);
-    this.hideDetailView();
-  }
 }
 </script>
 

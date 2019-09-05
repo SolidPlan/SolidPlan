@@ -78,7 +78,9 @@ export const actions: ActionTree<RootState, {}> = {
     commit('showDetailView', context);
   },
 
-  hideDetailView ({commit}: ActionContext<RootState, {}>): void {
-    commit('hideDetailView');
+  hideDetailView ({commit, state: rootState}: ActionContext<RootState, {}>): void {
+    if (rootState.detailViewActive) {
+      commit('hideDetailView');
+    }
   },
 };

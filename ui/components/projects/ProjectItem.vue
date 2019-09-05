@@ -12,7 +12,7 @@
             text
             icon
             small
-            @click="remove(project)"
+            @click="removeProject"
             v-on="on"
           >
             <v-icon>mdi-close</v-icon>
@@ -38,6 +38,17 @@ export default class ProjectItem extends Vue {
   @Prop({type: Object as PropType<Project>, required: true}) public project!: Project;
 
   @store.Action('remove') public remove!: (project: Project) => void;
+
+  public async removeProject (): Promise<void> {
+    const result: boolean = await this.$dialog.confirm({
+      text: 'Are you sure you want to delete this project?',
+      title: 'Warning',
+    });
+
+    if (result) {
+      await this.remove(this.project);
+    }
+  }
 }
 </script>
 

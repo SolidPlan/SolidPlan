@@ -8,22 +8,23 @@
 import Vue, { PropType } from 'vue';
 import Component from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
-import { namespace } from 'vuex-class';
+import { Action, namespace } from 'vuex-class';
 import { BindingHelpers } from 'vuex-class/lib/bindings';
-import { Task, User } from '~/types';
+import { Task } from '~/types';
 
 const store: BindingHelpers = namespace('tasks');
 
 @Component({})
 export default class TaskActions extends Vue {
+  public editTitle: boolean = false;
+
   @Prop({type: Object as PropType<Task>, required: true}) public readonly task!: Task;
+  @Action('hideDetailView') public hideDetailView!: () => void;
 
   @store.Action('edit') public edit!: (task: Task) => void;
-  @store.Action('remove') public remove!: (task: Task) => void;
   @store.Action('toggle') public toggle!: (task: Task) => void;
   @store.Action('removeAssignedUser') public removeAssignedUser!: (task: Task) => void;
-
-  public editTitle: boolean = false;
+  @store.Action('remove') private remove!: (task: Task) => void;
 
   public async editTask (value: string): Promise<void> {
     if (value !== this.task.name) {
@@ -48,5 +49,17 @@ export default class TaskActions extends Vue {
 
   public cancelEdit (): void {
     this.editTitle = false;
+  }
+
+  public async removeTask (): Promise<void> {
+    const result: boolean = await this.$dialog.confirm({
+      text: 'Are you sure you want to delete this task?',
+      title: 'Warning',
+    });
+
+    if (result) {
+      await this.remove(this.task);
+      this.hideDetailView();
+    }
   }
 }

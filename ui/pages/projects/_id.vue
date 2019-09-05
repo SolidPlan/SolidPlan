@@ -1,6 +1,6 @@
 <template>
   <v-layout justify-center align-center row wrap class="ma-12">
-    <v-flex>
+    <v-flex v-if="project">
       <v-toolbar class="mb-3 white--text" :color="project.color" v-if="!editing">
         <v-toolbar-title>
           <template>
@@ -142,9 +142,16 @@ export default class ProjectId extends mixins(ColorSwatches) {
     }
 
     public async remove (): Promise<void> {
-      await this.removeProject(this.project);
+      const result: boolean = await this.$dialog.confirm({
+        text: 'Are you sure you want to delete this project?',
+        title: 'Warning',
+      });
 
-      this.$router.push({ 'name': 'projects' });
+      if (result) {
+        await this.removeProject(this.project);
+
+        this.$router.push({'name': 'projects'});
+      }
     }
 }
 </script>
