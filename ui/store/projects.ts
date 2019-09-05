@@ -28,6 +28,11 @@ export const mutations: MutationTree<ProjectState> = {
     projectState.projects.push(project);
   },
 
+  update (projectState: ProjectState, project: Project): void {
+    const index: number = findIndex(projectState.projects, {id: project.id});
+    Vue.set(projectState.projects, index, project);
+  },
+
   addTask (projectState: ProjectState, {project, task}: { project: Project; task: Task }): void {
     project.tasks.push(task['@id']);
   },
@@ -64,6 +69,12 @@ export const actions: (CrudAction<ProjectState, Project> & Initializeable<Projec
     commit('add', data);
 
     return data;
+  },
+
+  async edit ({commit}: ActionContext<ProjectState, Project>, {id, name, color}: Project): Promise<void> {
+    const projectData: Task = await this.$axios.$put<Task>(`/api/projects/${id}`, {name, color});
+
+    commit('update', projectData);
   },
 
   addTask ({dispatch, commit}: ActionContext<ProjectState, Project>, task: Task): void {
