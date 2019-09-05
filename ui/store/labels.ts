@@ -6,10 +6,10 @@
  */
 
 import { NuxtApp } from '@nuxt/types/app';
-import { findIndex } from 'lodash';
+import { find, findIndex, forEach } from 'lodash';
 import Vue from 'vue';
 import { ActionContext, MutationTree } from 'vuex';
-import { Collection, Label } from '~/types';
+import { Collection, Label, Project, Task } from '~/types';
 import { CrudAction, Initializeable, LabelState } from '~/types/state';
 
 export const state: () => LabelState = (): LabelState => ({
@@ -36,6 +36,18 @@ export const mutations: MutationTree<LabelState> = {
   update (labelState: LabelState, label: Label): void {
     const index: number = findIndex(labelState.labels, {id: label.id});
     Vue.set(labelState.labels, index, label);
+  },
+
+  addTask (labelState: LabelState, {task, label}: {task: Task; label: Label}): void {
+    label.tasks.push(task['@id']);
+  },
+
+  removeTask (labelState: LabelState, {task, label}: {task: Task; label: string}): void {
+    const l: Label | undefined = find(labelState.labels, {'@id': label});
+
+    if (l) {
+      l.tasks.splice(findIndex(l.tasks, task['@id']), 1);
+    }
   },
 };
 
@@ -69,6 +81,8 @@ export const actions: CrudAction<LabelState, Label> & Initializeable<LabelState,
 
   async remove ({commit, dispatch}: ActionContext<LabelState, Label>, label: Label): Promise<void> {
     await this.$axios.$delete(`/api/labels/${label.id}`);
+
+    await forEach<string>(label.tasks, async (task: string) => await commit('tasks/removeLabel', {taskId: task, label}, {root: true}));
 
     commit('remove', label);
   },

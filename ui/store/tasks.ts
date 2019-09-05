@@ -5,7 +5,7 @@
  * @copyright  Copyright (c) 2019
  */
 
-import { filter, findIndex, isEmpty, map, slice } from 'lodash';
+import { difference, filter, find, findIndex, forEach, indexOf, isEmpty, map, slice } from 'lodash';
 import Vue from 'vue';
 import { ActionContext, ActionTree, GetterTree, MutationTree } from 'vuex';
 import { Collection, Filter, Label, Project, Task, User } from '~/types';
@@ -60,6 +60,15 @@ export const mutations: MutationTree<TaskState> = {
   update (taskState: TaskState, task: Task): void {
     const index: number = findIndex(taskState.tasks, {id: task.id});
     Vue.set(taskState.tasks, index, task);
+  },
+
+  removeLabel (taskState: TaskState, {taskId, label}: {taskId: string; label: Label}): void {
+    const task: Task | undefined = find(taskState.tasks, {'@id': taskId});
+
+    if (task) {
+      const index: number = findIndex(task.labels, label['@id']);
+      task.labels.splice(index, 1);
+    }
   },
 
   updateOrder (taskState: TaskState, {task, order}: { task: Task; order: number }): void {
@@ -142,9 +151,23 @@ export const actions: (CrudAction<TaskState, Task> & Initializeable<TaskState, T
   },
 
   async setLabels ({commit}: ActionContext<TaskState, Task>, {task, labels}: { task: Task; labels: Label[] }): Promise<void> {
+    const originalLabels: string[] = task.labels;
+
     await this.$axios.$put<Task>(`/api/tasks/${task.id}`, {labels: map<Label>(labels, '@id')});
 
     commit('setLabels', {task, labels});
+
+    forEach(labels, (label: Label) => {
+      if (indexOf(label.tasks, task['@id']) === -1) {
+        commit('labels/addTask', {task, label}, {root: true});
+      }
+    });
+
+    const removedLabels: string[] = difference(originalLabels, task.labels);
+
+    forEach(removedLabels, (label: string) => {
+      commit('labels/removeTask', {task, label}, {root: true});
+    });
   },
 
   async sort ({commit, dispatch}: ActionContext<TaskState, Task>, {task, order}: { task: Task; order: number }): Promise<void> {
