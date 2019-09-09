@@ -54,7 +54,7 @@
 <script lang="ts">
 import { mixins } from 'vue-class-component';
 import { Component } from 'vue-property-decorator';
-import colors from 'vuetify/src/util/colors';
+import colors from 'vuetify/lib/util/colors';
 import { namespace } from 'vuex-class';
 import { BindingHelpers } from 'vuex-class/lib/bindings';
 import ColorSwatches from '~/assets/mixins/colorSwatches';

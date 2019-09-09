@@ -100,7 +100,7 @@
 
 <script lang="ts">
 import Component, { mixins } from 'vue-class-component';
-import colors from 'vuetify/src/util/colors';
+import colors from 'vuetify/lib/util/colors';
 import { Action, namespace, State } from 'vuex-class';
 import { BindingHelpers } from 'vuex-class/lib/bindings';
 import focus from '~/assets/directives/focus';

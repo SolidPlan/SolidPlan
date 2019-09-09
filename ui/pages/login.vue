@@ -78,9 +78,10 @@ import { NuxtApp } from '@nuxt/types/app';
 import { AxiosError } from 'axios';
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { VuetifyRuleValidations } from 'vuetify/src/mixins/validatable/index';
 import { Action } from 'vuex-class';
 import { User } from '~/types';
+
+type validator = (value: any) => string | boolean;
 
 @Component({
   layout: 'login',
@@ -90,7 +91,7 @@ export default class Login extends Vue {
   public error: string | null = null;
   public email: string | null = null;
   public password: string | null = null;
-  public usernameRules: VuetifyRuleValidations = [
+  public usernameRules: validator[] = [
     (value: string | null): boolean | string => !!value || 'E-mail is Required.',
     (value: string | null): boolean | string => {
       const pattern: RegExp = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -99,7 +100,7 @@ export default class Login extends Vue {
     },
   ];
 
-  public passwordRules: VuetifyRuleValidations = [
+  public passwordRules: validator[] = [
     (value: string | null): boolean | string => !!value || 'Password is Required.',
     (value: string | null): boolean | string => (value || '').length >= 5 || 'Password is too short.',
   ];

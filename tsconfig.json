@@ -26,7 +26,10 @@
     "types": [
       "@types/node",
       "@nuxt/types",
-      "./ui/types/types.d.ts"
+      "@nuxtjs/axios",
+      "@nuxtjs/vuetify",
+      "vuetify-dialog",
+      "./ui/types/types/*.d.ts"
     ],
     "plugins": [
       {

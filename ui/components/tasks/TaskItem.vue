@@ -139,7 +139,7 @@
 import { Dictionary, keyBy } from 'lodash';
 import { mixins } from 'vue-class-component';
 import { Component, Prop } from 'vue-property-decorator';
-import colors from 'vuetify/src/util/colors';
+import colors from 'vuetify/lib/util/colors';
 import { Action, State } from 'vuex-class';
 import focus from '~/assets/directives/focus';
 import TaskActions from '~/assets/mixins/taskActions';

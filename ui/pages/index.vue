@@ -68,21 +68,18 @@
 </template>
 
 <script lang="ts">
+import { NuxtApp } from '@nuxt/types/app';
+import Component from 'nuxt-class-component';
 import Vue from 'vue';
-import Component from 'vue-class-component';
 import { namespace } from 'vuex-class';
 import { BindingHelpers } from 'vuex-class/lib/bindings';
 import StatsCard from "~/components/material/StatsCard.vue";
 import TaskList from "~/components/tasks/TaskList.vue";
 import { Project } from '~/types';
-import { NuxtApp } from '@nuxt/types/app';
 
 const projectStore: BindingHelpers = namespace('projects');
 
 @Component({
-  async asyncData ({ $axios }: NuxtApp): Promise<{open: number; closed: number; assigned: number}> {
-    return await $axios.$get('/api/tasks/stats');
-  },
   components: {
     StatsCard,
     TaskList,
@@ -90,5 +87,9 @@ const projectStore: BindingHelpers = namespace('projects');
 })
 export default class Dashboard extends Vue {
   @projectStore.State('projects') public readonly projects!: Project[];
+
+  public async asyncData ({ $axios }: NuxtApp): Promise<{open: number; closed: number; assigned: number}> {
+    return await $axios.$get('/api/tasks/stats');
+  }
 }
 </script>
