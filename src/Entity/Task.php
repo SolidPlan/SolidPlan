@@ -2,7 +2,10 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -10,17 +13,32 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ApiResource(
  *   itemOperations={
- *     "get", "put", "delete",
+ *     "get",
+ *     "put",
+ *     "delete",
  *     "sort"={
  *        "method"="PUT",
  *        "path"="/tasks/{id}/sort.{_format}",
  *        "controller"="App\Action\Api\Tasks\Sort",
  *        "swagger_context"={"summary"="Sorts a task"},
  *        "access_control"="is_granted('IS_AUTHENTICATED_FULLY')",
- *       }
+ *       },
  *     },
+ *   collectionOperations={
+ *     "get", "post",
+ *     "stats"={
+ *       "method"="GET",
+ *       "path"="/tasks/stats.{_format}",
+ *       "controller"="App\Action\Api\Tasks\Stats",
+ *       "swagger_context"={"summary"="Get stats for tasks"},
+ *       "access_control"="is_granted('IS_AUTHENTICATED_FULLY')",
+ *       "read"=false
+ *     }
+ *   },
  *   attributes={"order"={"order": "ASC"}}
  * )
+ * @ApiFilter(SearchFilter::class, properties={"project.id": "exact", "assigned.id": "exact", "status": "exact"})
+ * @ApiFilter(OrderFilter::class, properties={"status"}, arguments={"orderParameterName"="order"})
  * @ORM\Entity(repositoryClass="App\Repository\TaskRepository")
  */
 class Task

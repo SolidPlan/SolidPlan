@@ -43,10 +43,14 @@ export interface User extends Entity {
 
 export interface Collection<T> {
   'hydra:member': T[];
+  'hydra:totalItems': number;
 }
 
 export interface Filter {
-  project?: Project;
-  assigned?: User;
+  'project.id'?: number;
+  'assigned.id'?: number;
   limit?: number;
+  page?: number;
+  status?: string;
+  'order[status]'?: string;
 }

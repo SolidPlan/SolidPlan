@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Task;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -61,5 +62,36 @@ class TaskRepository extends ServiceEntityRepository
       ->select('MAX(t.order)')
       ->getQuery()
       ->getSingleScalarResult();
+  }
+
+  public function getTotalTasksByStatus(string $status): int
+  {
+    return $this->createQueryBuilder('t')
+      ->select('COUNT(t)')
+      ->where('t.status = :status')
+      ->setParameter('status', $status)
+      ->getQuery()
+      ->getSingleScalarResult();
+  }
+
+  public function getTotalTasksAssignedToUser(User $user): int
+  {
+    return $this->createQueryBuilder('t')
+      ->select('COUNT(t)')
+      ->where('t.status = :status')
+      ->andWhere('t.assigned = :user')
+      ->setParameter('status', 'open')
+      ->setParameter('user', $user)
+      ->getQuery()
+      ->getSingleScalarResult();
+  }
+
+  public function getTaskStats(?User $user)
+  {
+    return [
+      'open' => $this->getTotalTasksByStatus('open'),
+      'closed' => $this->getTotalTasksByStatus('closed'),
+      'assigned' => $user ? $this->getTotalTasksAssignedToUser($user) : 0,
+    ];
   }
 }

@@ -83,7 +83,7 @@
                 Delete Task
               </v-list-item-title>
             </v-list-item>
-            <v-list-item @click="toggle(task)">
+            <v-list-item @click="toggleTask">
               <v-list-item-icon class="mr-3">
                 <v-icon color="green">mdi-checkbox-marked-circle-outline</v-icon>
               </v-list-item-icon>

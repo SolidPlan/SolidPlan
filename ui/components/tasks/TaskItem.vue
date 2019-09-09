@@ -7,7 +7,7 @@
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-hover v-slot:default="{ hover }">
-            <v-icon :color="done || hover ? 'success' : ''" @click.stop="toggle(task)" v-on="on">
+            <v-icon :color="done || hover ? 'success' : ''" @click.stop="toggleTask" v-on="on">
               mdi-checkbox-marked-circle-outline
             </v-icon>
           </v-hover>

@@ -44,7 +44,6 @@ export const actions: ActionTree<RootState, {}> = {
 
     await Promise.all([
       dispatch('projects/init', context),
-      dispatch('tasks/init', context),
       dispatch('labels/init', context),
       dispatch('users/init', context),
     ]);

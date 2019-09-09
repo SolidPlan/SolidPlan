@@ -1,6 +1,6 @@
 <template>
   <v-card class="mt-3">
-    <v-card-actions v-show="tasks.length" class="px-3">
+    <v-card-actions class="px-3">
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-hover v-slot:default="{ hover }">
@@ -11,26 +11,26 @@
         </template>
         <span>Mark all as done</span>
       </v-tooltip>
+      &nbsp;
+      {{ totalTasks }} Items
       <v-spacer />
       <v-icon>mdi-filter-variant</v-icon>
       <v-btn-toggle
-        v-show="tasks.length"
         v-model="visibility"
         class="elevation-0"
         mandatory
       >
         <v-btn
-          v-for="(val, key) in filters"
-          :key="key"
-          :value="key"
+          v-for="filter in filters"
+          :key="filter"
+          :value="filter"
           class="mx-0"
           color="primary"
           text
           small
-          @click="visibility = key"
-        >
-          {{ key }}
-        </v-btn>
+          @click="visibility = filter"
+          v-text="filter"
+        />
       </v-btn-toggle>
       <v-spacer />
 
@@ -48,37 +48,51 @@
       </v-tooltip>
     </v-card-actions>
     <v-card-text class="pa-0">
-      <v-list class="py-0" :dense="filteredTasks.length > 0" elevation="12" :three-line="showLabels">
-        <draggable v-model="filteredTasks" v-bind="dragOptions" handle=".sort-handle" v-on="{ sort: trackChanges }">
-          <template v-for="task in filteredTasks">
-            <div>
-              <v-divider />
-              <TaskItem
-                :key="task.id"
-                :task="task"
-                :show-project="showProject"
-                :disable-drag="disableDrag"
-              />
-            </div>
-          </template>
-        </draggable>
-        <template v-if="!filteredTasks.length">
-          <v-list-item class="task-item text-cs-center">
-            <v-list-item-content>
-              <span class="text-center success--text">
-                <v-icon>mdi-party-popper</v-icon> No Tasks
-              </span>
-            </v-list-item-content>
-          </v-list-item>
+      <v-data-iterator
+        :items="tasks"
+        :items-per-page.sync="itemsPerPage"
+        :page.sync="page"
+        :server-items-length="totalTasks"
+        :footer-props="{ itemsPerPageOptions: [5, 10, 15, 30, 50, 100] }"
+      >
+        <template v-slot:default="props">
+          <v-list class="py-0" :dense="props.items.length > 0" elevation="2" :three-line="showLabels">
+            <draggable v-model="props.items" v-bind="dragOptions" handle=".sort-handle" v-on="{ sort: trackChanges }">
+              <template v-for="task in props.items">
+                <div>
+                  <v-divider />
+                  <TaskItem
+                    :key="task.id"
+                    :task="task"
+                    :show-project="showProject"
+                    @refresh="fetchTasks(taskFilters)"
+                  />
+                </div>
+              </template>
+            </draggable>
+          </v-list>
         </template>
-      </v-list>
+        <template slot="no-data">
+          <v-list class="py-0">
+            <v-list-item class="task-item text-cs-center">
+              <v-list-item-content>
+                  <span class="text-center success--text">
+                    <v-icon>mdi-party-popper</v-icon> No Tasks
+                  </span>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+          <v-divider />
+        </template>
+      </v-data-iterator>
+
     </v-card-text>
   </v-card>
 </template>
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
-import { Component, Prop } from 'vue-property-decorator';
+import { Component, Prop, Watch } from 'vue-property-decorator';
 import Draggable, { DragOptions, MoveEvent } from 'vuedraggable';
 import { Action, namespace, State } from 'vuex-class';
 import { BindingHelpers } from 'vuex-class/lib/bindings';
@@ -86,17 +100,6 @@ import TaskItem from '~/components/tasks/TaskItem.vue';
 import { Filter, Project, Task, User } from '~/types';
 
 const store: BindingHelpers = namespace('tasks');
-
-interface FilterList {
-  [key: string]: (tasks: Task[]) => Task[];
-}
-
-const filters: FilterList = {
-  all: (tasks: Task[]): Task[] => filters.open(tasks)
-      .concat(filters.closed(tasks)),
-  open: (tasks: Task[]): Task[] => tasks.filter((task: Task) => task.status === 'open'),
-  closed: (tasks: Task[]): Task[] => tasks.filter((task: Task) => task.status === 'closed'),
-};
 
 @Component({
   components: {
@@ -108,55 +111,97 @@ export default class TaskList extends Vue {
   @Prop({type: Object as PropType<Project>, required: false, default: null}) public readonly project!: Project;
   @Prop({type: Object as PropType<User>, required: false, default: null}) public readonly assigned!: User;
   @Prop({type: Boolean, required: false, default: false}) public readonly showProject!: boolean;
-  @Prop({type: Number, required: false, default: null}) public readonly limit!: number;
+  @Prop({type: Number, required: false, default: 15}) public readonly limit!: number;
 
   @State('showLabels') public readonly showLabels!: boolean;
 
-  @store.Getter('getFilteredTasks') public getFilteredTasks!: (filter?: Filter) => Task[];
+  @store.State('tasks') public readonly tasks!: Task[];
+  @store.State('total') public readonly totalTasks!: number;
+
+  @store.Action('fetch') public fetchTasks!: (filters: Filter) => void;
   @store.Action('sort') public sort!: ({task, order}: {task: Task; order: number}) => void;
   @store.Action('markDone') public markDone!: (task: Task) => void;
 
   @Action('toggleLabels') public toggleLabels!: () => void;
 
   public visibility: string = 'open';
-
   public drag: boolean = false;
+  public itemsPerPage: number = this.limit;
+  public page: number = 1;
 
-  public get disableDrag (): boolean {
-    return this.visibility === 'all';
+  @Watch('visibility', { immediate: true })
+  public async onVisibilityChanged (): Promise<void> {
+    if (this.page !== 1) {
+      this.page = 1;
+    } else {
+      await this.fetchTasks(this.taskFilters);
+    }
   }
 
-  public get filters (): FilterList {
-    return Object.freeze(filters);
+  @Watch('page')
+  @Watch('itemsPerPage')
+  public async onPagination (): Promise<void> {
+      await this.fetchTasks(this.taskFilters);
+  }
+
+  public get filters (): string[] {
+    return [
+      'all',
+      'open',
+      'closed',
+    ];
   }
 
   public get dragOptions (): DragOptions {
     return {
       animation: 200,
-      disabled: this.disableDrag,
+      disabled: false,
       ghostClass: 'ghost',
       group: 'description',
     };
   }
 
-  public get tasks (): Task[] {
-    return this.getFilteredTasks({project: this.project, assigned: this.assigned, limit: this.limit});
-  }
+  public get taskFilters (): Filter {
+    const filter: Filter = {};
 
-  public get filteredTasks (): Task[] {
-    return filters[this.visibility](this.tasks);
-  }
+    if (this.project) {
+      filter['project.id'] = this.project.id;
+    }
 
-  public set filteredTasks (value: Task[]) {
+    if (this.assigned) {
+      filter['assigned.id'] = this.assigned.id;
+    }
+
+    filter.limit = this.itemsPerPage;
+    filter.page = this.page;
+
+    if (this.visibility !== 'all') {
+      filter.status = this.visibility;
+    } else {
+      filter['order[status]'] = 'desc';
+    }
+
+    return filter;
   }
 
   public markAllDone (): void {
-    this.tasks.forEach(this.markDone);
+    if (this.tasks) {
+      this.tasks.forEach(this.markDone);
+    }
   }
 
-  public trackChanges ({ oldIndex, newIndex }: MoveEvent<Task>): void {
-    const order: number = this.filteredTasks[newIndex].order;
-    this.sort({ task: this.filteredTasks[oldIndex], order });
+  public async trackChanges ({ oldIndex, newIndex }: MoveEvent<Task>): Promise<void> {
+    const order: number = this.tasks[newIndex].order;
+    await this.sort({ task: this.tasks[oldIndex], order });
+    await this.fetchTasks(this.taskFilters);
+  }
+
+  public mounted(): void {
+    this.$event.$on('refresh',  () => this.fetchTasks(this.taskFilters));
+  }
+
+  public beforeDestroy(): void {
+    this.$event.$off('refresh');
   }
 }
 </script>

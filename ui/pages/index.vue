@@ -26,7 +26,7 @@
             color="primary"
             icon="mdi-playlist-check"
             title="Open Tasks"
-            :value="openTasksCount"
+            :value="open"
           />
         </v-col>
         <v-col
@@ -38,7 +38,7 @@
             color="red"
             icon="mdi-account-details"
             title="My Tasks"
-            :value="assignedTasksCount"
+            :value="assigned"
           />
         </v-col>
 
@@ -51,7 +51,7 @@
             color="teal"
             icon="mdi-format-list-checks"
             title="Completed Tasks"
-            :value="closedTasksCount"
+            :value="closed"
           />
         </v-col>
       </v-row>
@@ -74,33 +74,21 @@ import { namespace } from 'vuex-class';
 import { BindingHelpers } from 'vuex-class/lib/bindings';
 import StatsCard from "~/components/material/StatsCard.vue";
 import TaskList from "~/components/tasks/TaskList.vue";
-import { Project, Task, User } from '~/types';
+import { Project } from '~/types';
+import { NuxtApp } from '@nuxt/types/app';
 
-const taskStore: BindingHelpers = namespace('tasks');
 const projectStore: BindingHelpers = namespace('projects');
 
 @Component({
+  async asyncData ({ $axios }: NuxtApp): Promise<{open: number; closed: number; assigned: number}> {
+    return await $axios.$get('/api/tasks/stats');
+  },
   components: {
     StatsCard,
     TaskList,
   },
 })
 export default class Dashboard extends Vue {
-  @taskStore.State('tasks') public readonly tasks!: Task[];
   @projectStore.State('projects') public readonly projects!: Project[];
-
-  public get openTasksCount (): number {
-    return this.tasks.filter((value: Task): boolean => value.status === 'open').length;
-  }
-
-  public get closedTasksCount (): number {
-    return this.tasks.filter((value: Task): boolean => value.status === 'closed').length;
-  }
-
-  public get assignedTasksCount (): number {
-    const user: Partial<User> = this.$auth.user;
-
-    return this.tasks.filter((value: Task): boolean => value.assigned === user['@id'] && value.status === 'open').length;
-  }
 }
 </script>

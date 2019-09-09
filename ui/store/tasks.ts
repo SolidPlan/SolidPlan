@@ -5,31 +5,35 @@
  * @copyright  Copyright (c) 2019
  */
 
-import { difference, filter, find, findIndex, forEach, indexOf, isEmpty, map, slice } from 'lodash';
-import Vue from 'vue';
-import { ActionContext, ActionTree, GetterTree, MutationTree } from 'vuex';
+import { difference, find, findIndex, forEach, indexOf, map } from 'lodash';
+import { ActionContext, ActionTree, MutationTree } from 'vuex';
 import { Collection, Filter, Label, Project, Task, User } from '~/types';
 import { CrudAction, Initializeable, TaskState } from '~/types/state';
 
 export const state: () => TaskState = (): TaskState => ({
   tasks: [],
+  total: 0,
 });
 
 export const mutations: MutationTree<TaskState> = {
-  set (taskState: TaskState, tasks: Task[]): void {
-    taskState.tasks = tasks;
+  set (taskState: TaskState, tasks: Collection<Task>): void {
+    taskState.tasks = tasks['hydra:member'];
+    taskState.total = tasks['hydra:totalItems'];
   },
 
   reset (taskState: TaskState): void {
     taskState.tasks = [];
+    taskState.total = 0;
   },
 
   add (taskState: TaskState, task: Task): void {
     taskState.tasks.push(task);
+    taskState.total++;
   },
 
   remove (taskState: TaskState, task: Task): void {
     taskState.tasks.splice(findIndex(taskState.tasks, {'@id': task['@id']}), 1);
+    taskState.total--;
   },
 
   toggle (taskState: TaskState, task: Task): void {
@@ -57,9 +61,13 @@ export const mutations: MutationTree<TaskState> = {
     task.labels = labels.length === 0 ? [] : map(labels, '@id');
   },
 
-  update (taskState: TaskState, task: Task): void {
-    const index: number = findIndex(taskState.tasks, {id: task.id});
-    Vue.set(taskState.tasks, index, task);
+  update (taskState: TaskState, {task, taskData}: {task: number; taskData: Task}): void {
+    const t: Task | undefined = find(taskState.tasks, {id: task});
+
+    if (t) {
+      t.name = taskData.name;
+      t.description = taskData.description;
+    }
   },
 
   removeLabel (taskState: TaskState, {taskId, label}: {taskId: string; label: Label}): void {
@@ -76,14 +84,7 @@ export const mutations: MutationTree<TaskState> = {
   },
 };
 
-export const actions: (CrudAction<TaskState, Task> & Initializeable<TaskState, Task>) | ActionTree<TaskState, Task> = {
-  async init ({state: taskState, commit}: ActionContext<TaskState, Task>, {force}: { force: boolean }): Promise<void> {
-    if (taskState.tasks.length === 0 || force === true) {
-      const data: Collection<Task> = await this.$axios.$get<Collection<Task>>('/api/tasks');
-      commit('set', data['hydra:member']);
-    }
-  },
-
+export const actions: CrudAction<TaskState, Task> | ActionTree<TaskState, Task> = {
   reset ({commit}: ActionContext<TaskState, Task>): void {
     commit('reset');
   },
@@ -124,7 +125,7 @@ export const actions: (CrudAction<TaskState, Task> & Initializeable<TaskState, T
   async edit ({commit}: ActionContext<TaskState, Task>, {id, name, description}: Task): Promise<void> {
     const taskData: Task = await this.$axios.$put<Task>(`/api/tasks/${id}`, {name, description});
 
-    commit('update', taskData);
+    commit('update', {task: id, taskData});
   },
 
   async assignToProject ({commit}: ActionContext<TaskState, Task>, {task, project}: { task: Task; project: Project }): Promise<void> {
@@ -174,40 +175,11 @@ export const actions: (CrudAction<TaskState, Task> & Initializeable<TaskState, T
     await this.$axios.$put<Task>(`/api/tasks/${task.id}/sort`, {order});
 
     commit('updateOrder', {task, order});
-    await dispatch('init', {force: true});
-  },
-};
-
-export const getters: GetterTree<TaskState, Task> = {
-  getTasksByProject: (taskState: TaskState): (project?: Project) => Task[] => (project?: Project): Task[] => {
-    let tasks: Task[] = taskState.tasks;
-    if (project) {
-      tasks = filter<Task>(taskState.tasks, {'project': project['@id']});
-    }
-
-    return tasks;
   },
 
-  getFilteredTasks: (taskState: TaskState): (filters: Filter) => Task[] => (filters: Filter): Task[] => {
-    let tasks: Task[] = taskState.tasks;
-    const predicate: {project?: string; assigned?: string; limit?: number} = {};
+  async fetch ({commit, dispatch}: ActionContext<TaskState, Task>, filters: Filter): Promise<void> {
+    const data: Collection<Task> = await this.$axios.$get<Collection<Task>>('/api/tasks', {params: filters});
 
-    if (filters.project) {
-      predicate.project = filters.project['@id'];
-    }
-
-    if (filters.assigned) {
-      predicate.assigned = filters.assigned['@id'];
-    }
-
-    if (!isEmpty(predicate)) {
-      tasks = filter<Task>(taskState.tasks, predicate);
-    }
-
-    if (filters.limit) {
-      tasks = slice<Task>(tasks, 0, filters.limit);
-    }
-
-    return tasks;
+    commit('set', data);
   },
 };

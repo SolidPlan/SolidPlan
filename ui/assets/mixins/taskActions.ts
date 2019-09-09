@@ -22,8 +22,8 @@ export default class TaskActions extends Vue {
   @Action('hideDetailView') public hideDetailView!: () => void;
 
   @store.Action('edit') public edit!: (task: Task) => void;
-  @store.Action('toggle') public toggle!: (task: Task) => void;
   @store.Action('removeAssignedUser') public removeAssignedUser!: (task: Task) => void;
+  @store.Action('toggle') private toggle!: (task: Task) => void;
   @store.Action('remove') private remove!: (task: Task) => void;
 
   public async editTask (value: string): Promise<void> {
@@ -59,7 +59,16 @@ export default class TaskActions extends Vue {
 
     if (result) {
       await this.remove(this.task);
+      this.$emit('refresh');
+      this.$event.$emit('refresh');
       this.hideDetailView();
     }
+  }
+
+  public async toggleTask (): Promise<void> {
+    await this.toggle(this.task);
+
+    this.$emit('refresh');
+    this.$event.$emit('refresh');
   }
 }

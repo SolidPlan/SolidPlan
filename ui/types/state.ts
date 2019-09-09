@@ -40,6 +40,7 @@ export interface ProjectState {
 
 export interface TaskState {
   tasks: Task[];
+  total: number;
 }
 
 export interface CrudAction<T, S> {

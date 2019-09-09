@@ -1,3 +1,7 @@
 api_platform:
+    collection:
+        pagination:
+            client_items_per_page: true
+            items_per_page_parameter_name: limit
     mapping:
         paths: ['%kernel.project_dir%/src/Entity']
