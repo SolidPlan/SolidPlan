@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+  db:
+    image: "mysql:5.7"
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: solidplan
+      MYSQL_DATABASE: solidplan
+    volumes:
+      - ./var/db:/var/lib/mysql:rw
+  api:
+    image: bitnami/symfony:1
+    volumes:
+      - '.:/app/solidplan'
+    environment:
+      SYMFONY_PROJECT_NAME: solidplan
+      DATABASE_URL: mysql://root:solidplan@db:3306/solidplan
+    command:
+      - /bin/bash
+      - -c
+      - |
+        cd /app/solidplan
+        php bin/console doctrine:migrations:migrate -n --allow-no-migration --all-or-nothing
+        userCount=$$(php bin/console doctrine:query:sql "select COUNT(*) as total FROM user" | grep "string" | cut -d'"' -f 2)
+        if [[ $$userCount -lt 1 ]]; then
+            php bin/console user:create -u test@example.com -p Test1234 -f test -l test
+        fi;
+        WEB_DIR=/app/solidplan/public /run.sh
+  ui:
+    image: node:10-alpine
+    ports:
+      - '8085:3000'
+    volumes:
+      - '.:/app'
+    working_dir: '/app'
+    environment:
+      API_PROXY_URL: "http://api:8000"
+      HOST: "0.0.0.0"
+    command: yarn prod
