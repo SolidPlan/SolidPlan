@@ -8,6 +8,7 @@
         "api-platform/core": "^2.1",
         "doctrine/annotations": "^1.0",
         "doctrine/doctrine-bundle": "^1.6",
+        "doctrine/doctrine-migrations-bundle": "^2.0",
         "doctrine/orm": "^2.4.5",
         "lexik/jwt-authentication-bundle": "^2.6",
         "nelmio/cors-bundle": "^1.5",

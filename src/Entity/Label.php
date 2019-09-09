@@ -27,7 +27,7 @@ class Label
     private $name;
 
     /**
-     * @ORM\Column(type="string", length=25, nullable=true)
+     * @ORM\Column(type="string", length=15, nullable=true)
      */
     private $color;
 
