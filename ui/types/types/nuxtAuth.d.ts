@@ -5,10 +5,7 @@
  * @copyright  Copyright (c) 2019
  */
 
-import { NuxtAxiosInstance } from '@nuxtjs/axios';
 import Vue, { ComponentOptions } from 'vue';
-import { VuetifyObject } from 'vuetify';
-import { VuetifyDialog } from 'vuetify-dialog';
 import { User } from '~/types';
 
 interface Storage {
@@ -78,8 +75,5 @@ declare module 'vue/types/vue' {
 
   interface Vue {
     $auth: Auth<User>;
-    $axios: NuxtAxiosInstance;
-    $dialog: VuetifyDialog;
-    $vuetify: VuetifyObject;
   }
 }
