@@ -14,10 +14,10 @@
               v-focus="editTitle"
               clearable
               color="primary"
-              hide-details
               maxlength="1023"
               outlined
               :value="task.name"
+              :rules="taskTitleRules"
               @blur="doneEdit"
               @keyup.enter="doneEdit"
               @keyup.esc="cancelEdit"
@@ -142,7 +142,7 @@ import TaskActions from '~/assets/mixins/taskActions';
 import TaskLabels from '~/components/labels/TaskLabels.vue';
 import TaskProject from '~/components/projects/TaskProject.vue';
 import TaskUser from '~/components/users/TaskUser.vue';
-import { Project, Task, User } from '~/types';
+import { Project, Task, User, validator } from '~/types';
 
 const projectStore: BindingHelpers = namespace('projects');
 
@@ -160,6 +160,10 @@ export default class TaskDetail extends mixins(TaskActions) {
   @Prop({type: Object as PropType<Task>, required: true}) public task!: Task;
 
   @Action('hideDetailView') public hideDetailView!: () => void;
+
+  public taskTitleRules: validator[] = [
+    (value: string | null): boolean | string => !!value || 'Title cannot be empty.',
+  ];
 
   public get description (): string {
     return this.task.description;

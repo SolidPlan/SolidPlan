@@ -49,10 +49,10 @@
         clearable
         color="primary"
         text
-        hide-details
         maxlength="1023"
         solo
         :value="task.name"
+        :rules="taskTitleRules"
         @blur.stop="doneEdit"
         @keyup.enter.stop="doneEdit"
         @keyup.esc.stop="cancelEdit"
@@ -157,8 +157,9 @@ import TaskActions from '~/assets/mixins/taskActions';
 import TaskLabels from '~/components/labels/TaskLabels.vue';
 import TaskProject from '~/components/projects/TaskProject.vue';
 import TaskUser from '~/components/users/TaskUser.vue';
-import { Project, User } from '~/types';
+import { Project, User, validator } from '~/types';
 import { DetailComponent } from '~/types/state';
+
 const taskDetail: () => Promise<any> = (): Promise<any> => import('~/components/tasks/TaskDetail.vue');
 
 @Component({
@@ -182,6 +183,10 @@ export default class TaskItem extends mixins(TaskActions) {
   public strikethrough: boolean = this.task.status === 'closed';
   public color: string = colors.grey.base;
   public components: {} = { taskDetail };
+
+  public taskTitleRules: validator[] = [
+    (value: string | null): boolean | string => !!value || 'Title cannot be empty.',
+  ];
 
   public get done (): boolean {
     return this.task.status === 'closed';

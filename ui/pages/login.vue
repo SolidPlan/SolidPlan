@@ -79,9 +79,7 @@ import { AxiosError } from 'axios';
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import { Action } from 'vuex-class';
-import { User } from '~/types';
-
-type validator = (value: any) => string | boolean;
+import { User, validator } from '~/types';
 
 @Component({
   layout: 'login',

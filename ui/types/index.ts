@@ -54,3 +54,5 @@ export interface Filter {
   status?: string;
   'order[status]'?: string;
 }
+
+export type validator = (value: any) => string | boolean;

@@ -26,11 +26,11 @@
             autocomplete="off"
             counter="255"
             flat
-            hide-details
             maxlength="255"
             placeholder="Enter project name"
             prepend-icon="mdi-file-document-box-check-outline"
             solo
+            :rules="projectNameRules"
             @keyup.enter="doneEdit"
             @keyup.esc="cancelEdit"
           >
@@ -93,7 +93,7 @@ import Focus from '~/assets/directives/focus';
 import ColorSwatches from '~/assets/mixins/colorSwatches';
 import CreateTask from '~/components/tasks/CreateTask.vue';
 import TaskList from '~/components/tasks/TaskList.vue';
-import { Project } from '~/types';
+import { Project, validator } from '~/types';
 
 const projectStore: BindingHelpers = namespace('projects');
 
@@ -110,6 +110,10 @@ export default class ProjectId extends mixins(ColorSwatches) {
     public editing: boolean = false;
     public name: string = '';
     public color: string = '';
+
+    public projectNameRules: validator[] = [
+        (value: string | null): boolean | string => !!value || 'Name cannot be empty.',
+    ];
 
     @projectStore.Action('edit') public edit!: (project: Project) => void;
     @projectStore.Getter('getProjectById') private readonly getProjectById!: (projectId: number) => Project;
