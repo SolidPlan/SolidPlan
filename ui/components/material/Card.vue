@@ -78,7 +78,7 @@ export default class Card extends Vue {
   @Prop({type: [Number, String], default: 10}) public readonly elevation!: string;
   @Prop({type: Boolean, default: false}) public readonly inline!: string;
   @Prop({type: Boolean, default: false}) public readonly fullWidth!: string;
-  @Prop({type: Number, default: 24}) public readonly offset!: number;
+  @Prop({type: Number, default: 5}) public readonly offset!: number;
   @Prop({type: String, default: undefined}) public readonly title!: string;
   @Prop({type: String, default: undefined}) public readonly text!: string;
 
@@ -96,7 +96,7 @@ export default class Card extends Vue {
 
       return {
         marginBottom: `${this.offset}px`,
-        marginTop: `${this.offset * 2}px`,
+        marginTop: `${this.offset}px`,
       };
     }
 }

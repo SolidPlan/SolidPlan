@@ -30,8 +30,8 @@ export default class Offset extends Vue {
 
     public get styles (): {marginBottom: string; top: string} {
       return {
-        marginBottom: `-${this.offset}px`,
-        top: `-${this.offset}px`,
+        marginBottom: `${this.offset}px`,
+        top: `${this.offset}px`,
       };
     }
 }

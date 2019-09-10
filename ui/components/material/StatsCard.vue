@@ -66,7 +66,7 @@ export default class StatsCard extends Vue {
     @Prop({type: [Number, String], default: 10}) public readonly elevation!: number | string;
     @Prop({type: Boolean, default: false}) public readonly inline!: string;
     @Prop({type: Boolean, default: false}) public readonly fullWidth!: string;
-    @Prop({type: Number, default: 24}) public readonly offset!: number;
+    @Prop({type: Number, default: 5}) public readonly offset!: number;
     @Prop({type: String, default: undefined}) public readonly title!: string;
     @Prop({type: String, default: undefined}) public readonly text!: string;
     @Prop({type: String, required: true}) public readonly icon!: string;

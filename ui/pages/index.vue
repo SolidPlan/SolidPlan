@@ -14,6 +14,8 @@
             color="green"
             icon="mdi-folder-multiple-outline"
             title="Projects"
+            elevation="0"
+            class="my-10"
             :value="projects.length"
           />
         </v-col>
@@ -26,6 +28,8 @@
             color="primary"
             icon="mdi-playlist-check"
             title="Open Tasks"
+            elevation="0"
+            class="my-10"
             :value="open"
           />
         </v-col>
@@ -38,6 +42,8 @@
             color="red"
             icon="mdi-account-details"
             title="My Tasks"
+            elevation="0"
+            class="my-10"
             :value="assigned"
           />
         </v-col>
@@ -51,6 +57,8 @@
             color="teal"
             icon="mdi-format-list-checks"
             title="Completed Tasks"
+            elevation="0"
+            class="my-10"
             :value="closed"
           />
         </v-col>
