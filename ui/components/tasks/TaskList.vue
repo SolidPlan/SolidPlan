@@ -56,7 +56,7 @@
         :footer-props="{ itemsPerPageOptions: [5, 10, 15, 30, 50, 100] }"
       >
         <template v-slot:default="props">
-          <v-list class="py-0" :dense="props.items.length > 0" elevation="2" :three-line="showLabels">
+          <v-list class="py-0" :dense="props.items.length > 0" elevation="2">
             <draggable v-model="props.items" v-bind="dragOptions" handle=".sort-handle" v-on="{ sort: trackChanges }">
               <template v-for="task in props.items">
                 <div>

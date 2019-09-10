@@ -20,6 +20,7 @@
         <v-list-item-content>
           <v-list-item-title :class="{ 'primary--text': done, 'strikethrough': strikethrough || done }">
             <span class="mr-3">{{ task.name }}</span>
+            <TaskLabels :task="task" v-if="showLabels" />
             <template v-if="hover">
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
@@ -37,9 +38,6 @@
               </v-tooltip>
             </template>
           </v-list-item-title>
-          <v-list-item-subtitle v-if="showLabels">
-            <TaskLabels :task="task" />
-          </v-list-item-subtitle>
         </v-list-item-content>
       </template>
       <v-text-field
@@ -66,7 +64,6 @@
     </v-hover>
 
     <div v-if="task.assigned">
-
       <v-list-item-avatar class="mr-0">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
@@ -110,37 +107,31 @@
       </v-menu>
     </div>
 
-    <v-list-item-action class="align-self-center flex-row">
-      <div :class="{'mr-2': showProject}">
-
-      </div>
-
-      <div v-if="showProject">
-        <v-menu offset-y>
-          <template v-slot:activator="{ on }">
-            <v-chip
-              v-if="task.project"
-              pill
-              small
-              :color="projects[task.project].color"
-              text-color="white"
-              v-on:click.stop="on.click"
-            >
-              {{ projects[task.project].name }}
-            </v-chip>
-            <v-chip
-              v-else
-              pill
-              x-small
-              outlined
-              v-on:click.stop="on.click"
-            >
-              + Add to project
-            </v-chip>
-          </template>
-          <TaskProject :task="task" />
-        </v-menu>
-      </div>
+    <v-list-item-action class="align-self-center flex-row" v-if="showProject">
+      <v-menu offset-y>
+        <template v-slot:activator="{ on }">
+          <v-chip
+            v-if="task.project"
+            pill
+            small
+            :color="projects[task.project].color"
+            text-color="white"
+            v-on:click.stop="on.click"
+          >
+            {{ projects[task.project].name }}
+          </v-chip>
+          <v-chip
+            v-else
+            pill
+            x-small
+            outlined
+            v-on:click.stop="on.click"
+          >
+            + Add to project
+          </v-chip>
+        </template>
+        <TaskProject :task="task" />
+      </v-menu>
     </v-list-item-action>
   </v-list-item>
 </template>
