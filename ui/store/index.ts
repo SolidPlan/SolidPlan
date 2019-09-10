@@ -39,14 +39,17 @@ export const mutations: MutationTree<RootState> = {
 
 export const actions: ActionTree<RootState, {}> = {
   async init ({commit, dispatch, state: rootState}: ActionContext<RootState, {}>, context: NuxtApp): Promise<void> {
-    context.$vuetify.theme.dark = rootState.theme;
-    commit('toggleTheme', rootState.theme);
-
     await Promise.all([
+      dispatch('initTheme', context),
       dispatch('projects/init', context),
       dispatch('labels/init', context),
       dispatch('users/init', context),
     ]);
+  },
+
+  async initTheme ({commit, dispatch, state: rootState}: ActionContext<RootState, {}>, context: NuxtApp): Promise<void> {
+    context.$vuetify.theme.dark = rootState.theme;
+    commit('toggleTheme', rootState.theme);
   },
 
   async reset ({dispatch}: ActionContext<RootState, {}>, context: NuxtApp): Promise<void> {

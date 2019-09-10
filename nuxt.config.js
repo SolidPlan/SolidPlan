@@ -103,11 +103,21 @@ export default {
     theme: {
       dark: false,
       themes: {
-        light: {
-          primary: '#4caf50',
-          secondary: '#4caf50',
+        dark: {
+          primary: colors.green.darken2,
+          secondary: colors.green.base,
           tertiary: '#495057',
-          accent: '#82B1FF',
+          accent: colors.blue.accent2,
+          error: '#f55a4e',
+          info: '#00d3ee',
+          success: '#5cb860',
+          warning: '#ffa21a'
+        },
+        light: {
+          primary: colors.green.base,
+          secondary: colors.green.lighten2,
+          tertiary: '#495057',
+          accent: colors.blue.accent1,
           error: '#f55a4e',
           info: '#00d3ee',
           success: '#5cb860',
