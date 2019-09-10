@@ -65,44 +65,54 @@
       </v-text-field>
     </v-hover>
 
+    <div v-if="task.assigned">
+
+      <v-list-item-avatar class="mr-0">
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-img :src="`https://www.gravatar.com/avatar/${emailHash}?d=mp`" v-on="on" />
+          </template>
+          <span>{{ `${usersList[task.assigned].firstName} ${usersList[task.assigned].lastName}` }}</span>
+        </v-tooltip>
+      </v-list-item-avatar>
+
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-icon
+            color="error"
+            x-small
+            @click.stop="removeAssignedUser(task)"
+            v-on="on"
+          >
+            mdi-close
+          </v-icon>
+        </template>
+        <span>Remove Assigned User</span>
+      </v-tooltip>
+    </div>
+    <div v-else>
+      <v-menu :close-on-content-click="false">
+        <template v-slot:activator="{ on }">
+          <v-chip
+            pill
+            x-small
+            outlined
+            v-on:click.stop="on.click"
+          >
+            <v-icon x-small>
+              mdi-plus
+            </v-icon>
+            Assign to User
+          </v-chip>
+        </template>
+
+        <TaskUser :task="task" />
+      </v-menu>
+    </div>
+
     <v-list-item-action class="align-self-center flex-row">
       <div :class="{'mr-2': showProject}">
-        <div v-if="task.assigned">
-          {{ `${usersList[task.assigned].firstName} ${usersList[task.assigned].lastName}` }}
 
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
-              <v-icon
-                color="error"
-                x-small
-                @click.stop="removeAssignedUser(task)"
-                v-on="on"
-              >
-                mdi-close
-              </v-icon>
-            </template>
-            <span>Remove Assigned User</span>
-          </v-tooltip>
-        </div>
-        <div v-else>
-          <v-menu :close-on-content-click="false">
-            <template v-slot:activator="{ on }">
-              <v-chip
-                pill
-                x-small
-                outlined
-                v-on:click.stop="on.click"
-              >
-                <v-icon x-small>
-                  mdi-plus
-                </v-icon>
-                Assign to User
-              </v-chip>
-            </template>
-
-            <TaskUser :task="task" />
-          </v-menu>
-        </div>
       </div>
 
       <div v-if="showProject">
@@ -137,6 +147,7 @@
 
 <script lang="ts">
 import { Dictionary, keyBy } from 'lodash';
+import md5 from 'md5';
 import { mixins } from 'vue-class-component';
 import { Component, Prop } from 'vue-property-decorator';
 import colors from 'vuetify/lib/util/colors';
@@ -182,6 +193,10 @@ export default class TaskItem extends mixins(TaskActions) {
 
   public get usersList (): Dictionary<User> {
     return keyBy(this.$store.state.users.users, '@id');
+  }
+
+  public get emailHash (): string {
+    return this.task.assigned ? md5(this.usersList[this.task.assigned].email) : '';
   }
 }
 </script>
