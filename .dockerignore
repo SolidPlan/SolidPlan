@@ -1,0 +1,6 @@
+.nuxt
+.ppm
+dist
+node_modules
+var
+vendor

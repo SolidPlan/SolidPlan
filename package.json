@@ -9,8 +9,14 @@
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
+    "prod": "nuxt build && nuxt start",
     "lint": "tslint --project tsconfig.json --config tslint.json",
     "test": "jest"
+  },
+  "config": {
+    "nuxt": {
+      "host": "0.0.0.0"
+    }
   },
   "dependencies": {
     "@nuxt/typescript-runtime": "^0.1.3",

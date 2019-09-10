@@ -1,0 +1,29 @@
+FROM node:10-alpine as ui
+
+ENV LC_ALL en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV NODE_ENV production
+ENV HOST 0.0.0.0
+ENV API_PROXY_URL http://api:8000
+
+WORKDIR /var/www
+
+COPY yarn.lock ./
+COPY package.json ./
+
+RUN set -eux; \
+	yarn install --production=false; \
+	yarn cache clean
+
+COPY package.json ./
+COPY ui ui/
+COPY tsconfig.json ./
+COPY tslint.json ./
+COPY nuxt.config.js ./
+
+RUN set -eux; \
+    yarn run build; \
+    sync
+
+ADD docker/ui/run.sh /etc/app/run.sh
+ENTRYPOINT ["/bin/sh", "/etc/app/run.sh"]
