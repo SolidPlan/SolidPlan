@@ -12,10 +12,9 @@ declare(strict_types=1);
 namespace App\Event\Listener;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
-use App\Entity\Agent;
 use App\Entity\User;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -41,7 +40,7 @@ class AuthenticationSuccessListener implements EventSubscriberInterface
     ];
   }
 
-  public function onAuthenticationSuccessEvent(GetResponseEvent $event)
+  public function onAuthenticationSuccessEvent(RequestEvent $event)
   {
     $request = $event->getRequest();
 
