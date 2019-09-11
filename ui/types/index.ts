@@ -49,6 +49,7 @@ export interface Collection<T> {
 export interface Filter {
   'project.id'?: number;
   'assigned.id'?: number;
+  'labels.id'?: number[];
   limit?: number;
   page?: number;
   status?: string;

@@ -37,7 +37,7 @@ use Doctrine\ORM\Mapping as ORM;
  *   },
  *   attributes={"order"={"order": "ASC"}}
  * )
- * @ApiFilter(SearchFilter::class, properties={"project.id": "exact", "assigned.id": "exact", "status": "exact"})
+ * @ApiFilter(SearchFilter::class, properties={"project.id": "exact", "assigned.id": "exact", "status": "exact", "labels.id": "exact"})
  * @ApiFilter(OrderFilter::class, properties={"status"}, arguments={"orderParameterName"="order"})
  * @ORM\Entity(repositoryClass="App\Repository\TaskRepository")
  */

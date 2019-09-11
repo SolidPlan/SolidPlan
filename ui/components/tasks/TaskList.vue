@@ -14,26 +14,9 @@
       &nbsp;
       {{ totalTasks }} Items
       <v-spacer />
-      <v-icon>mdi-filter-variant</v-icon>
-      <v-btn-toggle
-        v-model="visibility"
-        class="elevation-0"
-        mandatory
-      >
-        <v-btn
-          v-for="filter in filters"
-          :key="filter"
-          :value="filter"
-          class="mx-0"
-          color="primary"
-          text
-          small
-          @click="visibility = filter"
-          v-text="filter"
-        />
-      </v-btn-toggle>
+      <v-icon class="mt-3 mr-3">mdi-filter-variant</v-icon>
+      <Filters v-bind:filter.sync="filter" :project="project" :assigned="assigned" />
       <v-spacer />
-
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-icon
@@ -74,6 +57,7 @@
         </template>
         <template slot="no-data">
           <v-list class="py-0">
+            <v-divider />
             <v-list-item class="task-item text-cs-center">
               <v-list-item-content>
                   <span class="text-center success--text">
@@ -96,6 +80,7 @@ import { Component, Prop, Watch } from 'vue-property-decorator';
 import Draggable, { DragOptions, MoveEvent } from 'vuedraggable';
 import { Action, namespace, State } from 'vuex-class';
 import { BindingHelpers } from 'vuex-class/lib/bindings';
+import Filters from '~/components/tasks/Filters.vue';
 import TaskItem from '~/components/tasks/TaskItem.vue';
 import { Filter, Project, Task, User } from '~/types';
 
@@ -104,6 +89,7 @@ const store: BindingHelpers = namespace('tasks');
 @Component({
   components: {
     Draggable,
+    Filters,
     TaskItem,
   },
 })
@@ -124,32 +110,25 @@ export default class TaskList extends Vue {
 
   @Action('toggleLabels') public toggleLabels!: () => void;
 
-  public visibility: string = 'open';
   public drag: boolean = false;
   public itemsPerPage: number = this.limit;
   public page: number = 1;
 
-  @Watch('visibility', { immediate: true })
-  public async onVisibilityChanged (): Promise<void> {
-    if (this.page !== 1) {
-      this.page = 1;
-    } else {
-      await this.fetchTasks(this.taskFilters);
-    }
-  }
+  public filter: Filter = {};
 
   @Watch('page')
   @Watch('itemsPerPage')
   public async onPagination (): Promise<void> {
-      await this.fetchTasks(this.taskFilters);
+    await this.fetchTasks(this.taskFilters);
   }
 
-  public get filters (): string[] {
-    return [
-      'all',
-      'open',
-      'closed',
-    ];
+  @Watch('filter', {deep: true})
+  public async onFilter (): Promise<void> {
+    if (this.page !== 1) {
+      this.page = 1; // this will trigger a new fetch, so no need to fetch here
+    } else {
+      await this.fetchTasks(this.taskFilters);
+    }
   }
 
   public get dragOptions (): DragOptions {
@@ -162,26 +141,18 @@ export default class TaskList extends Vue {
   }
 
   public get taskFilters (): Filter {
-    const filter: Filter = {};
-
     if (this.project) {
-      filter['project.id'] = this.project.id;
+      this.filter['project.id'] = this.project.id;
     }
 
     if (this.assigned) {
-      filter['assigned.id'] = this.assigned.id;
+      this.filter['assigned.id'] = this.assigned.id;
     }
 
-    filter.limit = this.itemsPerPage;
-    filter.page = this.page;
+    this.filter.limit = this.itemsPerPage;
+    this.filter.page = this.page;
 
-    if (this.visibility !== 'all') {
-      filter.status = this.visibility;
-    } else {
-      filter['order[status]'] = 'desc';
-    }
-
-    return filter;
+    return this.filter;
   }
 
   public markAllDone (): void {
@@ -196,11 +167,11 @@ export default class TaskList extends Vue {
     await this.fetchTasks(this.taskFilters);
   }
 
-  public mounted(): void {
+  public mounted (): void {
     this.$event.$on('refresh',  () => this.fetchTasks(this.taskFilters));
   }
 
-  public beforeDestroy(): void {
+  public beforeDestroy (): void {
     this.$event.$off('refresh');
   }
 }
