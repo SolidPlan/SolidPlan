@@ -23,7 +23,7 @@ class UserPasswordNormalizer implements NormalizerInterface, DenormalizerInterfa
   /**
    * @var NormalizerInterface
    */
-  private $normalizer;
+  private $serializer;
 
   /**
    * @var UserPasswordEncoderInterface
@@ -36,7 +36,7 @@ class UserPasswordNormalizer implements NormalizerInterface, DenormalizerInterfa
       throw new \InvalidArgumentException(sprintf('The decorated normalizer must implement the %s.', DenormalizerInterface::class));
     }
 
-    $this->normalizer = $normalizer;
+    $this->serializer = $normalizer;
     $this->passwordEncoder = $passwordEncoder;
   }
 
@@ -49,10 +49,10 @@ class UserPasswordNormalizer implements NormalizerInterface, DenormalizerInterfa
     if (\is_array($data) && isset($data['password'])) {
       $hashPassword = true;
     }
-    $data = $this->normalizer->denormalize($data, $class, $format, $context);
+    $data = $this->serializer->denormalize($data, $class, $format, $context);
 
     if ($data instanceof User && $hashPassword) {
-        $data->setPassword($this->passwordEncoder->encodePassword($data, $data->getPassword()));
+      $data->setPassword($this->passwordEncoder->encodePassword($data, $data->getPassword()));
     }
 
     return $data;
@@ -63,7 +63,7 @@ class UserPasswordNormalizer implements NormalizerInterface, DenormalizerInterfa
    */
   public function supportsDenormalization($data, $type, $format = null): bool
   {
-    return User::class === $type && $this->normalizer->supportsDenormalization($data, $type, $format);
+    return User::class === $type && $this->serializer->supportsDenormalization($data, $type, $format);
   }
 
   /**
@@ -71,7 +71,7 @@ class UserPasswordNormalizer implements NormalizerInterface, DenormalizerInterfa
    */
   public function normalize($object, $format = null, array $context = [])
   {
-    return $this->normalizer->normalize($object, $format, $context);
+    return $this->serializer->normalize($object, $format, $context);
   }
 
   /**
@@ -79,7 +79,7 @@ class UserPasswordNormalizer implements NormalizerInterface, DenormalizerInterfa
    */
   public function supportsNormalization($data, $format = null): bool
   {
-    return $this->normalizer->supportsNormalization($data, $format);
+    return $this->serializer->supportsNormalization($data, $format);
   }
 
   /**
@@ -87,8 +87,8 @@ class UserPasswordNormalizer implements NormalizerInterface, DenormalizerInterfa
    */
   public function setSerializer(SerializerInterface $serializer)
   {
-    if($this->normalizer instanceof SerializerAwareInterface) {
-      $this->normalizer->setSerializer($serializer);
+    if ($this->serializer instanceof SerializerAwareInterface) {
+      $this->serializer->setSerializer($serializer);
     }
   }
 }

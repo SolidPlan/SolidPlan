@@ -1,0 +1,8 @@
+App\Entity\Task:
+  task_{1..10}:
+    name: <sentence(4)>
+    description: <text()>
+    status: <randomElement(['open', 'closed'])>
+    project: 50%? @project*
+    assigned: 50%? @user*
+    labels: <numberBetween(0, 5)>x @label*

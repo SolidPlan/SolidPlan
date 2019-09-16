@@ -1,0 +1,13 @@
+App\Entity\User:
+  test_user:
+    email: test@test.com
+    password: '\$2y\$13\$pyC2tdIY4Za.HsFz3Wyh6uPiUExMj64LEgICY7.WGLy3yD018eV3y'
+    firstName: Test
+    lastName: Test
+    roles: [ROLE_USER]
+  user_{1..9}:
+    email (unique): <email()>
+    password: <password()>
+    firstName: <firstName()>
+    lastName: <lastName()>
+    roles: [ROLE_USER]

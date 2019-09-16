@@ -1,0 +1,4 @@
+App\Entity\Label:
+  label_{1..10}:
+    name: <sentence(4)>
+    color: <hexcolor()>

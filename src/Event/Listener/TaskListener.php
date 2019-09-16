@@ -40,9 +40,26 @@ class TaskListener implements EventSubscriber
     }
 
     /** @var TaskRepository $repository */
-    $repository = $event->getEntityManager()->getRepository(Task::class);
+    $em = $event->getEntityManager();
+    $repository = $em->getRepository(Task::class);
 
-    $task->setOrder($repository->getMaxOrder() + 1);
+    $scheduledEntityInsertions = array_values(array_filter($em->getUnitOfWork()->getScheduledEntityInsertions(), function ($entity) { return $entity instanceof Task; }));
+
+    if (0 === count($scheduledEntityInsertions)) {
+      $task->setOrder($repository->getMaxOrder() + 1);
+
+      return;
+    }
+
+    $maxOrder = 0;
+
+    foreach ($scheduledEntityInsertions as $entity) {
+      if (($order = $entity->getOrder()) > $maxOrder) {
+        $maxOrder = $order;
+      }
+    }
+
+    $task->setOrder($maxOrder + 1);
   }
 
   public function postRemove(LifecycleEventArgs $event)

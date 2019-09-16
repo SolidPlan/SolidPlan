@@ -1,0 +1,5 @@
+App\Entity\Project:
+  project_{1..10}:
+    name: <sentence(4)>
+    description: <text()>
+    color: <hexcolor()>
