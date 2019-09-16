@@ -126,36 +126,16 @@
           </v-list-item>
         </v-list-group>
         <v-divider />
-        <v-list-group
-          prepend-icon="mdi-label"
-          no-action
-        >
-          <template v-slot:activator>
-            <v-list-item-title>Labels</v-list-item-title>
-          </template>
-
-          <v-list-item
-            v-for="label in labels"
-            :key="label.id"
-          >
-            <v-list-item-title>
-              <v-icon :color="label.color">
-                mdi-label
-              </v-icon>
-              {{ label.name }}
+        <v-list-item active-class="primary white--text" @click="toggleLabelsDialog">
+          <v-list-item-action>
+            <v-icon>mdi-label</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title v-once>
+              Manage Labels
             </v-list-item-title>
-          </v-list-item>
-
-          <v-list-item link @click="toggleLabelsDialog">
-            <v-list-item-title>
-              <v-icon>
-                mdi-plus
-              </v-icon>
-              Edit Labels
-            </v-list-item-title>
-          </v-list-item>
-          <Labels />
-        </v-list-group>
+          </v-list-item-content>
+        </v-list-item>
         <v-divider />
         <v-list-item @click="logout">
           <v-list-item-action>
@@ -187,6 +167,7 @@
       </v-fade-transition>
     </v-content>
     <Footer />
+    <Labels />
   </v-app>
 </template>
 
