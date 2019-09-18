@@ -47,8 +47,8 @@ final class Version20190909090915 extends AbstractMigration
     $taskTable->addColumn('`order`', 'integer', ['notnull' => false]);
     $taskTable->addIndex(['project_id']);
     $taskTable->addIndex(['assigned_id']);
-    $taskTable->addForeignKeyConstraint($projectTable, ['project_id'], ['id']);
-    $taskTable->addForeignKeyConstraint($userTable, ['assigned_id'], ['id']);
+    $taskTable->addForeignKeyConstraint($projectTable, ['project_id'], ['id'], ['onDelete' => 'SET NULL']);
+    $taskTable->addForeignKeyConstraint($userTable, ['assigned_id'], ['id'], ['onDelete' => 'SET NULL']);
     $taskTable->setPrimaryKey(['id']);
 
     $labelTable = $schema->createTable('labels');

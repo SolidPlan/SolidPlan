@@ -89,8 +89,8 @@
           v-for="(item, i) in menuItems"
           :key="i"
           :to="item.to"
-          router
           exact
+          nuxt
           active-class="primary white--text"
         >
           <v-list-item-action>
@@ -137,6 +137,14 @@
           </v-list-item-content>
         </v-list-item>
         <v-divider />
+        <v-list-item nuxt exact active-class="primary white--text" to="/users">
+          <v-list-item-action>
+            <v-icon>mdi-account</v-icon>
+          </v-list-item-action>
+          <v-list-item-title>
+            Manage Users
+          </v-list-item-title>
+        </v-list-item>
         <v-list-item @click="logout">
           <v-list-item-action>
             <v-icon>mdi-logout</v-icon>

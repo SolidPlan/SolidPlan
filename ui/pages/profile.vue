@@ -63,7 +63,7 @@ export default class Profile extends Vue {
     ];
   }
 
-  public user: User = JSON.parse(JSON.stringify(this.$auth.$state.user));
+  public user: User = {...this.$auth.$state.user};
 
   public async update (): Promise<void> {
     if ((this.$refs.form as HTMLFormElement).validate()) {

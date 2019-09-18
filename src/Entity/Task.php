@@ -67,6 +67,7 @@ class Task
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Project", inversedBy="tasks")
+     * @ORM\JoinColumn(onDelete="SET NULL", nullable=true)
      */
     private $project;
 
@@ -77,6 +78,7 @@ class Task
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="tasks")
+     * @ORM\JoinColumn(onDelete="SET NULL", nullable=true)
      */
     private $assigned;
 
