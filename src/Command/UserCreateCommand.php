@@ -27,131 +27,131 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserCreateCommand extends Command
 {
-  /**
-   * @var ValidatorInterface
-   */
-  private $validator;
+    /**
+     * @var ValidatorInterface
+     */
+    private $validator;
 
-  /**
-   * @var UserPasswordEncoderInterface
-   */
-  private $passwordEncoder;
+    /**
+     * @var UserPasswordEncoderInterface
+     */
+    private $passwordEncoder;
 
-  /**
-   * @var UserRepository
-   */
-  private $userRepository;
+    /**
+     * @var UserRepository
+     */
+    private $userRepository;
 
-  public function __construct(ValidatorInterface $validator, UserPasswordEncoderInterface $passwordEncoder, UserRepository $userRepository)
-  {
-    parent::__construct('user:create');
-    $this->validator = $validator;
-    $this->passwordEncoder = $passwordEncoder;
-    $this->userRepository = $userRepository;
-  }
+    public function __construct(ValidatorInterface $validator, UserPasswordEncoderInterface $passwordEncoder, UserRepository $userRepository)
+    {
+        parent::__construct('user:create');
+        $this->validator = $validator;
+        $this->passwordEncoder = $passwordEncoder;
+        $this->userRepository = $userRepository;
+    }
 
-  protected function configure()
-  {
-    $this
+    protected function configure()
+    {
+        $this
       ->addOption('email', 'u', InputOption::VALUE_REQUIRED, 'The email address of the user to create')
       ->addOption('password', 'p', InputOption::VALUE_REQUIRED, 'The password of the user')
       ->addOption('firstName', 'f', InputOption::VALUE_REQUIRED, 'The first name of the user')
       ->addOption('lastName', 'l', InputOption::VALUE_REQUIRED, 'The last name of the user to create');
-  }
+    }
 
-  protected function interact(InputInterface $input, OutputInterface $output)
-  {
-    $io = new SymfonyStyle($input, $output);
-    $helper = new QuestionHelper();
+    protected function interact(InputInterface $input, OutputInterface $output)
+    {
+        $io = new SymfonyStyle($input, $output);
+        $helper = new QuestionHelper();
 
-    foreach (static::getFields() as $field) {
-      $fieldName = $field['name'];
-      while (null === $input->getOption($fieldName)) {
-        $q = new Question("Enter the $fieldName of the user: ");
-        $q->setHidden($field['hidden'] ?? false);
-        $value = $helper->ask($input, $output, $q);
+        foreach (static::getFields() as $field) {
+            $fieldName = $field['name'];
+            while (null === $input->getOption($fieldName)) {
+                $q = new Question("Enter the $fieldName of the user: ");
+                $q->setHidden($field['hidden'] ?? false);
+                $value = $helper->ask($input, $output, $q);
 
-        if (null === $value) {
-          $io->error("The $fieldName cannot be blank");
-          continue;
+                if (null === $value) {
+                    $io->error("The $fieldName cannot be blank");
+                    continue;
+                }
+
+                $violations = $this->validator->validate($value, $field['constraints']);
+
+                if (count($violations) > 0) {
+                    /** @var \Symfony\Component\Validator\ConstraintViolation $violation */
+                    foreach ($violations as $violation) {
+                        $io->error($violation->getMessage());
+                    }
+
+                    continue;
+                }
+
+                $input->setOption($fieldName, $value);
+            }
+        }
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $user = new User();
+        $io = new SymfonyStyle($input, $output);
+
+        $missingFields = [];
+        $error = false;
+        foreach (static::getFields() as $field) {
+            $name = $field['name'];
+
+            /** @var string|null $option */
+            $option = $input->getOption($name);
+
+            if (null === $option) {
+                $missingFields[] = $name;
+
+                continue;
+            }
+
+            $violations = $this->validator->validate($option, $field['constraints']);
+
+            if (count($violations) > 0) {
+                /** @var \Symfony\Component\Validator\ConstraintViolation $violation */
+                foreach ($violations as $violation) {
+                    $io->error($name.': '.$violation->getMessage());
+                }
+
+                $error = true;
+
+                continue;
+            }
+
+            $method = 'set'.ucfirst($name);
+
+            $user->$method($field['hidden'] ?? false ? $this->passwordEncoder->encodePassword($user, $option) : $option);
         }
 
-        $violations = $this->validator->validate($value, $field['constraints']);
+        if ([] !== $missingFields) {
+            $io->error('Unable to create user. Some required fields are missing: '.implode(', ', $missingFields));
 
-        if (count($violations) > 0) {
-          /** @var \Symfony\Component\Validator\ConstraintViolation $violation */
-          foreach ($violations as $violation) {
-            $io->error($violation->getMessage());
-          }
-
-          continue;
+            return 1;
         }
 
-        $input->setOption($fieldName, $value);
-      }
-    }
-  }
-
-  protected function execute(InputInterface $input, OutputInterface $output)
-  {
-    $user = new User();
-    $io = new SymfonyStyle($input, $output);
-
-    $missingFields = [];
-    $error = false;
-    foreach (static::getFields() as $field) {
-      $name = $field['name'];
-
-      /** @var string|null $option */
-      $option = $input->getOption($name);
-
-      if (null === $option) {
-        $missingFields[] = $name;
-
-        continue;
-      }
-
-      $violations = $this->validator->validate($option, $field['constraints']);
-
-      if (count($violations) > 0) {
-        /** @var \Symfony\Component\Validator\ConstraintViolation $violation */
-        foreach ($violations as $violation) {
-          $io->error($name.': '.$violation->getMessage());
+        if ($error) {
+            return 1;
         }
 
-        $error = true;
+        $user->setRoles(['ROLE_USER']);
 
-        continue;
-      }
+        $this->userRepository->save($user);
 
-      $method = 'set'.ucfirst($name);
-
-      $user->$method($field['hidden'] ?? false ? $this->passwordEncoder->encodePassword($user, $option) : $option);
+        $io->success('User created successfully');
     }
 
-    if ([] !== $missingFields) {
-      $io->error('Unable to create user. Some required fields are missing: '.implode(', ', $missingFields));
-
-      return 1;
-    }
-
-    if ($error) {
-      return 1;
-    }
-
-    $user->setRoles(['ROLE_USER']);
-
-    $this->userRepository->save($user);
-
-    $io->success('User created successfully');
-  }
-
-  private static function getFields(): array
-  {
-    return [
+    private static function getFields(): array
+    {
+        return [
       [
         'name' => 'email',
-        'constraints' => [new Email()]
+        'constraints' => [new Email()],
       ],
       [
         'name' => 'password',
@@ -160,12 +160,12 @@ class UserCreateCommand extends Command
       ],
       [
         'name' => 'firstName',
-        'constraints' => [new Length(['min' => 3])]
+        'constraints' => [new Length(['min' => 3])],
       ],
       [
         'name' => 'lastName',
-        'constraints' => [new Length(['min' => 3])]
-      ]
+        'constraints' => [new Length(['min' => 3])],
+      ],
     ];
-  }
+    }
 }

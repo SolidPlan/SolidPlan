@@ -17,16 +17,16 @@ use Symfony\Component\HttpFoundation\Request;
 
 final class Sort
 {
-  /**
-   * @param Task $data
-   * @param Task $previous_data
-   *
-   * @return Task
-   */
-  public function __invoke($data, $previous_data, Request $request, TaskRepository $taskRepository)
-  {
-    $order = (int) $data->getOrder();
+    /**
+     * @param Task $data
+     * @param Task $previous_data
+     *
+     * @return Task
+     */
+    public function __invoke($data, $previous_data, Request $request, TaskRepository $taskRepository)
+    {
+        $order = (int) $data->getOrder();
 
-    return $taskRepository->sortTask($data->setOrder($previous_data->getOrder()), $order);
-  }
+        return $taskRepository->sortTask($data->setOrder($previous_data->getOrder()), $order);
+    }
 }

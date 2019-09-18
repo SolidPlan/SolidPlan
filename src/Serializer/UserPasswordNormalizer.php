@@ -20,75 +20,75 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class UserPasswordNormalizer implements NormalizerInterface, DenormalizerInterface, SerializerAwareInterface
 {
-  /**
-   * @var NormalizerInterface & DenormalizerInterface
-   */
-  private $serializer;
+    /**
+     * @var NormalizerInterface & DenormalizerInterface
+     */
+    private $serializer;
 
-  /**
-   * @var UserPasswordEncoderInterface
-   */
-  private $passwordEncoder;
+    /**
+     * @var UserPasswordEncoderInterface
+     */
+    private $passwordEncoder;
 
-  public function __construct(NormalizerInterface $normalizer, UserPasswordEncoderInterface $passwordEncoder)
-  {
-    if (!$normalizer instanceof DenormalizerInterface) {
-      throw new \InvalidArgumentException(sprintf('The decorated normalizer must implement the %s.', DenormalizerInterface::class));
+    public function __construct(NormalizerInterface $normalizer, UserPasswordEncoderInterface $passwordEncoder)
+    {
+        if (!$normalizer instanceof DenormalizerInterface) {
+            throw new \InvalidArgumentException(sprintf('The decorated normalizer must implement the %s.', DenormalizerInterface::class));
+        }
+
+        $this->serializer = $normalizer;
+        $this->passwordEncoder = $passwordEncoder;
     }
 
-    $this->serializer = $normalizer;
-    $this->passwordEncoder = $passwordEncoder;
-  }
+    /**
+     * {@inheritdoc}
+     */
+    public function denormalize($data, $class, $format = null, array $context = [])
+    {
+        $hashPassword = false;
+        if (\is_array($data) && isset($data['password'])) {
+            $hashPassword = true;
+        }
+        $data = $this->serializer->denormalize($data, $class, $format, $context);
 
-  /**
-   * {@inheritDoc}
-   */
-  public function denormalize($data, $class, $format = null, array $context = [])
-  {
-    $hashPassword = false;
-    if (\is_array($data) && isset($data['password'])) {
-      $hashPassword = true;
+        if ($data instanceof User && $hashPassword) {
+            $data->setPassword($this->passwordEncoder->encodePassword($data, $data->getPassword()));
+        }
+
+        return $data;
     }
-    $data = $this->serializer->denormalize($data, $class, $format, $context);
 
-    if ($data instanceof User && $hashPassword) {
-      $data->setPassword($this->passwordEncoder->encodePassword($data, $data->getPassword()));
+    /**
+     * {@inheritdoc}
+     */
+    public function supportsDenormalization($data, $type, $format = null): bool
+    {
+        return User::class === $type && $this->serializer->supportsDenormalization($data, $type, $format);
     }
 
-    return $data;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public function supportsDenormalization($data, $type, $format = null): bool
-  {
-    return User::class === $type && $this->serializer->supportsDenormalization($data, $type, $format);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public function normalize($object, $format = null, array $context = [])
-  {
-    return $this->serializer->normalize($object, $format, $context);
-  }
-
-  /**
-   * {@inheritDoc}}
-   */
-  public function supportsNormalization($data, $format = null): bool
-  {
-    return $this->serializer->supportsNormalization($data, $format);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public function setSerializer(SerializerInterface $serializer)
-  {
-    if ($this->serializer instanceof SerializerAwareInterface) {
-      $this->serializer->setSerializer($serializer);
+    /**
+     * {@inheritdoc}
+     */
+    public function normalize($object, $format = null, array $context = [])
+    {
+        return $this->serializer->normalize($object, $format, $context);
     }
-  }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function supportsNormalization($data, $format = null): bool
+    {
+        return $this->serializer->supportsNormalization($data, $format);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setSerializer(SerializerInterface $serializer)
+    {
+        if ($this->serializer instanceof SerializerAwareInterface) {
+            $this->serializer->setSerializer($serializer);
+        }
+    }
 }

@@ -19,60 +19,60 @@ use Doctrine\ORM\Events;
 
 class TaskListener implements EventSubscriber
 {
-  /**
-   * Returns an array of events this subscriber wants to listen to.
-   *
-   * @return string[]
-   */
-  public function getSubscribedEvents()
-  {
-    return [
+    /**
+     * Returns an array of events this subscriber wants to listen to.
+     *
+     * @return string[]
+     */
+    public function getSubscribedEvents()
+    {
+        return [
       Events::prePersist,
-      Events::postRemove
+      Events::postRemove,
     ];
-  }
-
-  public function prePersist(LifecycleEventArgs $event)
-  {
-    /** @var Task $task */
-    if (!($task = $event->getObject()) instanceof Task) {
-      return;
     }
 
-    /** @var TaskRepository $repository */
-    $em = $event->getEntityManager();
-    /** @var TaskRepository $repository */
-    $repository = $em->getRepository(Task::class);
+    public function prePersist(LifecycleEventArgs $event)
+    {
+        /** @var Task $task */
+        if (!($task = $event->getObject()) instanceof Task) {
+            return;
+        }
 
-    $scheduledEntityInsertions = array_values(array_filter($em->getUnitOfWork()->getScheduledEntityInsertions(), function ($entity) { return $entity instanceof Task; }));
+        /** @var TaskRepository $repository */
+        $em = $event->getEntityManager();
+        /** @var TaskRepository $repository */
+        $repository = $em->getRepository(Task::class);
 
-    if (0 === count($scheduledEntityInsertions)) {
-      $task->setOrder($repository->getMaxOrder() + 1);
+        $scheduledEntityInsertions = array_values(array_filter($em->getUnitOfWork()->getScheduledEntityInsertions(), function ($entity) { return $entity instanceof Task; }));
 
-      return;
+        if (0 === count($scheduledEntityInsertions)) {
+            $task->setOrder($repository->getMaxOrder() + 1);
+
+            return;
+        }
+
+        $maxOrder = 0;
+
+        foreach ($scheduledEntityInsertions as $entity) {
+            if (($order = $entity->getOrder()) > $maxOrder) {
+                $maxOrder = $order;
+            }
+        }
+
+        $task->setOrder($maxOrder + 1);
     }
 
-    $maxOrder = 0;
+    public function postRemove(LifecycleEventArgs $event)
+    {
+        /** @var Task $task */
+        if (!($task = $event->getObject()) instanceof Task) {
+            return;
+        }
 
-    foreach ($scheduledEntityInsertions as $entity) {
-      if (($order = $entity->getOrder()) > $maxOrder) {
-        $maxOrder = $order;
-      }
+        /** @var TaskRepository $repository */
+        $repository = $event->getEntityManager()->getRepository(Task::class);
+
+        $repository->sortTask($task, 0);
     }
-
-    $task->setOrder($maxOrder + 1);
-  }
-
-  public function postRemove(LifecycleEventArgs $event)
-  {
-    /** @var Task $task */
-    if (!($task = $event->getObject()) instanceof Task) {
-      return;
-    }
-
-    /** @var TaskRepository $repository */
-    $repository = $event->getEntityManager()->getRepository(Task::class);
-
-    $repository->sortTask($task,0);
-  }
 }

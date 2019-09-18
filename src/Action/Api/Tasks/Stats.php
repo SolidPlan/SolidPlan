@@ -18,25 +18,25 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 final class Stats
 {
-  public function __invoke(TaskRepository $taskRepository, TokenStorageInterface $tokenStorage): JsonResponse
-  {
-    return new JsonResponse($taskRepository->getTaskStats($this->getUser($tokenStorage)));
-  }
-
-  private function getUser(TokenStorageInterface $tokenStorage): ?User
-  {
-    if (null === $token = $tokenStorage->getToken()) {
-      return null;
+    public function __invoke(TaskRepository $taskRepository, TokenStorageInterface $tokenStorage): JsonResponse
+    {
+        return new JsonResponse($taskRepository->getTaskStats($this->getUser($tokenStorage)));
     }
 
-    if (!\is_object($user = $token->getUser())) {
-      return null;
-    }
+    private function getUser(TokenStorageInterface $tokenStorage): ?User
+    {
+        if (null === $token = $tokenStorage->getToken()) {
+            return null;
+        }
 
-    if (!$user instanceof User) {
-      return null;
+        if (!\is_object($user = $token->getUser())) {
+            return null;
+        }
+
+        if (!$user instanceof User) {
+            return null;
+        }
+
+        return $user;
     }
-    
-    return $user;
-  }
 }

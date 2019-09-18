@@ -20,50 +20,50 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 class AuthenticationSuccessListener implements EventSubscriberInterface
 {
-  /**
-   * @var TokenStorageInterface
-   */
-  private $tokenStorage;
+    /**
+     * @var TokenStorageInterface
+     */
+    private $tokenStorage;
 
-  public function __construct(TokenStorageInterface $tokenStorage)
-  {
-    $this->tokenStorage = $tokenStorage;
-  }
+    public function __construct(TokenStorageInterface $tokenStorage)
+    {
+        $this->tokenStorage = $tokenStorage;
+    }
 
-  /**
-   * {@inheritDoc}
-   */
-  public static function getSubscribedEvents()
-  {
-    return [
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedEvents()
+    {
+        return [
       KernelEvents::REQUEST => ['onAuthenticationSuccessEvent', EventPriorities::PRE_READ],
     ];
-  }
-
-  public function onAuthenticationSuccessEvent(RequestEvent $event)
-  {
-    $request = $event->getRequest();
-
-    if ('api_users_me_item' !== $request->attributes->get('_route')) {
-      return;
     }
 
-    if (null !== $request->attributes->get('id')) {
-      return;
+    public function onAuthenticationSuccessEvent(RequestEvent $event)
+    {
+        $request = $event->getRequest();
+
+        if ('api_users_me_item' !== $request->attributes->get('_route')) {
+            return;
+        }
+
+        if (null !== $request->attributes->get('id')) {
+            return;
+        }
+
+        $token = $this->tokenStorage->getToken();
+
+        if (null === $token) {
+            return;
+        }
+
+        $user = $token->getUser();
+
+        if (!$user instanceof User) {
+            return;
+        }
+
+        $request->attributes->set('id', $user->getId());
     }
-
-    $token = $this->tokenStorage->getToken();
-
-    if (null === $token) {
-      return;
-    }
-
-    $user = $token->getUser();
-
-    if (!$user instanceof User) {
-        return;
-    }
-
-    $request->attributes->set('id', $user->getId());
-  }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\Task;
@@ -15,20 +17,20 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
  */
 class TaskRepository extends ServiceEntityRepository
 {
-  public function __construct(RegistryInterface $registry)
-  {
-    parent::__construct($registry, Task::class);
-  }
+    public function __construct(RegistryInterface $registry)
+    {
+        parent::__construct($registry, Task::class);
+    }
 
-  public function sortTask(Task $task, int $newOrder): Task
-  {
-    $initialOrder = $task->getOrder();
+    public function sortTask(Task $task, int $newOrder): Task
+    {
+        $initialOrder = $task->getOrder();
 
-    $qb = $this->createQueryBuilder('t');
+        $qb = $this->createQueryBuilder('t');
 
-    if ($initialOrder > $newOrder) {
-      // Task moved up in list (higher priority)
-      $qb->update()
+        if ($initialOrder > $newOrder) {
+            // Task moved up in list (higher priority)
+            $qb->update()
         ->set('t.order', 't.order + 1')
         ->where('t.order >= :order')
         ->andWhere('t.order < :initialOrder')
@@ -36,9 +38,9 @@ class TaskRepository extends ServiceEntityRepository
         ->setParameter('initialOrder', $initialOrder)
         ->getQuery()
         ->execute();
-    } else {
-      // Task moved down in list (lower priority)
-      $qb->update()
+        } else {
+            // Task moved down in list (lower priority)
+            $qb->update()
         ->set('t.order', 't.order - 1')
         ->where('t.order <= :order')
         ->andWhere('t.order > :initialOrder')
@@ -46,37 +48,37 @@ class TaskRepository extends ServiceEntityRepository
         ->setParameter('initialOrder', $initialOrder)
         ->getQuery()
         ->execute();
-    }
+        }
 
-    $task->setOrder($newOrder);
+        $task->setOrder($newOrder);
 
-    $this->getEntityManager()
+        $this->getEntityManager()
       ->persist($task);
 
-    return $task;
-  }
+        return $task;
+    }
 
-  public function getMaxOrder(): int
-  {
-    return (int) $this->createQueryBuilder('t')
+    public function getMaxOrder(): int
+    {
+        return (int) $this->createQueryBuilder('t')
       ->select('MAX(t.order)')
       ->getQuery()
       ->getSingleScalarResult();
-  }
+    }
 
-  public function getTotalTasksByStatus(string $status): int
-  {
-    return $this->createQueryBuilder('t')
+    public function getTotalTasksByStatus(string $status): int
+    {
+        return $this->createQueryBuilder('t')
       ->select('COUNT(t)')
       ->where('t.status = :status')
       ->setParameter('status', $status)
       ->getQuery()
       ->getSingleScalarResult();
-  }
+    }
 
-  public function getTotalTasksAssignedToUser(User $user): int
-  {
-    return $this->createQueryBuilder('t')
+    public function getTotalTasksAssignedToUser(User $user): int
+    {
+        return $this->createQueryBuilder('t')
       ->select('COUNT(t)')
       ->where('t.status = :status')
       ->andWhere('t.assigned = :user')
@@ -84,14 +86,14 @@ class TaskRepository extends ServiceEntityRepository
       ->setParameter('user', $user)
       ->getQuery()
       ->getSingleScalarResult();
-  }
+    }
 
-  public function getTaskStats(?User $user)
-  {
-    return [
+    public function getTaskStats(?User $user)
+    {
+        return [
       'open' => $this->getTotalTasksByStatus('open'),
       'closed' => $this->getTotalTasksByStatus('closed'),
       'assigned' => $user ? $this->getTotalTasksAssignedToUser($user) : 0,
     ];
-  }
+    }
 }
