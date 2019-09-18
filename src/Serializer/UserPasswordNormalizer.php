@@ -21,7 +21,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 class UserPasswordNormalizer implements NormalizerInterface, DenormalizerInterface, SerializerAwareInterface
 {
   /**
-   * @var NormalizerInterface
+   * @var NormalizerInterface & DenormalizerInterface
    */
   private $serializer;
 

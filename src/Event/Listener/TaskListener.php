@@ -41,6 +41,7 @@ class TaskListener implements EventSubscriber
 
     /** @var TaskRepository $repository */
     $em = $event->getEntityManager();
+    /** @var TaskRepository $repository */
     $repository = $em->getRepository(Task::class);
 
     $scheduledEntityInsertions = array_values(array_filter($em->getUnitOfWork()->getScheduledEntityInsertions(), function ($entity) { return $entity instanceof Task; }));

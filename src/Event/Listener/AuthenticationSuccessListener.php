@@ -52,7 +52,13 @@ class AuthenticationSuccessListener implements EventSubscriberInterface
       return;
     }
 
-    $user = $this->tokenStorage->getToken()->getUser();
+    $token = $this->tokenStorage->getToken();
+
+    if (null === $token) {
+      return;
+    }
+
+    $user = $token->getUser();
 
     if (!$user instanceof User) {
         return;

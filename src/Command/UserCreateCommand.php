@@ -102,13 +102,16 @@ class UserCreateCommand extends Command
     foreach (static::getFields() as $field) {
       $name = $field['name'];
 
-      if (null === $input->getOption($name)) {
+      /** @var string|null $option */
+      $option = $input->getOption($name);
+
+      if (null === $option) {
         $missingFields[] = $name;
 
         continue;
       }
 
-      $violations = $this->validator->validate($input->getOption($name), $field['constraints']);
+      $violations = $this->validator->validate($option, $field['constraints']);
 
       if (count($violations) > 0) {
         /** @var \Symfony\Component\Validator\ConstraintViolation $violation */
@@ -123,7 +126,7 @@ class UserCreateCommand extends Command
 
       $method = 'set'.ucfirst($name);
 
-      $user->$method($field['hidden'] ?? false ? $this->passwordEncoder->encodePassword($user, $input->getOption($name)) : $input->getOption($name));
+      $user->$method($field['hidden'] ?? false ? $this->passwordEncoder->encodePassword($user, $option) : $option);
     }
 
     if ([] !== $missingFields) {

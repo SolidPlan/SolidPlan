@@ -11,13 +11,10 @@ declare(strict_types=1);
 
 namespace App\Action\Api\Tasks;
 
-use App\Entity\Task;
 use App\Entity\User;
 use App\Repository\TaskRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 final class Stats
 {
@@ -36,7 +33,10 @@ final class Stats
       return null;
     }
 
-    /** @var User $user */
+    if (!$user instanceof User) {
+      return null;
+    }
+    
     return $user;
   }
 }

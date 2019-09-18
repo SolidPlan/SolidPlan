@@ -25,7 +25,7 @@ final class Sort
    */
   public function __invoke($data, $previous_data, Request $request, TaskRepository $taskRepository)
   {
-    $order = $data->getOrder();
+    $order = (int) $data->getOrder();
 
     return $taskRepository->sortTask($data->setOrder($previous_data->getOrder()), $order);
   }

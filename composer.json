@@ -26,6 +26,9 @@
     },
     "require-dev": {
         "hautelook/alice-bundle": "^2.5",
+        "phpstan/phpstan": "^0.11.16",
+        "phpstan/phpstan-doctrine": "^0.11.6",
+        "phpstan/phpstan-symfony": "^0.11.6",
         "symfony/maker-bundle": "^1.12",
         "symfony/test-pack": "^1.0"
     },
