@@ -25,6 +25,7 @@
         "symfony/yaml": "4.3.*"
     },
     "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.15",
         "hautelook/alice-bundle": "^2.5",
         "phpstan/phpstan": "^0.11.16",
         "phpstan/phpstan-doctrine": "^0.11.6",
