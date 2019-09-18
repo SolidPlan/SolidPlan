@@ -1,0 +1,307 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TaskList matches snapshot 1`] = `
+<v-card-stub
+  class="mt-3"
+  loaderheight="4"
+  tag="div"
+>
+  <v-card-actions-stub
+    class="px-3"
+  >
+    <v-hover-stub
+      closedelay="0"
+      opendelay="0"
+    />
+    
+     
+    0 Items
+    
+    <v-spacer-stub />
+     
+    <v-icon-stub
+      class="mt-3 mr-3"
+    >
+      mdi-filter-variant
+    </v-icon-stub>
+     
+    <filters-stub
+      filter="[object Object]"
+    />
+     
+    <v-spacer-stub />
+     
+    <v-tooltip-stub
+      bottom="true"
+      closedelay="0"
+      contentclass=""
+      fixed="true"
+      maxwidth="auto"
+      nudgebottom="0"
+      nudgeleft="0"
+      nudgeright="0"
+      nudgetop="0"
+      nudgewidth="0"
+      opendelay="0"
+      openonhover="true"
+      tag="span"
+    >
+       
+      <span>
+        Show/Hide labels
+      </span>
+    </v-tooltip-stub>
+  </v-card-actions-stub>
+   
+  <v-card-text-stub
+    class="pa-0"
+  >
+    <v-data-iterator-stub
+      customfilter="function searchItems(items, search) {
+          if (!search) return items;
+          search = search.toString().toLowerCase();
+          if (search.trim() === '') return items;
+          return items.filter(function (item) {
+            return Object.keys(item).some(function (key) {
+              return defaultFilter(getObjectValueByPath(item, key), search, item);
+            });
+          });
+        }"
+      customsort="function sortItems(items, sortBy, sortDesc, locale, customSorters) {
+          if (sortBy === null || !sortBy.length) return items;
+          return items.sort(function (a, b) {
+            var _a, _b;
+
+            for (var i = 0; i < sortBy.length; i++) {
+              var sortKey = sortBy[i];
+              var sortA = getObjectValueByPath(a, sortKey);
+              var sortB = getObjectValueByPath(b, sortKey);
+
+              if (sortDesc[i]) {
+                _a = __read([sortB, sortA], 2), sortA = _a[0], sortB = _a[1];
+              }
+
+              if (customSorters && customSorters[sortKey]) return customSorters[sortKey](sortA, sortB); // Check if both cannot be evaluated
+
+              if (sortA === null && sortB === null) {
+                return 0;
+              }
+
+              _b = __read([sortA, sortB].map(function (s) {
+                return (s || '').toString().toLocaleLowerCase();
+              }), 2), sortA = _b[0], sortB = _b[1];
+
+              if (sortA !== sortB) {
+                if (!isNaN(sortA) && !isNaN(sortB)) return Number(sortA) - Number(sortB);
+                return sortA.localeCompare(sortB, locale);
+              }
+            }
+
+            return 0;
+          });
+        }"
+      expanded=""
+      footerprops="[object Object]"
+      groupby=""
+      groupdesc=""
+      itemkey="id"
+      items=""
+      itemsperpage="15"
+      loadingtext="$vuetify.dataIterator.loadingText"
+      locale="en-US"
+      nodatatext="$vuetify.noDataText"
+      noresultstext="$vuetify.dataIterator.noResultsText"
+      options="[object Object]"
+      page="1"
+      serveritemslength="0"
+      sortby=""
+      sortdesc=""
+      value=""
+    >
+       
+      <template>
+        <v-list-stub
+          class="py-0"
+          tag="div"
+          tile="true"
+        >
+          <v-divider-stub />
+           
+          <v-list-item-stub
+            activeclass=""
+            class="task-item text-cs-center"
+            tag="div"
+          >
+            <v-list-item-content-stub>
+              <span
+                class="text-center success--text"
+              >
+                <v-icon-stub>
+                  mdi-party-popper
+                </v-icon-stub>
+                 No Tasks
+                
+              </span>
+            </v-list-item-content-stub>
+          </v-list-item-stub>
+        </v-list-stub>
+         
+        <v-divider-stub />
+      </template>
+    </v-data-iterator-stub>
+  </v-card-text-stub>
+</v-card-stub>
+`;
+
+exports[`TaskList matches snapshot with data 1`] = `
+<v-card-stub
+  class="mt-3"
+  loaderheight="4"
+  tag="div"
+>
+  <v-card-actions-stub
+    class="px-3"
+  >
+    <v-hover-stub
+      closedelay="0"
+      opendelay="0"
+    />
+    
+     
+    10 Items
+    
+    <v-spacer-stub />
+     
+    <v-icon-stub
+      class="mt-3 mr-3"
+    >
+      mdi-filter-variant
+    </v-icon-stub>
+     
+    <filters-stub
+      filter="[object Object]"
+    />
+     
+    <v-spacer-stub />
+     
+    <v-tooltip-stub
+      bottom="true"
+      closedelay="0"
+      contentclass=""
+      fixed="true"
+      maxwidth="auto"
+      nudgebottom="0"
+      nudgeleft="0"
+      nudgeright="0"
+      nudgetop="0"
+      nudgewidth="0"
+      opendelay="0"
+      openonhover="true"
+      tag="span"
+    >
+       
+      <span>
+        Show/Hide labels
+      </span>
+    </v-tooltip-stub>
+  </v-card-actions-stub>
+   
+  <v-card-text-stub
+    class="pa-0"
+  >
+    <v-data-iterator-stub
+      customfilter="function searchItems(items, search) {
+          if (!search) return items;
+          search = search.toString().toLowerCase();
+          if (search.trim() === '') return items;
+          return items.filter(function (item) {
+            return Object.keys(item).some(function (key) {
+              return defaultFilter(getObjectValueByPath(item, key), search, item);
+            });
+          });
+        }"
+      customsort="function sortItems(items, sortBy, sortDesc, locale, customSorters) {
+          if (sortBy === null || !sortBy.length) return items;
+          return items.sort(function (a, b) {
+            var _a, _b;
+
+            for (var i = 0; i < sortBy.length; i++) {
+              var sortKey = sortBy[i];
+              var sortA = getObjectValueByPath(a, sortKey);
+              var sortB = getObjectValueByPath(b, sortKey);
+
+              if (sortDesc[i]) {
+                _a = __read([sortB, sortA], 2), sortA = _a[0], sortB = _a[1];
+              }
+
+              if (customSorters && customSorters[sortKey]) return customSorters[sortKey](sortA, sortB); // Check if both cannot be evaluated
+
+              if (sortA === null && sortB === null) {
+                return 0;
+              }
+
+              _b = __read([sortA, sortB].map(function (s) {
+                return (s || '').toString().toLocaleLowerCase();
+              }), 2), sortA = _b[0], sortB = _b[1];
+
+              if (sortA !== sortB) {
+                if (!isNaN(sortA) && !isNaN(sortB)) return Number(sortA) - Number(sortB);
+                return sortA.localeCompare(sortB, locale);
+              }
+            }
+
+            return 0;
+          });
+        }"
+      expanded=""
+      footerprops="[object Object]"
+      groupby=""
+      groupdesc=""
+      itemkey="id"
+      items="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      itemsperpage="15"
+      loadingtext="$vuetify.dataIterator.loadingText"
+      locale="en-US"
+      nodatatext="$vuetify.noDataText"
+      noresultstext="$vuetify.dataIterator.noResultsText"
+      options="[object Object]"
+      page="1"
+      serveritemslength="10"
+      sortby=""
+      sortdesc=""
+      value=""
+    >
+       
+      <template>
+        <v-list-stub
+          class="py-0"
+          tag="div"
+          tile="true"
+        >
+          <v-divider-stub />
+           
+          <v-list-item-stub
+            activeclass=""
+            class="task-item text-cs-center"
+            tag="div"
+          >
+            <v-list-item-content-stub>
+              <span
+                class="text-center success--text"
+              >
+                <v-icon-stub>
+                  mdi-party-popper
+                </v-icon-stub>
+                 No Tasks
+                
+              </span>
+            </v-list-item-content-stub>
+          </v-list-item-stub>
+        </v-list-stub>
+         
+        <v-divider-stub />
+      </template>
+    </v-data-iterator-stub>
+  </v-card-text-stub>
+</v-card-stub>
+`;

@@ -1,0 +1,220 @@
+{
+  "@context": "/api/contexts/Task",
+  "@id": "/api/tasks",
+  "@type": "hydra:Collection",
+  "hydra:member": [
+    {
+      "@id": "/api/tasks/1",
+      "@type": "Task",
+      "id": 1,
+      "name": "Reiciendis qui architecto fugiat.",
+      "description": "Consequatur recusandae qui cupiditate eos quod veritatis. Optio provident non incidunt magnam molestias et quibusdam. Ab quo voluptatum quia ipsum voluptatibus est accusantium eveniet.",
+      "status": "open",
+      "project": "/api/projects/6",
+      "labels": [
+        "/api/labels/1",
+        "/api/labels/2",
+        "/api/labels/3",
+        "/api/labels/4"
+      ],
+      "assigned": "/api/users/5",
+      "order": 1
+    },
+    {
+      "@id": "/api/tasks/2",
+      "@type": "Task",
+      "id": 2,
+      "name": "Neque itaque ex quaerat.",
+      "description": "Maiores ex beatae reprehenderit. Corrupti dolorem reprehenderit ut ducimus. Molestiae consequatur sint consequatur est qui doloremque.",
+      "status": "closed",
+      "project": null,
+      "labels": [],
+      "assigned": null,
+      "order": 2
+    },
+    {
+      "@id": "/api/tasks/3",
+      "@type": "Task",
+      "id": 3,
+      "name": "Consequatur laudantium nisi quo earum rerum.",
+      "description": "Debitis omnis voluptatem voluptatem et eaque praesentium et. Est velit molestiae porro consequuntur quos. Animi nobis doloribus illo velit eius similique dolore consequatur.",
+      "status": "closed",
+      "project": "/api/projects/7",
+      "labels": [],
+      "assigned": null,
+      "order": 3
+    },
+    {
+      "@id": "/api/tasks/4",
+      "@type": "Task",
+      "id": 4,
+      "name": "Voluptatibus quae sit veniam vel.",
+      "description": "Et est nisi iusto amet neque deleniti totam. Nisi non omnis voluptatem velit. Eligendi eos sint ut voluptates.",
+      "status": "closed",
+      "project": "/api/projects/7",
+      "labels": [
+        "/api/labels/4",
+        "/api/labels/5",
+        "/api/labels/6",
+        "/api/labels/7",
+        "/api/labels/8"
+      ],
+      "assigned": null,
+      "order": 4
+    },
+    {
+      "@id": "/api/tasks/5",
+      "@type": "Task",
+      "id": 5,
+      "name": "Ratione quis voluptates nulla totam.",
+      "description": "Inventore perferendis voluptatem nisi quis consequatur ullam voluptas. Tempora repellat corporis excepturi sint dolores quaerat. Quia nisi accusantium natus voluptatem.",
+      "status": "open",
+      "project": null,
+      "labels": [
+        "/api/labels/1",
+        "/api/labels/3",
+        "/api/labels/6",
+        "/api/labels/7"
+      ],
+      "assigned": "/api/users/2",
+      "order": 5
+    },
+    {
+      "@id": "/api/tasks/6",
+      "@type": "Task",
+      "id": 6,
+      "name": "Ad asperiores quaerat eius.",
+      "description": "Dolorem earum ut consequatur facilis molestias quo. Minima illo delectus iste modi accusantium autem. Quia et et dolorum quos aliquam. Accusantium quidem ut eius a corrupti totam placeat delectus.",
+      "status": "open",
+      "project": null,
+      "labels": [
+        "/api/labels/9"
+      ],
+      "assigned": "/api/users/2",
+      "order": 6
+    },
+    {
+      "@id": "/api/tasks/7",
+      "@type": "Task",
+      "id": 7,
+      "name": "Beatae et nam itaque nesciunt.",
+      "description": "Accusantium temporibus qui ad est et. Cum eius voluptas numquam quam occaecati culpa. In laudantium omnis et.",
+      "status": "closed",
+      "project": null,
+      "labels": [
+        "/api/labels/4",
+        "/api/labels/6"
+      ],
+      "assigned": null,
+      "order": 7
+    },
+    {
+      "@id": "/api/tasks/8",
+      "@type": "Task",
+      "id": 8,
+      "name": "Distinctio modi officiis.",
+      "description": "Facilis vel ut modi quia recusandae. Eligendi quo voluptas totam asperiores ab tenetur voluptatem. Reiciendis cum accusamus ut et nobis iste accusantium quaerat. Voluptas est tenetur sed possimus.",
+      "status": "open",
+      "project": "/api/projects/4",
+      "labels": [
+        "/api/labels/3",
+        "/api/labels/4",
+        "/api/labels/7",
+        "/api/labels/8"
+      ],
+      "assigned": null,
+      "order": 8
+    },
+    {
+      "@id": "/api/tasks/9",
+      "@type": "Task",
+      "id": 9,
+      "name": "Eveniet consequatur sit impedit.",
+      "description": "Perferendis sit est magnam ut nemo possimus. Totam iste perspiciatis harum animi et ad rerum. Fugiat et facere quisquam. Quod velit velit ut rem repellendus ut sit laudantium.",
+      "status": "open",
+      "project": null,
+      "labels": [
+        "/api/labels/5",
+        "/api/labels/10"
+      ],
+      "assigned": null,
+      "order": 9
+    },
+    {
+      "@id": "/api/tasks/10",
+      "@type": "Task",
+      "id": 10,
+      "name": "Perspiciatis quia quasi sit.",
+      "description": "Sunt est impedit itaque cumque. Ut quis quisquam consequatur asperiores voluptatem magnam nostrum. Corrupti voluptatem molestiae cupiditate rerum ratione.",
+      "status": "closed",
+      "project": "/api/projects/8",
+      "labels": [
+        "/api/labels/9"
+      ],
+      "assigned": null,
+      "order": 10
+    }
+  ],
+  "hydra:totalItems": 10,
+  "hydra:search": {
+    "@type": "hydra:IriTemplate",
+    "hydra:template": "/api/tasks{?project.id,project.id[],assigned.id,assigned.id[],status,status[],labels.id,labels.id[],order[status]}",
+    "hydra:variableRepresentation": "BasicRepresentation",
+    "hydra:mapping": [
+      {
+        "@type": "IriTemplateMapping",
+        "variable": "project.id",
+        "property": "project.id",
+        "required": false
+      },
+      {
+        "@type": "IriTemplateMapping",
+        "variable": "project.id[]",
+        "property": "project.id",
+        "required": false
+      },
+      {
+        "@type": "IriTemplateMapping",
+        "variable": "assigned.id",
+        "property": "assigned.id",
+        "required": false
+      },
+      {
+        "@type": "IriTemplateMapping",
+        "variable": "assigned.id[]",
+        "property": "assigned.id",
+        "required": false
+      },
+      {
+        "@type": "IriTemplateMapping",
+        "variable": "status",
+        "property": "status",
+        "required": false
+      },
+      {
+        "@type": "IriTemplateMapping",
+        "variable": "status[]",
+        "property": "status",
+        "required": false
+      },
+      {
+        "@type": "IriTemplateMapping",
+        "variable": "labels.id",
+        "property": "labels.id",
+        "required": false
+      },
+      {
+        "@type": "IriTemplateMapping",
+        "variable": "labels.id[]",
+        "property": "labels.id",
+        "required": false
+      },
+      {
+        "@type": "IriTemplateMapping",
+        "variable": "order[status]",
+        "property": "status",
+        "required": false
+      }
+    ]
+  }
+}

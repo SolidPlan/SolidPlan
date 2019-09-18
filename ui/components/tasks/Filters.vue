@@ -78,7 +78,8 @@ import { remove } from 'lodash';
 import Vue, { PropType } from 'vue';
 import Component from 'vue-class-component';
 import { Prop, Watch } from 'vue-property-decorator';
-import { BindingHelpers, namespace } from 'vuex-class/lib/bindings';
+import { namespace } from 'vuex-class';
+import { BindingHelpers } from 'vuex-class/lib/bindings';
 import { Filter, Label, Project, User } from '~/types';
 
 const labelStore: BindingHelpers = namespace('labels');
@@ -126,7 +127,6 @@ export default class Filters extends Vue {
       filters['order[status]'] = 'desc';
     }
 
-    // this.fetchTasks(this.taskFilters);
     this.$emit('update:filter', filters);
   }
 
