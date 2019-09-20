@@ -40,6 +40,8 @@ matrix:
       script:
         - composer validate
         - bin/phpunit --coverage-clover build/logs/clover.xml
+        - ls -la var/cache
+        - ls -la var/cache/test
         - ./vendor/bin/phpstan analyse ./src -vvv --level=max -c phpstan.neon
       after_script:
         - travis_retry wget https://scrutinizer-ci.com/ocular.phar
