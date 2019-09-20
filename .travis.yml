@@ -51,10 +51,10 @@ matrix:
       script: bin/phpunit
     - php: 7.4snapshot
       script: bin/phpunit
-    - php: nightly
-      script: bin/phpunit
     - node_js: "12"
-      before_install:
+      before_install: skip
+      services: null
+      before_script:
           - nvm install 12
           - nvm use 12
       install:
