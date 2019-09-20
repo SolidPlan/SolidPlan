@@ -1,5 +1,6 @@
 {
     "name": "solidplan/solidplan",
+    "description": "Simple project and task management application",
     "type": "project",
     "license": "proprietary",
     "require": {
@@ -23,8 +24,7 @@
         "symfony/framework-bundle": "4.3.*",
         "symfony/security-bundle": "4.3.*",
         "symfony/validator": "4.3.*",
-        "symfony/yaml": "4.3.*",
-      "ext-curl": "*"
+        "symfony/yaml": "4.3.*"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.15",
