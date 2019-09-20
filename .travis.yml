@@ -25,7 +25,7 @@ matrix:
     - php: 7.1
       before_install:
         - composer self-update
-        - mysql -e 'create database $database_name;'
+        - mysql -e "create database $database_name;"
       install:
         - composer install -n
       script:
@@ -39,28 +39,28 @@ matrix:
     - php: 7.2
       before_install:
         - composer self-update
-        - mysql -e 'create database $database_name;'
+        - mysql -e "create database $database_name;"
       install:
         - composer install -n
       script: bin/phpunit
     - php: 7.3
       before_install:
         - composer self-update
-        - mysql -e 'create database $database_name;'
+        - mysql -e "create database $database_name;"
       install:
         - composer install -n
       script: bin/phpunit
     - php: 7.4snapshot
       before_install:
         - composer self-update
-        - mysql -e 'create database $database_name;'
+        - mysql -e "create database $database_name;"
       install:
         - composer install -n
       script: bin/phpunit
     - php: nightly
       before_install:
         - composer self-update
-        - mysql -e 'create database $database_name;'
+        - mysql -e "create database $database_name;"
       install:
         - composer install -n
       script: bin/phpunit
