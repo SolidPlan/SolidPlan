@@ -52,11 +52,11 @@ matrix:
     - php: 7.4snapshot
       script: bin/phpunit
     - node_js: "12"
-      before_install: skip
       services: null
-      before_script:
+      before_install:
           - nvm install 12
           - nvm use 12
       install:
         - yarn
+      before_script: skip
       script: yarn run test
