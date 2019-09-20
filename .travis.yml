@@ -3,7 +3,7 @@ language: php
 env:
   global:
     - APP_ENV=test
-    - APP_DEBUG=0
+    - APP_DEBUG=1
     - NODE_ENV=test
     - DATABASE_NAME=solidplan_test
 
@@ -40,8 +40,6 @@ matrix:
       script:
         - composer validate
         - bin/phpunit --coverage-clover build/logs/clover.xml
-        - ls -la var/cache
-        - ls -la var/cache/test
         - ./vendor/bin/phpstan analyse ./src -vvv --level=max -c phpstan.neon
       after_script:
         - travis_retry wget https://scrutinizer-ci.com/ocular.phar
