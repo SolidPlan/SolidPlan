@@ -28,6 +28,7 @@ matrix:
         - mysql -e "create database $database_name;"
       install:
         - composer install -n
+      before_script: php bin/console doctrine:migrations:migrate -n
       script:
         - composer validate
         - bin/phpunit --coverage-clover build/logs/clover.xml
@@ -42,6 +43,7 @@ matrix:
         - mysql -e "create database $database_name;"
       install:
         - composer install -n
+      before_script: php bin/console doctrine:migrations:migrate -n
       script: bin/phpunit
     - php: 7.3
       before_install:
@@ -49,6 +51,7 @@ matrix:
         - mysql -e "create database $database_name;"
       install:
         - composer install -n
+      before_script: php bin/console doctrine:migrations:migrate -n
       script: bin/phpunit
     - php: 7.4snapshot
       before_install:
@@ -56,6 +59,7 @@ matrix:
         - mysql -e "create database $database_name;"
       install:
         - composer install -n
+      before_script: php bin/console doctrine:migrations:migrate -n
       script: bin/phpunit
     - php: nightly
       before_install:
@@ -63,6 +67,7 @@ matrix:
         - mysql -e "create database $database_name;"
       install:
         - composer install -n
+      before_script: php bin/console doctrine:migrations:migrate -n
       script: bin/phpunit
     - node_js: "10"
       install:
