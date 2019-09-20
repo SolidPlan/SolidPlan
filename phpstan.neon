@@ -7,6 +7,7 @@ parameters:
   excludes_analyse:
     - src/Test/ApiTestCase.php
     - src/Test/Traits/FakerTrait.php
+    - src/Migrations/Version20190909090915.php
   symfony:
     container_xml_path: %rootDir%/../../../var/cache/test/srcApp_KernelTestDebugContainer.xml
   inferPrivatePropertyTypeFromConstructor: true
