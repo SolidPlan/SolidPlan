@@ -5,7 +5,7 @@ env:
     - APP_ENV=test
     - APP_DEBUG=0
     - NODE_ENV=test
-    - database_name=solidplan_test
+    - DATABASE_NAME=solidplan_test
 
 cache:
   yarn: true
@@ -16,6 +16,20 @@ cache:
 services:
   - mysql
 
+before_install:
+  - composer self-update
+  - mysql -e "create database $DATABASE_NAME;"
+
+install:
+  - composer install -n
+
+before_script:
+  - export JWT_PASSPHRASE=$(openssl rand -base64 32);
+  - mkdir -p config/jwt;
+  - openssl genpkey -out config/jwt/private.pem -aes256 -algorithm rsa -pkeyopt rsa_keygen_bits:4096s -pass "pass:$JWT_PASSPHRASE";
+  - openssl pkey -in config/jwt/private.pem -out config/jwt/public.pem -pubout -passin "pass:$JWT_PASSPHRASE";
+  - php bin/console doctrine:migrations:migrate -n
+
 matrix:
   fast_finish: true
   allow_failures:
@@ -23,12 +37,6 @@ matrix:
     - php: 7.4snapshot
   include:
     - php: 7.1
-      before_install:
-        - composer self-update
-        - mysql -e "create database $database_name;"
-      install:
-        - composer install -n
-      before_script: php bin/console doctrine:migrations:migrate -n
       script:
         - composer validate
         - bin/phpunit --coverage-clover build/logs/clover.xml
@@ -38,42 +46,14 @@ matrix:
         - travis_retry php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml
         - travis_retry php ./vendor/bin/php-coveralls -v
     - php: 7.2
-      before_install:
-        - composer self-update
-        - mysql -e "create database $database_name;"
-      install:
-        - composer install -n
-      before_script: php bin/console doctrine:migrations:migrate -n
       script: bin/phpunit
     - php: 7.3
-      before_install:
-        - composer self-update
-        - mysql -e "create database $database_name;"
-      install:
-        - composer install -n
-      before_script: php bin/console doctrine:migrations:migrate -n
       script: bin/phpunit
     - php: 7.4snapshot
-      before_install:
-        - composer self-update
-        - mysql -e "create database $database_name;"
-      install:
-        - composer install -n
-      before_script: php bin/console doctrine:migrations:migrate -n
       script: bin/phpunit
     - php: nightly
-      before_install:
-        - composer self-update
-        - mysql -e "create database $database_name;"
-      install:
-        - composer install -n
-      before_script: php bin/console doctrine:migrations:migrate -n
       script: bin/phpunit
     - node_js: "10"
       install:
         - yarn
       script: yarn run test
-
-notifications:
-  slack:
-    secure: jAXgCz5/ZxAnFN/x73gH8may6Vd5OJsfg4bX/1/QcAybP5J77P7vBBnJNVU3vsjTBrl24cAyfqwE/bUz9ZqLGKb1P3RglLmZAIhE92V76QDE+zpbPxt2rGCBIdGFrkRCFsR4AthfjroTWg4cWA9GGxISkNj4+K3hcbKQZzs0nz7VzrXLX2IywwlcHV75XHy8SpAeGCG1ZqYqc6vVhO3E777kz9n+b5HoTYp8GiRbh7X0FKQ9CdzRdpvc217+0XoL+v6MWBWjAV2YOm7XcXsfe79U3Iip7Cs42q23G7KGNoF3292W+CiZ2w25B6YFvxiep+tcioCx2xMaWPZ7lYAApjh7O/mgJKBtd3hQUWNm0KKKyKnJ3g9b5ZX0qagkv3DFYo7vU/Y+41HIm1D2EckgBYTKkcnprCb9nmf19l6h+SKwiVZfJdQS8ScNfUtADBd7s8csjaM3jG7KCK4yKU4JQLvEQmlzyPE3ngXMjlb3U9NoloMZuN2ukhDF2oRedL4mP8j4S9JbyhTBytXXyzr5wMBzdpXgI3TZngbZM0d1wbbuGm9VEWLQG5PJQtW3WkX9bs7dzu5iRttjDyRfyKXF7ZVYmW59Ox3J54c8zNSQVy/uVdwrX4nvh8jPQ4oh3BJvsQwX+HbW9+tdRhyKBsH9l8JALRCfY4AP4TxziohMsMw=
