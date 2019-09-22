@@ -56,6 +56,7 @@ class UserCreateCommandTest extends KernelTestCase
 
   public function testExecuteWithMissingFields()
   {
+    putenv('COLUMNS=80'); // Work around issue with CI environments terminal width
     $kernel = static::bootKernel();
     $application = new Application($kernel);
 
@@ -70,7 +71,7 @@ class UserCreateCommandTest extends KernelTestCase
     $commandTester->execute(array_merge(['command' => $command->getName()], $data), ['interactive' => 0]);
 
     $output = $commandTester->getDisplay();
-    $this->assertContains('[ERROR] Unable to create user. Some required fields are missing: firstName, lastName', $output);
+    $this->assertContains("[ERROR] Unable to create user. Some required fields are missing: firstName,    \n         lastName", $output);
     $this->assertSame(1, $commandTester->getStatusCode());
   }
 

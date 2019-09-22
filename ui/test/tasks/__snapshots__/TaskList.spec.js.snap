@@ -9,10 +9,26 @@ exports[`TaskList matches snapshot 1`] = `
   <v-card-actions-stub
     class="px-3"
   >
-    <v-hover-stub
+    <v-tooltip-stub
+      bottom="true"
       closedelay="0"
+      contentclass=""
+      fixed="true"
+      maxwidth="auto"
+      nudgebottom="0"
+      nudgeleft="0"
+      nudgeright="0"
+      nudgetop="0"
+      nudgewidth="0"
       opendelay="0"
-    />
+      openonhover="true"
+      tag="span"
+    >
+       
+      <span>
+        Mark all as done
+      </span>
+    </v-tooltip-stub>
     
      
     0 Items
@@ -162,10 +178,26 @@ exports[`TaskList matches snapshot with data 1`] = `
   <v-card-actions-stub
     class="px-3"
   >
-    <v-hover-stub
+    <v-tooltip-stub
+      bottom="true"
       closedelay="0"
+      contentclass=""
+      fixed="true"
+      maxwidth="auto"
+      nudgebottom="0"
+      nudgeleft="0"
+      nudgeright="0"
+      nudgetop="0"
+      nudgewidth="0"
       opendelay="0"
-    />
+      openonhover="true"
+      tag="span"
+    >
+       
+      <span>
+        Mark all as done
+      </span>
+    </v-tooltip-stub>
     
      
     10 Items
