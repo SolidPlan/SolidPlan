@@ -53,10 +53,10 @@ class UserCreateCommand extends Command
     protected function configure()
     {
         $this
-      ->addOption('email', 'u', InputOption::VALUE_REQUIRED, 'The email address of the user to create')
-      ->addOption('password', 'p', InputOption::VALUE_REQUIRED, 'The password of the user')
-      ->addOption('firstName', 'f', InputOption::VALUE_REQUIRED, 'The first name of the user')
-      ->addOption('lastName', 'l', InputOption::VALUE_REQUIRED, 'The last name of the user to create');
+        ->addOption('email', 'u', InputOption::VALUE_REQUIRED, 'The email address of the user to create')
+        ->addOption('password', 'p', InputOption::VALUE_REQUIRED, 'The password of the user')
+        ->addOption('firstName', 'f', InputOption::VALUE_REQUIRED, 'The first name of the user')
+        ->addOption('lastName', 'l', InputOption::VALUE_REQUIRED, 'The last name of the user to create');
     }
 
     protected function interact(InputInterface $input, OutputInterface $output)
@@ -149,23 +149,23 @@ class UserCreateCommand extends Command
     private static function getFields(): array
     {
         return [
-      [
+        [
         'name' => 'email',
         'constraints' => [new Email()],
-      ],
-      [
+        ],
+        [
         'name' => 'password',
         'constraints' => [new Length(['min' => 6])],
         'hidden' => true,
-      ],
-      [
+        ],
+        [
         'name' => 'firstName',
         'constraints' => [new Length(['min' => 3])],
-      ],
-      [
+        ],
+        [
         'name' => 'lastName',
         'constraints' => [new Length(['min' => 3])],
-      ],
+        ],
     ];
     }
 }

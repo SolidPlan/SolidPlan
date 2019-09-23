@@ -95,41 +95,41 @@ abstract class ApiTestCase extends WebTestCase
             switch ($name) {
         case 'get':
           $response = $this->request($operation['method'], $path);
-          $json = json_decode($response->getContent(), true);
+            $json = json_decode($response->getContent(), true);
 
-          $this->assertEquals(200, $response->getStatusCode());
-          $this->assertEquals('application/ld+json; charset=utf-8', $response->headers->get('Content-Type'));
+            $this->assertEquals(200, $response->getStatusCode());
+            $this->assertEquals('application/ld+json; charset=utf-8', $response->headers->get('Content-Type'));
 
-          $this->assertArrayHasKey('hydra:totalItems', $json);
-          $this->assertEquals(10, $json['hydra:totalItems']);
+            $this->assertArrayHasKey('hydra:totalItems', $json);
+            $this->assertEquals(10, $json['hydra:totalItems']);
 
-          $this->assertArrayHasKey('hydra:member', $json);
-          $this->assertCount(10, $json['hydra:member']);
-          break;
+            $this->assertArrayHasKey('hydra:member', $json);
+            $this->assertCount(10, $json['hydra:member']);
+            break;
 
         case 'post':
           $data = $this->getFields();
 
-          $response = $this->request('POST', $path, $data);
-          $json = json_decode($response->getContent(), true);
+            $response = $this->request('POST', $path, $data);
+            $json = json_decode($response->getContent(), true);
 
-          if (500 === $response->getStatusCode()) {
-              echo $response->getContent();
-          }
+            if (500 === $response->getStatusCode()) {
+                echo $response->getContent();
+            }
 
-          $this->assertEquals(201, $response->getStatusCode());
-          $this->assertEquals('application/ld+json; charset=utf-8', $response->headers->get('Content-Type'));
+            $this->assertEquals(201, $response->getStatusCode());
+            $this->assertEquals('application/ld+json; charset=utf-8', $response->headers->get('Content-Type'));
 
-          foreach ($data as $key => $value) {
-              if ('password' === $key) {
-                  continue;
-              }
+            foreach ($data as $key => $value) {
+                if ('password' === $key) {
+                    continue;
+                }
 
-              $this->assertArrayHasKey($key, $json);
-              $this->assertSame($value, $json[$key]);
-          }
-          break;
-      }
+                $this->assertArrayHasKey($key, $json);
+                $this->assertSame($value, $json[$key]);
+            }
+            break;
+        }
         }
     }
 
@@ -142,28 +142,28 @@ abstract class ApiTestCase extends WebTestCase
         case 'put':
           $data = $this->getFields();
 
-          do {
-              $field = $this->faker->randomKey($data);
-          } while ('password' === $field);
+            do {
+                $field = $this->faker->randomKey($data);
+            } while ('password' === $field);
 
-          $response = $this->request('PUT', $this->findOneIriBy(['id' => 1]), [$field => '1234']);
-          $json = json_decode($response->getContent(), true);
+            $response = $this->request('PUT', $this->findOneIriBy(['id' => 1]), [$field => '1234']);
+            $json = json_decode($response->getContent(), true);
 
-          $this->assertEquals(200, $response->getStatusCode());
-          $this->assertEquals('application/ld+json; charset=utf-8', $response->headers->get('Content-Type'));
+            $this->assertEquals(200, $response->getStatusCode());
+            $this->assertEquals('application/ld+json; charset=utf-8', $response->headers->get('Content-Type'));
 
-          $this->assertArrayHasKey($field, $json);
-          $this->assertSame('1234', $json[$field]);
-          break;
+            $this->assertArrayHasKey($field, $json);
+            $this->assertSame('1234', $json[$field]);
+            break;
 
         case 'delete':
           $response = $this->request('DELETE', $this->findOneIriBy(['id' => 4]));
 
-          $this->assertEquals(204, $response->getStatusCode());
+            $this->assertEquals(204, $response->getStatusCode());
 
-          $this->assertEmpty($response->getContent());
-          break;
-      }
+            $this->assertEmpty($response->getContent());
+            break;
+        }
         }
     }
 }

@@ -70,11 +70,11 @@ final class Version20190909090915 extends AbstractMigration
     public function down(Schema $schema): void
     {
         $tables = [
-      'task',
-      'task_label',
-      'user',
-      'labels',
-      'project',
+        'task',
+        'task_label',
+        'user',
+        'labels',
+        'project',
     ];
 
         foreach ($tables as $table) {
@@ -92,12 +92,12 @@ final class Version20190909090915 extends AbstractMigration
     {
         parent::postUp($schema);
         try {
-            $this->connection->transactional(function (Connection $connection) {
+            $this->connection->transactional(function(Connection $connection) {
                 $labels = [
-          ['name' => 'Feature', 'color' => '#4CAF50'],
-          ['name' => 'Urgent', 'color' => '#f44336'],
-          ['name' => 'On Hold', 'color' => '#ffc107'],
-          ['name' => 'Bug', 'color' => '#F44336'],
+            ['name' => 'Feature', 'color' => '#4CAF50'],
+            ['name' => 'Urgent', 'color' => '#f44336'],
+            ['name' => 'On Hold', 'color' => '#ffc107'],
+            ['name' => 'Bug', 'color' => '#F44336'],
         ];
 
                 foreach ($labels as $label) {
