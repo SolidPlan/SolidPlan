@@ -16,8 +16,8 @@ build:
 
   project_setup:
     before:
-      - php bin/console doctrine:database:create
-      - php bin/console doctrine:migrations:migrate
+      - php bin/console doctrine:database:create -n
+      - php bin/console doctrine:migrations:migrate -n
 
 tools:
   external_code_coverage:
