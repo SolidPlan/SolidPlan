@@ -5,6 +5,10 @@ build:
         override: true
       tests:
         override: [php-scrutinizer-run]
+    test:
+      tests:
+        override:
+          - command: ./bin/phpunit
   services:
     mysql: 5.7
 
