@@ -7,14 +7,48 @@ Open-Source Project management tool
 
 SolidPlan is an open-source application to manages simple projects and tasks. 
 
-Requirements
+<!--ts-->
+   * [Features](#features)
+   * [Screenshots](#screenshots)
+   * [Installation](#installation)
+      * [Requirements](#requirements)
+      * [Docker](#docker)
+      * [From Source](#from-source)
+        * [API](#api)
+        * [UI](#ui)
+   * [Contributing](#contributing)
+   * [License](#license)
+<!--te-->
+
+Features
+--------
+
+Some of the basic features included in SolidPlan is:
+
+* Create and manage projects
+* Create tasks and add tasks to projects
+* Assign tasks to users
+* Add labels to tasks and manage global labels
+* RESTful API
+
+Screenshots
+-----------
+
+<p align="center">
+<img width="768" alt="Dashboard" src="https://user-images.githubusercontent.com/144858/65403373-a0f8ab00-ddd3-11e9-82cc-f103dc36c07c.png">
+<img width="768" alt="Tasks Overview" src="https://user-images.githubusercontent.com/144858/65403374-a1914180-ddd3-11e9-8976-96aafd2e0ac1.png">
+<img width="768" alt="Task Information" src="https://user-images.githubusercontent.com/144858/65403375-a1914180-ddd3-11e9-979c-e71a6b8c5f63.png">
+</p>
+
+
+Installation
 ------------
+
+#### Requirements
 
 SolidPlan requires minimum PHP 7.1.3 and NodeJs 10.
 
 *Note:* The latest version of PHP is always recommended
-
-## Installation
 
 ### Docker
 
@@ -107,24 +141,13 @@ $ yarn run prod
 
 When the build process is done, you can open [http://127.0.0.1:3000](http://127.0.0.1:3000) and log in using the user you created in the previous steps.
 
-Features
---------
-
-Some of the basic features included in SolidPlan is:
-
-* Create and manage projects
-* Create tasks and add tasks to projects
-* Assign tasks to users
-* Add labels to tasks and manage global labels
-* RESTful API
-
 Contributing
 ------------
 
 See [CONTRIBUTING](CONTRIBUTING.md)
 
 License
-------------
+--------
 
 SolidPlan is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT)
 
