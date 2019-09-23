@@ -1,0 +1,13 @@
+build:
+  services:
+    mysql: 5.7
+
+  environment:
+    variables:
+      APP_ENV: test
+      APP_DEBUG: 1
+
+  project_setup:
+    before:
+      - php bin/console doctrine:database:create
+      - php bin/console doctrine:migrations:migrate
