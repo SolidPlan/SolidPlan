@@ -2,6 +2,7 @@ SolidPlan
 =========
 
 [![Build Status](https://travis-ci.org/SolidPlan/SolidPlan.png?branch=master)](https://travis-ci.org/SolidPlan/SolidPlan)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/SolidPlan/SolidPlan/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/SolidPlan/SolidPlan/?branch=master)
 
 Open-Source Project management tool
 
