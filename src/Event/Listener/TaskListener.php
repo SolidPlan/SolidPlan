@@ -27,8 +27,8 @@ class TaskListener implements EventSubscriber
     public function getSubscribedEvents()
     {
         return [
-      Events::prePersist,
-      Events::postRemove,
+        Events::prePersist,
+        Events::postRemove,
     ];
     }
 
@@ -44,7 +44,7 @@ class TaskListener implements EventSubscriber
         /** @var TaskRepository $repository */
         $repository = $em->getRepository(Task::class);
 
-        $scheduledEntityInsertions = array_values(array_filter($em->getUnitOfWork()->getScheduledEntityInsertions(), function ($entity) { return $entity instanceof Task; }));
+        $scheduledEntityInsertions = array_values(array_filter($em->getUnitOfWork()->getScheduledEntityInsertions(), function($entity) { return $entity instanceof Task; }));
 
         if (0 === count($scheduledEntityInsertions)) {
             $task->setOrder($repository->getMaxOrder() + 1);

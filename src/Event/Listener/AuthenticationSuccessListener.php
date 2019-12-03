@@ -36,7 +36,7 @@ class AuthenticationSuccessListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-      KernelEvents::REQUEST => ['onAuthenticationSuccessEvent', EventPriorities::PRE_READ],
+        KernelEvents::REQUEST => ['onAuthenticationSuccessEvent', EventPriorities::PRE_READ],
     ];
     }
 
