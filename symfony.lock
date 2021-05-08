@@ -49,6 +49,9 @@
     "doctrine/dbal": {
         "version": "v2.9.2"
     },
+    "doctrine/deprecations": {
+        "version": "v0.5.3"
+    },
     "doctrine/doctrine-bundle": {
         "version": "1.6",
         "recipe": {
@@ -104,6 +107,9 @@
     "doctrine/reflection": {
         "version": "v1.0.0"
     },
+    "fakerphp/faker": {
+        "version": "v1.14.1"
+    },
     "fig/link-util": {
         "version": "1.0.0"
     },
@@ -118,9 +124,6 @@
         "files": [
             ".php_cs.dist"
         ]
-    },
-    "fzaninotto/faker": {
-        "version": "v1.8.0"
     },
     "guzzlehttp/guzzle": {
         "version": "6.3.3"
@@ -230,11 +233,11 @@
     "ocramius/proxy-manager": {
         "version": "2.2.3"
     },
-    "php-cs-fixer/diff": {
-        "version": "v1.3.0"
-    },
     "php-coveralls/php-coveralls": {
         "version": "v2.1.0"
+    },
+    "php-cs-fixer/diff": {
+        "version": "v1.3.0"
     },
     "phpdocumentor/reflection-common": {
         "version": "1.0.1"
@@ -262,6 +265,9 @@
     },
     "psr/container": {
         "version": "1.0.0"
+    },
+    "psr/http-client": {
+        "version": "1.0.1"
     },
     "psr/http-message": {
         "version": "1.0.1"
@@ -323,6 +329,9 @@
     },
     "symfony/dependency-injection": {
         "version": "v4.3.3"
+    },
+    "symfony/deprecation-contracts": {
+        "version": "v2.4.0"
     },
     "symfony/doctrine-bridge": {
         "version": "v4.3.3"
@@ -422,6 +431,9 @@
     "symfony/polyfill-intl-idn": {
         "version": "v1.12.0"
     },
+    "symfony/polyfill-intl-normalizer": {
+        "version": "v1.22.1"
+    },
     "symfony/polyfill-mbstring": {
         "version": "v1.12.0"
     },
@@ -494,6 +506,27 @@
     "symfony/translation-contracts": {
         "version": "v1.1.5"
     },
+    "symfony/twig-bridge": {
+        "version": "v4.3.11"
+    },
+    "symfony/twig-bundle": {
+        "version": "3.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "3.3",
+            "ref": "7e5381cd17e0e27d1b432af9230b65060b75ac4c"
+        },
+        "files": [
+            "config/packages/test/twig.yaml",
+            "config/packages/twig.yaml",
+            "config/routes/dev/twig.yaml",
+            "templates/base.html.twig"
+        ]
+    },
+    "symfony/twig-pack": {
+        "version": "v1.0.1"
+    },
     "symfony/validator": {
         "version": "4.3",
         "recipe": {
@@ -524,6 +557,12 @@
             "version": "1.0",
             "ref": "fe5a50faf580eb58f08ada2abe8afbd2d4941e05"
         }
+    },
+    "twig/extra-bundle": {
+        "version": "v3.3.0"
+    },
+    "twig/twig": {
+        "version": "v2.13.1"
     },
     "webmozart/assert": {
         "version": "1.4.0"
