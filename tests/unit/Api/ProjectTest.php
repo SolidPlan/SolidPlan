@@ -26,7 +26,7 @@ class ProjectTest extends ApiTestCase
     $response = $this->request('POST', '/api/projects', $data);
     $json = json_decode($response->getContent(), true);
 
-    $this->assertEquals(400, $response->getStatusCode());
+    $this->assertEquals(422, $response->getStatusCode());
     $this->assertEquals('application/ld+json; charset=utf-8', $response->headers->get('Content-Type'));
 
     $this->assertArrayHasKey('violations', $json);
