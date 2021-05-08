@@ -35,7 +35,7 @@ abstract class ApiTestCase extends WebTestCase
 
     private static $jwt;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
