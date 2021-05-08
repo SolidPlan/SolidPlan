@@ -1,0 +1,110 @@
+name: Tests
+
+on:
+    push:
+        branches:
+            - master
+    pull_request: ~
+
+jobs:
+    php:
+        name: Unit ( PHP ${{ matrix.php }}, MySQL ${{ matrix.mysql }} )
+
+        runs-on: ubuntu-20.04
+
+        env:
+            APP_ENV: test
+            APP_DEBUG: 1
+            NODE_ENV: test
+            DATABASE_NAME: solidplan_test
+
+        strategy:
+            matrix:
+                php: [ '7.3', '7.4', '8.0' ]
+                mysql: [ '5.6', '5.7' ]
+                include:
+                    - php: '7.3'
+                      mysql: '5.6'
+                    - php: '7.3'
+                      mysql: '8.0'
+                      mysql-entrypoint: >-
+                          --entrypoint sh mysql:8.0 -c "exec docker-entrypoint.sh mysqld --default-authentication-plugin=mysql_native_password"
+                    - php: '8.0'
+                      mysql: '8.0'
+                      mysql-entrypoint: >-
+                          --entrypoint sh mysql:8.0 -c "exec docker-entrypoint.sh mysqld --default-authentication-plugin=mysql_native_password"
+            fail-fast: false
+
+        services:
+            mysql:
+                image: mysql:${{ matrix.mysql }}
+                ports:
+                    - 3306:3306
+                options: >-
+                    --health-cmd "mysqladmin ping --silent"
+                    --health-interval=10s
+                    --health-timeout=5s
+                    --health-retries=3
+                    -e MYSQL_ALLOW_EMPTY_PASSWORD=yes
+                    ${{ matrix.mysql-entrypoint }}
+
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v2
+
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: ${{ matrix.php }}
+                    ini-values: date.timezone=Africa/Johannesburg, opcache.enable=1, opcache.enable_cli=1, opcache.memory_consumption=256, opcache.max_accelerated_files=32531, opcache.interned_strings_buffer=8, opcache.validate_timestamps=0, opcache.save_comments=1, opcache.fast_shutdown=0
+                    extensions: intl, opcache, mysql, pdo_mysql, zip, :xdebug
+
+            -   name: Get composer cache directory
+                id: composercache
+                run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+            -   name: Cache dependencies
+                uses: actions/cache@v2
+                with:
+                    path: ${{ steps.composercache.outputs.dir }}
+                    key: ${{ runner.os }}-php-${{ matrix.php }}-composer-${{ hashFiles('composer.json composer.lock') }}
+                    restore-keys: ${{ runner.os }}-php-${{ matrix.php }}-composer-
+
+            -   name: Install dependencies
+                run: composer install --ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+            -   name: Prepare application
+                run: |
+                    echo JWT_PASSPHRASE=$(openssl rand -base64 32) >> $GITHUB_ENV
+                    mkdir -p config/jwt;
+                    openssl genpkey -out config/jwt/private.pem -aes256 -algorithm rsa -pkeyopt rsa_keygen_bits:4096s -pass "pass:$JWT_PASSPHRASE";
+                    openssl pkey -in config/jwt/private.pem -out config/jwt/public.pem -pubout -passin "pass:$JWT_PASSPHRASE";
+                    php bin/console doctrine:migrations:migrate -n
+
+            -   name: Run tests
+                run: bin/phpunit
+
+    node:
+        name: Unit ( Node ${{ matrix.node }} )
+
+        runs-on: ubuntu-20.04
+
+        env:
+            APP_ENV: test
+            APP_DEBUG: 1
+            NODE_ENV: test
+            DATABASE_NAME: solidplan_tes
+
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v2
+
+            -   uses: actions/setup-node@v2
+                with:
+                    node-version: 14
+
+            -   name: Install dependencies
+                run: yarn
+
+            -   name: Run tests
+                run: yarn run test
