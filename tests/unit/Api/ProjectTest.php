@@ -30,7 +30,7 @@ class ProjectTest extends ApiTestCase
     $this->assertEquals('application/ld+json; charset=utf-8', $response->headers->get('Content-Type'));
 
     $this->assertArrayHasKey('violations', $json);
-    $this->assertCount(1, $json['violations']);
+    $this->assertCount(2, $json['violations']);
 
     $this->assertArrayHasKey('propertyPath', $json['violations'][0]);
     $this->assertEquals('name', $json['violations'][0]['propertyPath']);
