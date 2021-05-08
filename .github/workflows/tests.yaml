@@ -17,6 +17,7 @@ jobs:
             APP_DEBUG: 1
             NODE_ENV: test
             DATABASE_NAME: solidplan_test
+            JWT_PASSPHRASE: suchislife
 
         strategy:
             matrix:
@@ -75,7 +76,6 @@ jobs:
 
             -   name: Prepare application
                 run: |
-                    echo JWT_PASSPHRASE=$(openssl rand -base64 32) >> $GITHUB_ENV
                     mkdir -p config/jwt;
                     openssl genpkey -out config/jwt/private.pem -aes256 -algorithm rsa -pkeyopt rsa_keygen_bits:4096s -pass "pass:$JWT_PASSPHRASE";
                     openssl pkey -in config/jwt/private.pem -out config/jwt/public.pem -pubout -passin "pass:$JWT_PASSPHRASE";
