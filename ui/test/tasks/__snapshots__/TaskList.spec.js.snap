@@ -73,49 +73,9 @@ exports[`TaskList matches snapshot 1`] = `
     class="pa-0"
   >
     <v-data-iterator-stub
-      customfilter="function searchItems(items, search) {
-          if (!search) return items;
-          search = search.toString().toLowerCase();
-          if (search.trim() === '') return items;
-          return items.filter(function (item) {
-            return Object.keys(item).some(function (key) {
-              return defaultFilter(getObjectValueByPath(item, key), search, item);
-            });
-          });
-        }"
-      customsort="function sortItems(items, sortBy, sortDesc, locale, customSorters) {
-          if (sortBy === null || !sortBy.length) return items;
-          return items.sort(function (a, b) {
-            var _a, _b;
-
-            for (var i = 0; i < sortBy.length; i++) {
-              var sortKey = sortBy[i];
-              var sortA = getObjectValueByPath(a, sortKey);
-              var sortB = getObjectValueByPath(b, sortKey);
-
-              if (sortDesc[i]) {
-                _a = __read([sortB, sortA], 2), sortA = _a[0], sortB = _a[1];
-              }
-
-              if (customSorters && customSorters[sortKey]) return customSorters[sortKey](sortA, sortB); // Check if both cannot be evaluated
-
-              if (sortA === null && sortB === null) {
-                return 0;
-              }
-
-              _b = __read([sortA, sortB].map(function (s) {
-                return (s || '').toString().toLocaleLowerCase();
-              }), 2), sortA = _b[0], sortB = _b[1];
-
-              if (sortA !== sortB) {
-                if (!isNaN(sortA) && !isNaN(sortB)) return Number(sortA) - Number(sortB);
-                return sortA.localeCompare(sortB, locale);
-              }
-            }
-
-            return 0;
-          });
-        }"
+      customfilter="[Function]"
+      customgroup="[Function]"
+      customsort="[Function]"
       expanded=""
       footerprops="[object Object]"
       groupby=""
@@ -125,10 +85,12 @@ exports[`TaskList matches snapshot 1`] = `
       itemsperpage="15"
       loadingtext="$vuetify.dataIterator.loadingText"
       locale="en-US"
+      mobilebreakpoint="600"
       nodatatext="$vuetify.noDataText"
       noresultstext="$vuetify.dataIterator.noResultsText"
       options="[object Object]"
       page="1"
+      selectablekey="isSelectable"
       serveritemslength="0"
       sortby=""
       sortdesc=""
@@ -139,7 +101,6 @@ exports[`TaskList matches snapshot 1`] = `
         <v-list-stub
           class="py-0"
           tag="div"
-          tile="true"
         >
           <v-divider-stub />
            
@@ -242,49 +203,9 @@ exports[`TaskList matches snapshot with data 1`] = `
     class="pa-0"
   >
     <v-data-iterator-stub
-      customfilter="function searchItems(items, search) {
-          if (!search) return items;
-          search = search.toString().toLowerCase();
-          if (search.trim() === '') return items;
-          return items.filter(function (item) {
-            return Object.keys(item).some(function (key) {
-              return defaultFilter(getObjectValueByPath(item, key), search, item);
-            });
-          });
-        }"
-      customsort="function sortItems(items, sortBy, sortDesc, locale, customSorters) {
-          if (sortBy === null || !sortBy.length) return items;
-          return items.sort(function (a, b) {
-            var _a, _b;
-
-            for (var i = 0; i < sortBy.length; i++) {
-              var sortKey = sortBy[i];
-              var sortA = getObjectValueByPath(a, sortKey);
-              var sortB = getObjectValueByPath(b, sortKey);
-
-              if (sortDesc[i]) {
-                _a = __read([sortB, sortA], 2), sortA = _a[0], sortB = _a[1];
-              }
-
-              if (customSorters && customSorters[sortKey]) return customSorters[sortKey](sortA, sortB); // Check if both cannot be evaluated
-
-              if (sortA === null && sortB === null) {
-                return 0;
-              }
-
-              _b = __read([sortA, sortB].map(function (s) {
-                return (s || '').toString().toLocaleLowerCase();
-              }), 2), sortA = _b[0], sortB = _b[1];
-
-              if (sortA !== sortB) {
-                if (!isNaN(sortA) && !isNaN(sortB)) return Number(sortA) - Number(sortB);
-                return sortA.localeCompare(sortB, locale);
-              }
-            }
-
-            return 0;
-          });
-        }"
+      customfilter="[Function]"
+      customgroup="[Function]"
+      customsort="[Function]"
       expanded=""
       footerprops="[object Object]"
       groupby=""
@@ -294,10 +215,12 @@ exports[`TaskList matches snapshot with data 1`] = `
       itemsperpage="15"
       loadingtext="$vuetify.dataIterator.loadingText"
       locale="en-US"
+      mobilebreakpoint="600"
       nodatatext="$vuetify.noDataText"
       noresultstext="$vuetify.dataIterator.noResultsText"
       options="[object Object]"
       page="1"
+      selectablekey="isSelectable"
       serveritemslength="10"
       sortby=""
       sortdesc=""
@@ -308,7 +231,6 @@ exports[`TaskList matches snapshot with data 1`] = `
         <v-list-stub
           class="py-0"
           tag="div"
-          tile="true"
         >
           <v-divider-stub />
            
